@@ -1,0 +1,134 @@
+# UniHub — Documentação Oficial de UI/UX e Identidade Visual
+
+# Visão Geral
+
+O UniHub é uma plataforma digital universitária desenvolvida para centralizar e facilitar a vida acadêmica e social dos estudantes da UVV.
+
+A proposta do sistema é unir funcionalidades acadêmicas e sociais em um único ambiente moderno, intuitivo e responsivo.
+
+O sistema combina características de:
+
+- portal universitário;
+- dashboard acadêmico;
+- mural digital;
+- fórum universitário;
+- mini rede social acadêmica.
+
+A plataforma será desenvolvida inicialmente como um MVP (Produto Mínimo Viável), priorizando simplicidade, organização visual e boa experiência do usuário.
+
+---
+
+# Objetivo da Plataforma
+
+O UniHub busca resolver a fragmentação de informações dentro do ambiente universitário.
+
+Atualmente, informações importantes ficam espalhadas entre:
+
+- grupos de WhatsApp;
+- Instagram;
+- conversas informais;
+- murais;
+- servidores Discord;
+- atléticas;
+- centros acadêmicos.
+
+O objetivo do UniHub é centralizar:
+
+- eventos universitários;
+- agenda pessoal;
+- moradias;
+- fóruns acadêmicos;
+- networking estudantil;
+- gerenciamento de conteúdos do usuário.
+
+---
+
+# Conceito de Produto
+
+O UniHub será definido visualmente como:
+
+> "Portal universitário moderno com elementos de rede social acadêmica."
+
+O sistema NÃO deve parecer:
+
+- sistema antigo institucional;
+- Moodle tradicional;
+- ERP acadêmico;
+- rede social genérica.
+
+O sistema DEVE parecer:
+
+- moderno;
+- jovem;
+- organizado;
+- tecnológico;
+- intuitivo;
+- acadêmico;
+- social;
+- confiável.
+
+---
+
+# Direção Visual
+
+## Estilo Visual
+
+A identidade visual seguirá:
+
+- estilo startup universitária;
+- aparência moderna;
+- visual limpo;
+- bastante espaço em branco;
+- cards arredondados;
+- sombras leves;
+- ícones simples;
+- dashboard acadêmico moderno;
+- mistura entre Discord, Sympla e Airbnb.
+
+---
+
+# Referências Visuais
+
+O UniHub terá inspiração visual em:
+
+- Discord (fórum e comunidade);
+- Sympla (eventos);
+- Airbnb (moradias);
+- dashboards modernos;
+- plataformas universitárias modernas;
+- interfaces startup.
+
+---
+
+# Estrutura Visual Geral
+
+## Layout Desktop
+
+- sidebar lateral fixa;
+- conteúdo principal centralizado;
+- cards organizados;
+- topo limpo;
+- navegação simples;
+- foco em leitura rápida.
+
+---
+
+## Layout Mobile
+
+O mobile utilizará:
+
+- bottom navigation;
+- navegação simplificada;
+- cards adaptáveis;
+- responsividade total.
+
+---
+
+# Paleta de Cores Oficial
+
+## Cores Institucionais UVV
+
+### Azul Principal UVV
+
+```txt
+#003B8F

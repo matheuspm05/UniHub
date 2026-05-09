@@ -1,0 +1,582 @@
+# UniHub — Plataforma Digital de Integração Universitária
+
+## Sobre o Projeto
+
+O **UniHub** é uma plataforma web voltada para a integração acadêmica e social de estudantes universitários.
+
+A proposta do sistema é centralizar, em um único ambiente digital, informações importantes da vida universitária, como eventos, oportunidades de moradia, fóruns acadêmicos e interação entre alunos.
+
+O projeto será desenvolvido como um **MVP (Produto Mínimo Viável)** para a disciplina de Web 2 Avançado, utilizando tecnologias web com foco em organização, autenticação, controle de permissões e persistência de dados.
+
+---
+
+## Problema
+
+Atualmente, muitas informações importantes da vida universitária ficam espalhadas em diferentes canais, como:
+
+- grupos de WhatsApp;
+- redes sociais;
+- conversas informais;
+- murais;
+- perfis de atléticas;
+- comunicação entre alunos.
+
+Isso dificulta o acesso rápido e organizado a eventos, oportunidades de moradia, dúvidas acadêmicas e interações entre estudantes.
+
+Além disso, alunos ingressantes e estudantes vindos de outras cidades podem ter mais dificuldade para se integrar à comunidade universitária.
+
+---
+
+## Objetivo
+
+O objetivo do UniHub é criar uma plataforma simples, organizada e funcional para ajudar os alunos a:
+
+- encontrar eventos universitários;
+- salvar eventos em uma agenda pessoal;
+- visualizar e publicar oportunidades de moradia;
+- participar de fóruns acadêmicos;
+- interagir com alunos do próprio curso e de outros cursos;
+- organizar suas atividades dentro da universidade.
+
+---
+
+## Público-Alvo
+
+O sistema é voltado para estudantes universitários, especialmente da Universidade Vila Velha (UVV), incluindo:
+
+- alunos ingressantes;
+- alunos de períodos avançados;
+- estudantes vindos de outras cidades;
+- representantes de turma;
+- membros de atléticas;
+- centros acadêmicos;
+- estudantes em busca de apoio acadêmico e social.
+
+---
+
+## Proposta de Valor
+
+O UniHub se diferencia por reunir, em uma única plataforma, funcionalidades acadêmicas e sociais importantes para a rotina universitária.
+
+A plataforma busca facilitar a comunicação entre alunos, melhorar a organização de informações e promover maior integração dentro da universidade.
+
+Em vez de depender apenas de grupos informais ou redes sociais, os estudantes terão um espaço centralizado para acompanhar eventos, encontrar moradia, tirar dúvidas e fazer networking.
+
+---
+
+## Perfis de Usuário
+
+O sistema contará com controle de acesso baseado em perfis de usuário, também chamados de **roles**.
+
+### Usuário Comum
+
+Representa o aluno padrão da plataforma.
+
+Permissões:
+
+- visualizar eventos;
+- salvar eventos na própria agenda;
+- visualizar anúncios de moradia;
+- criar anúncios de moradia;
+- criar tópicos no fórum;
+- responder tópicos;
+- editar e gerenciar apenas os próprios conteúdos;
+- solicitar aprovação para se tornar moderador.
+
+Restrições:
+
+- não pode criar eventos oficiais;
+- não pode editar conteúdos de outros usuários;
+- não possui acesso ao painel administrativo.
+
+---
+
+### Moderador / Representante
+
+Representa usuários autorizados, como:
+
+- líderes de atlética;
+- representantes de turma;
+- membros de centros acadêmicos;
+- organizadores universitários.
+
+Permissões:
+
+- criar eventos oficiais;
+- editar os próprios eventos;
+- gerenciar os eventos criados por ele;
+- participar do fórum;
+- possuir selo especial de identificação.
+
+Restrições:
+
+- não pode alterar permissões de outros usuários;
+- não possui controle total do sistema;
+- não pode excluir usuários.
+
+---
+
+### Administrador
+
+Representa o usuário com acesso total ao sistema.
+
+Permissões:
+
+- gerenciar usuários;
+- aprovar ou recusar solicitações de moderador;
+- alterar roles de usuários;
+- gerenciar eventos;
+- gerenciar moradias;
+- gerenciar tópicos e respostas do fórum;
+- bloquear ou desativar usuários;
+- acessar o painel administrativo.
+
+---
+
+## Selos de Perfil
+
+Os usuários poderão possuir selos visuais para identificação dentro da plataforma.
+
+Exemplos de selos:
+
+- Aluno;
+- Representante;
+- Atlética;
+- Administrador.
+
+Esses selos ajudam a transmitir mais confiança e clareza sobre quem está publicando determinado conteúdo.
+
+---
+
+## Funcionalidades do MVP
+
+### 1. Autenticação de Usuários
+
+O sistema terá cadastro e login de usuários.
+
+Campos principais do cadastro:
+
+- nome;
+- e-mail;
+- senha;
+- curso;
+- período;
+- cidade;
+- biografia curta.
+
+Após o cadastro, o usuário será criado inicialmente como **usuário comum**.
+
+---
+
+### 2. Feed Inicial
+
+Após o login, o usuário terá acesso a uma página inicial com um resumo das principais atividades da plataforma.
+
+O feed poderá exibir:
+
+- eventos recentes;
+- próximos eventos;
+- moradias recém-publicadas;
+- tópicos recentes do fórum;
+- atalhos para a agenda e conteúdos do usuário.
+
+Essa página funcionará como uma central da vida universitária.
+
+---
+
+### 3. Sistema de Eventos
+
+O módulo de eventos será utilizado para divulgar eventos universitários.
+
+Funcionalidades:
+
+- listagem de eventos;
+- visualização de detalhes do evento;
+- criação de eventos por moderadores e administradores;
+- edição de eventos pelo criador ou administrador;
+- categorização dos eventos;
+- controle de status;
+- salvamento de eventos pelos usuários.
+
+Categorias de evento:
+
+- festa;
+- palestra;
+- workshop;
+- atlética;
+- extensão;
+- monitoria.
+
+Status de evento:
+
+- ativo;
+- cancelado;
+- encerrado.
+
+Usuários comuns poderão visualizar e salvar eventos, mas não poderão criar eventos oficiais.
+
+---
+
+### 4. Minha Agenda
+
+A página **Minha Agenda** permitirá que o usuário visualize todos os eventos que salvou.
+
+Funcionalidades:
+
+- salvar evento;
+- remover evento salvo;
+- visualizar lista de eventos salvos;
+- acompanhar datas e locais dos eventos.
+
+Essa funcionalidade permite que o aluno organize melhor sua participação em atividades universitárias.
+
+---
+
+### 5. Sistema de Moradia
+
+O módulo de moradia será utilizado para divulgação de vagas, apartamentos e oportunidades de moradia compartilhada entre estudantes.
+
+Funcionalidades:
+
+- publicar anúncio de moradia;
+- visualizar anúncios disponíveis;
+- editar os próprios anúncios;
+- alterar status do anúncio;
+- filtrar moradias.
+
+Filtros possíveis:
+
+- bairro;
+- faixa de preço;
+- número de vagas;
+- proximidade da UVV;
+- aceita dividir quarto.
+
+Status de moradia:
+
+- disponível;
+- pausada;
+- preenchida.
+
+Diferente dos eventos, usuários comuns poderão criar anúncios de moradia.
+
+---
+
+### 6. Fórum Acadêmico
+
+O fórum acadêmico será um dos principais módulos do UniHub.
+
+Ele será organizado por **curso** e **disciplina**, permitindo que os alunos tirem dúvidas, compartilhem materiais, encontrem grupos de trabalho e façam networking.
+
+Ao acessar o fórum, o usuário verá inicialmente os tópicos relacionados ao curso informado em seu cadastro.
+
+Exemplo:
+
+Se o usuário for do curso de Ciência da Computação, a tela inicial do fórum exibirá primeiro tópicos desse curso.
+
+Mesmo assim, o usuário poderá acessar fóruns de outros cursos para interagir com estudantes de outras áreas.
+
+Estrutura do fórum:
+
+- curso;
+- disciplina;
+- tópico;
+- respostas.
+
+Categorias de tópico:
+
+- dúvida;
+- material de estudo;
+- grupo de trabalho;
+- monitoria;
+- estágio;
+- networking;
+- aviso.
+
+Status de tópico:
+
+- aberto;
+- resolvido;
+- fechado.
+
+Funcionalidades:
+
+- criar tópico;
+- responder tópico;
+- filtrar tópicos por curso;
+- filtrar tópicos por disciplina;
+- visualizar tópicos recentes;
+- marcar tópico como resolvido;
+- fechar tópico, quando necessário.
+
+---
+
+### 7. Painel Meus Conteúdos
+
+Cada usuário terá uma área para visualizar e gerenciar suas próprias atividades dentro da plataforma.
+
+Essa área poderá exibir:
+
+- minhas moradias;
+- meus tópicos;
+- minhas respostas;
+- eventos salvos;
+- eventos criados, no caso de moderadores.
+
+O objetivo é facilitar o controle dos conteúdos publicados ou salvos pelo usuário.
+
+---
+
+### 8. Solicitação para Moderador
+
+Usuários comuns poderão solicitar permissão para se tornarem moderadores.
+
+Fluxo:
+
+1. O usuário envia uma solicitação com justificativa.
+2. O administrador visualiza a solicitação.
+3. O administrador aprova ou recusa.
+4. Caso aprovado, o usuário passa a ter permissões de moderador.
+
+Essa funcionalidade permite que representantes, atléticas e centros acadêmicos publiquem eventos oficiais dentro da plataforma.
+
+---
+
+### 9. Painel Administrativo
+
+O administrador terá acesso a uma área de gerenciamento do sistema.
+
+Funcionalidades previstas:
+
+- visualizar usuários cadastrados;
+- alterar roles de usuários;
+- aprovar solicitações de moderador;
+- gerenciar eventos;
+- gerenciar moradias;
+- gerenciar tópicos e respostas;
+- desativar conteúdos inadequados;
+- bloquear usuários, se necessário.
+
+---
+
+## Funcionalidades Futuras
+
+Algumas funcionalidades poderão ser adicionadas após a entrega do MVP:
+
+- sistema de denúncias;
+- curtidas em tópicos e respostas;
+- comentários em eventos;
+- chat entre usuários;
+- notificações;
+- upload de imagens;
+- integração com calendário acadêmico;
+- sistema de favoritos para moradias;
+- aplicativo mobile;
+- recomendações personalizadas.
+
+---
+
+## Requisitos Não Funcionais
+
+O sistema deverá atender aos seguintes requisitos não funcionais:
+
+- interface responsiva;
+- compatibilidade com dispositivos móveis;
+- boa organização visual;
+- autenticação segura;
+- controle de permissões por tipo de usuário;
+- persistência de dados;
+- navegação simples e intuitiva;
+- tempo de resposta adequado;
+- separação clara entre usuário comum, moderador e administrador.
+
+---
+
+## Tecnologias Previstas
+
+### Backend
+
+- Python;
+- Flask;
+- Flask SQLAlchemy;
+- Flask Login ou controle de sessão equivalente.
+
+### Frontend
+
+- HTML;
+- CSS;
+- JavaScript;
+- Bootstrap;
+- Jinja2.
+
+### Banco de Dados
+
+Para desenvolvimento inicial:
+
+- SQLite.
+
+Para uma versão mais robusta:
+
+- PostgreSQL.
+
+---
+
+## Arquitetura Inicial
+
+A aplicação seguirá uma arquitetura web tradicional utilizando Flask.
+
+Estrutura geral:
+
+- backend em Flask;
+- páginas renderizadas com Jinja2;
+- banco de dados relacional;
+- autenticação baseada em sessão;
+- controle de permissões por role;
+- organização modular por funcionalidades.
+
+Módulos principais:
+
+- usuários;
+- cursos;
+- disciplinas;
+- eventos;
+- eventos salvos;
+- moradias;
+- fórum;
+- respostas;
+- solicitações de moderador;
+- administração.
+
+---
+
+## Entidades Principais do Sistema
+
+### Usuário
+
+Representa os alunos, moderadores e administradores da plataforma.
+
+Principais dados:
+
+- nome;
+- e-mail;
+- senha;
+- curso;
+- período;
+- cidade;
+- biografia;
+- role;
+- selo;
+- status ativo.
+
+---
+
+### Curso
+
+Representa os cursos disponíveis na universidade.
+
+Exemplos:
+
+- Ciência da Computação;
+- Administração;
+- Direito;
+- Engenharia Civil;
+- Psicologia.
+
+Um curso pode possuir várias disciplinas e vários usuários.
+
+---
+
+### Disciplina
+
+Representa as disciplinas ligadas a um curso.
+
+Exemplos:
+
+- Programação Web;
+- Banco de Dados;
+- Engenharia de Software;
+- Cálculo;
+- Física.
+
+Uma disciplina pertence a um curso e pode estar relacionada a vários tópicos do fórum.
+
+---
+
+### Evento
+
+Representa eventos universitários cadastrados por moderadores ou administradores.
+
+Um evento possui:
+
+- título;
+- descrição;
+- data;
+- local;
+- categoria;
+- status;
+- usuário criador.
+
+---
+
+### Evento Salvo
+
+Representa a relação entre um usuário e um evento salvo em sua agenda.
+
+Essa entidade existe porque:
+
+- um usuário pode salvar vários eventos;
+- um evento pode ser salvo por vários usuários.
+
+---
+
+### Moradia
+
+Representa anúncios de moradia publicados pelos usuários.
+
+Uma moradia possui:
+
+- título;
+- descrição;
+- bairro;
+- preço;
+- número de vagas;
+- informação sobre proximidade da UVV;
+- informação sobre dividir quarto;
+- status;
+- usuário responsável.
+
+---
+
+### Tópico do Fórum
+
+Representa uma discussão criada dentro do fórum acadêmico.
+
+Um tópico pertence a:
+
+- um curso;
+- uma disciplina;
+- um usuário criador.
+
+Além disso, possui categoria e status.
+
+---
+
+### Resposta do Fórum
+
+Representa uma resposta feita por um usuário em um tópico.
+
+Um tópico pode possuir várias respostas.
+
+---
+
+### Solicitação de Moderador
+
+Representa o pedido feito por um usuário comum para se tornar moderador.
+
+A solicitação pode estar com status:
+
+- pendente;
+- aprovada;
+- recusada.
+
+---

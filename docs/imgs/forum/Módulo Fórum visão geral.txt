@@ -1,0 +1,431 @@
+Módulo Fórum — visão geral
+
+A estrutura principal é:
+
+Fórum
+├── Cursos
+├── Disciplinas
+├── Tópicos
+└── Respostas
+
+E o fluxo base:
+
+Usuário entra no Fórum
+        ↓
+Vê tópicos do próprio curso primeiro
+        ↓
+Filtra por curso/disciplina/categoria
+        ↓
+Abre um tópico
+        ↓
+Responde ou cria novo tópico
+1. Telas do usuário comum
+
+O usuário comum é quem mais usa o fórum no dia a dia.
+
+1. Página principal do Fórum
+
+É a home do módulo.
+
+Deve ter:
+
+Título: Fórum acadêmico
+Subtítulo: Tire dúvidas, compartilhe materiais e participe das discussões da comunidade
+
+Busca:
+[Buscar por tópico, disciplina ou palavra-chave]
+
+Filtros:
+- Curso
+- Disciplina
+- Categoria
+- Status
+
+Cards ou lista de tópicos:
+
+Título do tópico
+Categoria
+Curso
+Disciplina
+Autor
+Quantidade de respostas
+Status
+Data da última atualização
+Botão: Ver tópico
+
+Exemplo:
+
+Dúvida sobre algoritmo de ordenação
+Ciência da Computação • Estruturas de Dados
+Categoria: Dúvida
+Status: Aberto
+8 respostas
+[Ver tópico]
+
+Essa tela deve priorizar o curso do usuário. Se Lucas é de Ciência da Computação, ele vê primeiro tópicos desse curso.
+
+2. Página de detalhe do tópico
+
+Quando o usuário clica em um tópico.
+
+Deve mostrar:
+
+Título do tópico
+Descrição completa
+Categoria
+Curso
+Disciplina
+Status
+Autor
+Data de criação
+Última atualização
+
+Abaixo:
+
+Respostas do tópico
+Campo para responder
+
+Ações do usuário:
+
+[Responder]
+[Salvar tópico] — opcional/futuro
+[Compartilhar] — opcional
+
+Se o tópico foi criado pelo próprio usuário:
+
+[Editar tópico]
+[Marcar como resolvido]
+
+Se for resposta do próprio usuário:
+
+[Editar resposta]
+[Remover resposta]
+3. Página/Formulário Criar Tópico
+
+Acessada pelo botão:
+
++ Novo tópico
+
+Campos:
+
+Título do tópico
+Descrição
+Curso
+Disciplina
+Categoria
+
+Categorias:
+
+Dúvida
+Material de estudo
+Grupo de trabalho
+Monitoria
+Estágio
+Networking
+Aviso
+
+Status inicial:
+
+Aberto
+
+Botões:
+
+[Cancelar]
+[Publicar tópico]
+4. Página/Formulário Editar Tópico
+
+Reutiliza a tela de criar tópico.
+
+Diferença:
+
+Criar tópico
+
+vira:
+
+Editar tópico
+
+Campos preenchidos:
+
+Título
+Descrição
+Curso
+Disciplina
+Categoria
+Status
+
+Ações:
+
+[Salvar alterações]
+[Marcar como resolvido]
+[Fechar tópico] — se permitido
+
+No MVP, eu deixaria o usuário comum apenas:
+
+Editar tópico próprio
+Marcar tópico próprio como resolvido
+5. Meus tópicos / Minhas respostas
+
+Essa tela pode ficar dentro de:
+
+Meus conteúdos
+
+Ou dentro do fórum como aba:
+
+[Explorar fórum] [Meus tópicos]
+
+Eu prefiro dentro do Fórum, porque facilita.
+
+Ela mostraria:
+
+Tópicos que eu criei
+Respostas que eu fiz
+Tópicos resolvidos
+Tópicos ainda abertos
+
+Cada item:
+
+Título
+Disciplina
+Status
+Quantidade de respostas
+Última atualização
+[Ver tópico]
+[Editar]
+Telas do usuário comum no Fórum
+1. Página principal do Fórum
+2. Detalhe do tópico
+3. Criar tópico
+4. Editar tópico próprio
+5. Meus tópicos / Minhas respostas
+2. Telas do moderador no Fórum
+
+Aqui tem um ponto importante.
+
+No projeto de vocês, o moderador é mais um representante/organizador autorizado, não necessariamente um administrador total do fórum.
+
+Então eu faria o moderador assim:
+
+Moderador pode:
+Criar tópicos normalmente
+Responder tópicos
+Editar os próprios tópicos
+Criar avisos com selo especial
+Ter selo de Moderador/Representante
+Moderador não pode:
+Editar tópico de qualquer usuário
+Apagar resposta de qualquer usuário
+Bloquear usuário
+Gerenciar todo o fórum
+
+Isso fica para o admin.
+
+Telas específicas do moderador
+
+Na prática, ele usa quase as mesmas telas do usuário comum, mas com pequenas diferenças.
+
+1. Página principal do Fórum — versão moderador
+
+Diferenças:
+
+Perfil com selo: Moderador
+Botão: + Novo tópico
+Botão opcional: + Criar aviso
+
+Abas possíveis:
+
+[Explorar fórum] [Meus tópicos] [Avisos]
+2. Criar tópico / Criar aviso
+
+O moderador pode criar um tópico normal ou um aviso.
+
+Campo especial:
+
+Tipo de publicação:
+- Tópico comum
+- Aviso oficial
+
+Exemplo:
+
+Aviso: Monitoria de Banco de Dados nesta sexta
+
+Esse aviso apareceria com selo:
+
+Aviso oficial
+3. Meus tópicos do moderador
+
+Mostra os tópicos e avisos criados por ele.
+
+Ações:
+
+[Editar]
+[Fechar tópico]
+[Marcar como resolvido]
+Telas do moderador no Fórum
+1. Página principal do Fórum — versão moderador
+2. Criar tópico / criar aviso
+3. Detalhe do tópico com selo de moderador
+4. Editar tópico próprio
+5. Meus tópicos / meus avisos
+3. Telas do admin no Fórum
+
+O admin é quem tem controle total do fórum.
+
+No documento, o administrador pode gerenciar tópicos e respostas do fórum, além de desativar conteúdos inadequados e bloquear usuários se necessário.
+
+Admin pode:
+Ver todos os tópicos
+Editar qualquer tópico
+Fechar qualquer tópico
+Remover/desativar tópicos inadequados
+Remover/desativar respostas inadequadas
+Gerenciar categorias, cursos e disciplinas
+Bloquear usuário, se necessário
+1. Página principal do Fórum — versão admin
+
+Abas:
+
+[Explorar fórum] [Gerenciar fórum]
+
+Filtros mais completos:
+
+Curso
+Disciplina
+Categoria
+Status
+Autor
+Data
+Denúncias — futuro
+
+Botão:
+
++ Criar tópico
+2. Gerenciar tópicos
+
+Tela administrativa com todos os tópicos.
+
+Cada item teria:
+
+Título
+Autor
+Curso
+Disciplina
+Categoria
+Status
+Quantidade de respostas
+Última atualização
+
+Ações:
+
+[Ver]
+[Editar]
+[Fechar]
+[Remover/Desativar]
+3. Gerenciar respostas
+
+Essa tela é importante porque às vezes o problema está em uma resposta, não no tópico.
+
+Cada resposta teria:
+
+Autor
+Conteúdo resumido
+Tópico relacionado
+Data
+Status
+
+Ações:
+
+[Ver tópico]
+[Desativar resposta]
+[Restaurar resposta]
+4. Detalhe do tópico — versão admin
+
+Além da visualização normal, o admin vê ações extras:
+
+[Editar tópico]
+[Fechar tópico]
+[Marcar como resolvido]
+[Desativar tópico]
+[Desativar resposta]
+5. Editar tópico — versão admin
+
+Reutiliza a tela de editar tópico, mas o admin pode editar qualquer tópico.
+
+Campos:
+
+Título
+Descrição
+Curso
+Disciplina
+Categoria
+Status
+
+Ações:
+
+[Salvar alterações]
+[Fechar tópico]
+[Desativar tópico]
+6. Modal de confirmação
+
+Para ações críticas:
+
+Fechar tópico?
+Desativar resposta?
+Remover tópico?
+
+Exemplo:
+
+Tem certeza que deseja desativar este tópico?
+Ele não aparecerá mais para os usuários comuns.
+
+[Cancelar]
+[Desativar tópico]
+Telas do admin no Fórum
+1. Página principal do Fórum — versão admin
+2. Gerenciar tópicos
+3. Gerenciar respostas
+4. Detalhe do tópico com ações administrativas
+5. Editar tópico
+6. Modal de confirmação
+Estrutura final do módulo Fórum
+
+Eu organizaria assim:
+
+Fórum
+├── Explorar fórum
+├── Detalhe do tópico
+├── Criar tópico
+├── Editar tópico
+├── Meus tópicos
+├── Minhas respostas
+├── Criar aviso — moderador/admin
+├── Gerenciar tópicos — admin
+├── Gerenciar respostas — admin
+└── Modal de confirmação
+Para o MVP, eu faria primeiro
+
+Para não ficar gigante demais, a ordem ideal é:
+
+1. Página principal do Fórum
+2. Detalhe do tópico
+3. Criar tópico
+4. Editar tópico
+5. Meus tópicos / minhas respostas
+
+Depois:
+
+6. Versão moderador com aviso oficial
+7. Gerenciar tópicos — admin
+8. Gerenciar respostas — admin
+Resumo direto
+
+O fórum é o coração social/acadêmico do UniHub.
+
+Ele precisa parecer uma mistura de:
+
+Discord acadêmico
++
+Stack Overflow simplificado
++
+mural de curso
+
+Mas sem complicar demais.

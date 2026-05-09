@@ -1,0 +1,203 @@
+1. Página principal de Eventos — versão admin
+
+Essa tela seria parecida com a tela do moderador, mas com linguagem de administração.
+
+Em vez de:
+
+[Explorar eventos] [Meus eventos]
+
+Para admin seria melhor:
+
+[Explorar eventos] [Gerenciar eventos]
+
+Elementos:
+
+Título: Eventos universitários
+Subtítulo: Visualize e gerencie os eventos cadastrados na plataforma
+
+Busca:
+[Buscar por nome, local, categoria ou organizador]
+
+Filtros:
+- Categoria
+- Data
+- Status
+- Local
+- Organizador
+- Criado por
+
+Botão:
++ Criar evento
+
+O admin pode explorar os eventos como qualquer usuário, mas também pode entrar na área de gerenciamento.
+
+2. Criar Evento
+
+Essa tela é praticamente igual à do moderador.
+
+Campos:
+
+Título do evento
+Descrição
+Categoria
+Data do evento
+Horário
+Local
+Status
+Banner/imagem opcional
+
+Categorias:
+
+Festa
+Palestra
+Workshop
+Atlética
+Extensão
+Monitoria
+
+Status inicial:
+
+Ativo
+
+Botões:
+
+[Cancelar]
+[Publicar evento]
+
+Diferença: o admin pode criar eventos oficiais em nome da administração/plataforma.
+
+3. Gerenciar Eventos
+
+Essa é a tela mais importante do admin.
+
+Ela mostra todos os eventos cadastrados, independente de quem criou.
+
+Cada item teria:
+
+Título
+Categoria
+Data
+Horário
+Local
+Status
+Organizador
+Criado por
+Quantidade de pessoas que salvaram
+Visualizações
+
+Ações:
+
+[Editar]
+[Cancelar evento]
+[Encerrar evento]
+[Excluir evento]
+
+Exemplo:
+
+Workshop: Git e GitHub
+Workshop • 24 de maio • Lab. Informática 2
+Status: Ativo
+Criado por: Atlética de Computação
+32 pessoas salvaram
+186 visualizações
+
+[Editar] [Cancelar evento] [Encerrar evento] [Excluir]
+
+Essa tela é diferente de “Meus eventos” do moderador.
+
+Moderador vê:
+
+Meus eventos
+
+Admin vê:
+
+Todos os eventos / Gerenciar eventos
+4. Detalhe do Evento — versão admin
+
+O admin pode abrir qualquer evento.
+
+A tela teria:
+
+Título do evento
+Banner/imagem
+Categoria
+Data
+Horário
+Local
+Status
+Descrição completa
+Organizador
+Criado por
+Data de publicação
+Quantidade de pessoas que salvaram
+
+Ações do admin:
+
+[Editar evento]
+[Cancelar evento]
+[Encerrar evento]
+[Excluir evento]
+
+Diferente do moderador, o admin vê essas ações mesmo se o evento foi criado por outra pessoa.
+
+5. Editar Evento — versão admin
+
+Reutiliza a tela de editar evento.
+
+Campos preenchidos:
+
+Título
+Descrição
+Categoria
+Data
+Horário
+Local
+Status
+Banner
+
+Status possíveis:
+
+Ativo
+Cancelado
+Encerrado
+
+Ações:
+
+[Salvar alterações]
+[Cancelar evento]
+[Encerrar evento]
+[Excluir evento]
+
+A diferença é que o admin pode editar qualquer evento.
+
+6. Modal de confirmação
+
+Para ações críticas, eu não criaria uma página inteira. Usaria modal.
+
+Exemplo ao excluir:
+
+Tem certeza que deseja excluir este evento?
+
+Essa ação não poderá ser desfeita.
+O evento será removido da plataforma e da agenda dos usuários.
+
+[Cancelar]
+[Excluir evento]
+
+Para cancelar:
+
+Cancelar evento?
+
+O evento continuará visível, mas marcado como cancelado.
+
+[Voltar]
+[Confirmar cancelamento]
+
+Para encerrar:
+
+Encerrar evento?
+
+O evento será marcado como concluído.
+
+[Voltar]
+[Encerrar evento]
