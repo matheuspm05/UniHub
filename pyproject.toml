@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unihub"
+version = "0.1.0"
+description = "Backend Flask da plataforma universitaria UniHub."
+requires-python = ">=3.10"
+dependencies = [
+    "Flask==3.1.3",
+    "Flask-Migrate==4.1.0",
+    "Flask-SQLAlchemy==3.1.1",
+    "python-dotenv==1.2.2",
+    "flasgger==0.9.7.1",
+    "invoke==2.2.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["unihub*"]

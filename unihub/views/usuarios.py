@@ -1,0 +1,51 @@
+from flask import Blueprint, request
+
+from unihub.ext.db import db
+from unihub.models import Usuario
+from unihub.utils.auth import obter_usuario_atual_id
+from unihub.utils.responses import resposta_erro, resposta_sucesso
+
+
+bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
+
+
+@bp.get("")
+def listar_usuarios():
+    usuarios = Usuario.query.order_by(Usuario.nome.asc()).all()
+    return resposta_sucesso(dados=[usuario.to_dict() for usuario in usuarios])
+
+
+@bp.get("/me")
+def usuario_mockado():
+    usuario = db.session.get(Usuario, obter_usuario_atual_id())
+    if not usuario:
+        return resposta_erro("Usuario mockado nao encontrado", 404)
+
+    return resposta_sucesso(dados=usuario.to_dict())
+
+
+@bp.patch("/me")
+def atualizar_usuario_mockado():
+    usuario = db.session.get(Usuario, obter_usuario_atual_id())
+    if not usuario:
+        return resposta_erro("Usuario mockado nao encontrado", 404)
+
+    data = request.get_json(silent=True) or {}
+    if not data:
+        return resposta_erro("JSON vazio ou invalido", 400)
+
+    for campo in ["nome", "curso", "periodo", "cidade", "bio", "selo"]:
+        if campo in data:
+            setattr(usuario, campo, data[campo])
+
+    db.session.commit()
+    return resposta_sucesso("Usuario atualizado com sucesso", dados=usuario.to_dict())
+
+
+@bp.get("/<int:usuario_id>")
+def detalhar_usuario(usuario_id):
+    usuario = db.session.get(Usuario, usuario_id)
+    if not usuario:
+        return resposta_erro("Usuario nao encontrado", 404)
+
+    return resposta_sucesso(dados=usuario.to_dict())

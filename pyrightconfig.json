@@ -1,0 +1,12 @@
+{
+  "include": [
+    "app.py",
+    "unihub",
+    "tests"
+  ],
+  "extraPaths": [
+    "."
+  ],
+  "venvPath": ".",
+  "venv": "venv"
+}

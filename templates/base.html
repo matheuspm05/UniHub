@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}UniHub{% endblock %}</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #1f2937;
+      }
+
+      main {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      section {
+        width: min(640px, 100%);
+        background: #ffffff;
+        border: 1px solid #dbe2ea;
+        border-radius: 8px;
+        padding: 32px;
+        box-sizing: border-box;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 2rem;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.6;
+      }
+    </style>
+    {% block styles %}{% endblock %}
+  </head>
+  <body>
+    <main id="content">
+      {% block content %}{% endblock %}
+    </main>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

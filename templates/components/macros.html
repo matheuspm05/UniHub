@@ -1,0 +1,10 @@
+{% macro action_button(label, href="#", variant="primary") %}
+  <a class="button button-{{ variant }}" href="{{ href }}">{{ label }}</a>
+{% endmacro %}
+
+{% macro info_card(title, text) %}
+  <article class="card">
+    <h2>{{ title }}</h2>
+    <p>{{ text }}</p>
+  </article>
+{% endmacro %}
