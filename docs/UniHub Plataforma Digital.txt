@@ -1,5 +1,12 @@
 # UniHub — Plataforma Digital de Integração Universitária
 
+#Data de inicio: 09/05/26
+
+#Criadores:
+matheus pastore
+felipe yuki 
+davi conde
+
 ## Sobre o Projeto
 
 O **UniHub** é uma plataforma web voltada para a integração acadêmica e social de estudantes universitários.
@@ -580,3 +587,238 @@ A solicitação pode estar com status:
 - recusada.
 
 ---
+
+## Diagrama de Classes
+
+```mermaid
+classDiagram
+
+class Usuario {
+    +int id
+    +string nome
+    +string email
+    +string senha_hash
+    +int curso_id
+    +int periodo
+    +string cidade
+    +string bio
+    +RoleUsuario role
+    +SeloPerfil selo
+    +bool ativo
+    +datetime criado_em
+
+    +cadastrar()
+    +login()
+    +editarPerfil()
+    +solicitarModerador()
+}
+
+class RoleUsuario {
+    <<enumeration>>
+    USUARIO
+    MODERADOR
+    ADMIN
+}
+
+class SeloPerfil {
+    <<enumeration>>
+    ALUNO
+    REPRESENTANTE
+    ATLETICA
+    ADMIN
+}
+
+class Curso {
+    +int id
+    +string nome
+    +string descricao
+    +bool ativo
+
+    +criarCurso()
+    +editarCurso()
+    +desativarCurso()
+}
+
+class Disciplina {
+    +int id
+    +string nome
+    +int curso_id
+    +int periodo_sugerido
+    +bool ativa
+
+    +criarDisciplina()
+    +editarDisciplina()
+    +desativarDisciplina()
+}
+
+class Evento {
+    +int id
+    +string titulo
+    +string descricao
+    +datetime data_evento
+    +string local
+    +CategoriaEvento categoria
+    +StatusEvento status
+    +int criado_por_id
+    +datetime criado_em
+
+    +criarEvento()
+    +editarEvento()
+    +cancelarEvento()
+    +encerrarEvento()
+}
+
+class CategoriaEvento {
+    <<enumeration>>
+    FESTA
+    PALESTRA
+    WORKSHOP
+    ATLETICA
+    EXTENSAO
+    MONITORIA
+}
+
+class StatusEvento {
+    <<enumeration>>
+    ATIVO
+    CANCELADO
+    ENCERRADO
+}
+
+class EventoSalvo {
+    +int id
+    +int usuario_id
+    +int evento_id
+    +datetime salvo_em
+
+    +salvarEvento()
+    +removerEventoSalvo()
+}
+
+class Moradia {
+    +int id
+    +string titulo
+    +string descricao
+    +string bairro
+    +decimal preco
+    +int numero_vagas
+    +bool perto_uvv
+    +bool aceita_dividir_quarto
+    +StatusMoradia status
+    +int usuario_id
+    +datetime criado_em
+
+    +criarAnuncio()
+    +editarAnuncio()
+    +pausarAnuncio()
+    +marcarComoPreenchido()
+}
+
+class StatusMoradia {
+    <<enumeration>>
+    DISPONIVEL
+    PAUSADA
+    PREENCHIDA
+}
+
+class TopicoForum {
+    +int id
+    +string titulo
+    +string descricao
+    +int curso_id
+    +int disciplina_id
+    +int usuario_id
+    +CategoriaTopico categoria
+    +StatusTopico status
+    +datetime criado_em
+    +datetime atualizado_em
+
+    +criarTopico()
+    +editarTopico()
+    +marcarComoResolvido()
+    +fecharTopico()
+}
+
+class CategoriaTopico {
+    <<enumeration>>
+    DUVIDA
+    MATERIAL_ESTUDO
+    GRUPO_TRABALHO
+    MONITORIA
+    ESTAGIO
+    NETWORKING
+    AVISO
+}
+
+class StatusTopico {
+    <<enumeration>>
+    ABERTO
+    RESOLVIDO
+    FECHADO
+}
+
+class RespostaForum {
+    +int id
+    +string conteudo
+    +int topico_id
+    +int usuario_id
+    +datetime criado_em
+    +datetime atualizado_em
+    +bool ativa
+
+    +responderTopico()
+    +editarResposta()
+    +removerResposta()
+}
+
+class SolicitacaoModerador {
+    +int id
+    +int usuario_id
+    +string justificativa
+    +StatusSolicitacao status
+    +datetime solicitado_em
+    +datetime analisado_em
+    +int analisado_por_id
+
+    +enviarSolicitacao()
+    +aprovar()
+    +recusar()
+}
+
+class StatusSolicitacao {
+    <<enumeration>>
+    PENDENTE
+    APROVADA
+    RECUSADA
+}
+
+Curso "1" --> "0..*" Usuario : possui alunos
+Curso "1" --> "0..*" Disciplina : possui disciplinas
+Curso "1" --> "0..*" TopicoForum : possui topicos
+
+Disciplina "1" --> "0..*" TopicoForum : classifica topicos
+
+Usuario "1" --> "0..*" Evento : cria
+Usuario "1" --> "0..*" Moradia : publica
+Usuario "1" --> "0..*" TopicoForum : cria
+Usuario "1" --> "0..*" RespostaForum : responde
+Usuario "1" --> "0..*" EventoSalvo : salva
+Usuario "1" --> "0..*" SolicitacaoModerador : solicita
+Usuario "1" --> "0..*" SolicitacaoModerador : analisa como admin
+
+Evento "1" --> "0..*" EventoSalvo : pode ser salvo
+
+TopicoForum "1" --> "0..*" RespostaForum : possui respostas
+
+Usuario --> RoleUsuario : possui
+Usuario --> SeloPerfil : possui
+
+Evento --> CategoriaEvento : possui
+Evento --> StatusEvento : possui
+
+Moradia --> StatusMoradia : possui
+
+TopicoForum --> CategoriaTopico : possui
+TopicoForum --> StatusTopico : possui
+
+SolicitacaoModerador --> StatusSolicitacao : possui

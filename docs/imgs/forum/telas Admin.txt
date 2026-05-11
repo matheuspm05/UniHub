@@ -1,0 +1,106 @@
+3. Admin
+
+O admin controla o fórum inteiro.
+
+Ele pode gerenciar tópicos, respostas e conteúdos inadequados.
+
+Telas do admin
+1. Explorar fórum — versão admin
+
+Visual parecido com o usuário comum, mas com acesso administrativo.
+
+Abas:
+
+Explorar fórum;
+Gerenciar fórum.
+
+Contém:
+
+busca;
+filtros;
+botão + Criar tópico;
+botão + Criar aviso.
+2. Gerenciar tópicos
+
+Tela administrativa para todos os tópicos.
+
+Cada item mostra:
+
+título;
+autor;
+curso;
+disciplina;
+categoria;
+status;
+respostas;
+última atualização.
+
+Ações:
+
+Ver;
+Editar;
+Fechar;
+Desativar.
+3. Gerenciar respostas
+
+Tela para administrar respostas individuais.
+
+Cada item mostra:
+
+autor;
+trecho da resposta;
+tópico relacionado;
+data;
+status.
+
+Ações:
+
+Ver tópico;
+Desativar resposta;
+Restaurar resposta.
+4. Detalhe do tópico — versão admin
+
+Mesma tela de detalhe, mas com ações extras.
+
+Ações administrativas:
+
+Editar tópico;
+Fechar tópico;
+Marcar como resolvido;
+Desativar tópico;
+Desativar resposta.
+5. Editar qualquer tópico
+
+Tela de edição completa.
+
+Campos:
+
+título;
+descrição;
+curso;
+disciplina;
+categoria;
+status.
+
+Ações:
+
+Salvar alterações;
+Fechar tópico;
+Desativar tópico.
+6. Modal de confirmação
+
+Usado para ações críticas.
+
+Exemplos:
+
+fechar tópico;
+desativar tópico;
+desativar resposta;
+restaurar resposta.
+
+Conteúdo:
+
+título da ação;
+mensagem curta explicando consequência;
+botão Cancelar;
+botão destrutivo, tipo Desativar tópico.
