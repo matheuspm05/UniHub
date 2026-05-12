@@ -1,7 +1,8 @@
-from flask import Blueprint, request
+from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import current_user
 
 from unihub.ext.db import db
-from unihub.models import ForumResposta, ForumTopico, Usuario
+from unihub.models import ForumResposta, ForumTopico, Mensagem, Notificacao, Usuario
 from unihub.utils.auth import (
     usuario_atual_pode_moderar,
     resposta_proibida,
@@ -13,6 +14,32 @@ from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 
 bp = Blueprint("forum", __name__, url_prefix="/forum")
+
+
+def _prefer_html():
+    return request.accept_mimetypes.best_match(["text/html", "application/json"]) == "text/html"
+
+
+def _iniciais(nome):
+    partes = [parte for parte in nome.split() if parte]
+    if not partes:
+        return "U"
+    return "".join(parte[0].upper() for parte in partes[:2])
+
+
+def _base_contexto():
+    usuario_id = obter_usuario_atual_id()
+    return {
+        "iniciais": _iniciais,
+        "notificacoes_count": Notificacao.query.filter_by(
+            usuario_id=usuario_id,
+            lida=False,
+        ).count(),
+        "mensagens_count": Mensagem.query.filter_by(
+            destinatario_id=usuario_id,
+            lida=False,
+        ).count(),
+    }
 
 
 def _payload():
@@ -37,8 +64,19 @@ def _get_topico_or_404(topico_id):
     return topico, None
 
 
-@bp.get("/topicos")
-def listar_topicos():
+def _opcoes_topicos(campo):
+    return [
+        valor
+        for (valor,) in db.session.query(getattr(ForumTopico, campo))
+        .filter(ForumTopico.status != "desativado")
+        .distinct()
+        .order_by(getattr(ForumTopico, campo).asc())
+        .all()
+        if valor
+    ]
+
+
+def _query_topicos():
     query = ForumTopico.query
 
     status = request.args.get("status")
@@ -64,40 +102,34 @@ def listar_topicos():
             )
         )
 
-    topicos = query.order_by(ForumTopico.atualizado_em.desc()).all()
-    return resposta_sucesso(dados=[topico.to_dict() for topico in topicos])
+    return query.order_by(ForumTopico.atualizado_em.desc())
 
 
-@bp.get("/topicos/<int:topico_id>")
-def detalhar_topico(topico_id):
-    topico, response = _get_topico_or_404(topico_id)
-    if response:
-        return response
+def _dados_topico_formulario():
+    return {
+        "titulo": request.form.get("titulo", "").strip(),
+        "descricao": request.form.get("descricao", "").strip(),
+        "curso": request.form.get("curso", "").strip(),
+        "disciplina": request.form.get("disciplina", "").strip(),
+        "categoria": request.form.get("categoria", "").strip(),
+        "tipo": "topico",
+        "aviso_oficial": False,
+    }
 
-    topico.visualizacoes += 1
-    db.session.commit()
-    return resposta_sucesso(dados=topico.to_dict(include_respostas=True))
 
-
-@bp.post("/topicos")
-@exigir_login
-def criar_topico():
-    data, response = _payload()
-    if response:
-        return response
-
+def _criar_topico_com_dados(data):
     obrigatorios = ["titulo", "descricao", "curso", "disciplina", "categoria"]
     faltando = _missing_fields(data, obrigatorios)
     if faltando:
-        return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
+        return None, resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
 
     autor_id = _get_autor_id(data)
     if not db.session.get(Usuario, autor_id):
-        return resposta_erro("Autor nao encontrado", 404)
+        return None, resposta_erro("Autor nao encontrado", 404)
 
     tipo = data.get("tipo", "topico")
     if tipo == "aviso" and not usuario_atual_pode_moderar():
-        return resposta_proibida("Somente moderadores podem criar avisos oficiais")
+        return None, resposta_proibida("Somente moderadores podem criar avisos oficiais")
 
     topico = ForumTopico(
         titulo=data["titulo"],
@@ -113,7 +145,102 @@ def criar_topico():
 
     db.session.add(topico)
     db.session.commit()
+    return topico, None
+
+
+@bp.get("")
+@exigir_login
+def tela_forum():
+    return _renderizar_lista_topicos()
+
+
+def _renderizar_lista_topicos():
+    topicos = _query_topicos().all()
+    contexto = _base_contexto()
+    contexto.update(
+        {
+            "topicos": topicos,
+            "filtros": request.args,
+            "cursos": _opcoes_topicos("curso"),
+            "disciplinas": _opcoes_topicos("disciplina"),
+            "categorias": _opcoes_topicos("categoria"),
+        }
+    )
+    return render_template("forum/index.html", **contexto)
+
+
+@bp.get("/topicos")
+def listar_topicos():
+    topicos = _query_topicos().all()
+    if _prefer_html():
+        if not current_user.is_authenticated:
+            return redirect(url_for("auth.tela_login"))
+        return _renderizar_lista_topicos()
+
+    return resposta_sucesso(dados=[topico.to_dict() for topico in topicos])
+
+
+@bp.get("/topicos/<int:topico_id>")
+def detalhar_topico(topico_id):
+    topico, response = _get_topico_or_404(topico_id)
+    if response:
+        return response
+
+    topico.visualizacoes += 1
+    db.session.commit()
+    if _prefer_html():
+        if not current_user.is_authenticated:
+            return redirect(url_for("auth.tela_login"))
+
+        contexto = _base_contexto()
+        respostas = [
+            resposta
+            for resposta in sorted(topico.respostas, key=lambda item: item.criado_em)
+            if resposta.status != "desativado"
+        ]
+        contexto.update(
+            {
+                "topico": topico,
+                "respostas": respostas,
+                "usuario_e_autor": topico.autor_id == obter_usuario_atual_id(),
+            }
+        )
+        return render_template("forum/detalhes.html", **contexto)
+
+    return resposta_sucesso(dados=topico.to_dict(include_respostas=True))
+
+
+@bp.post("/topicos")
+@exigir_login
+def criar_topico():
+    data, response = _payload()
+    if response:
+        return response
+
+    topico, response = _criar_topico_com_dados(data)
+    if response:
+        return response
     return resposta_sucesso("Topico criado com sucesso", dados=topico.to_dict(), codigo_status=201)
+
+
+@bp.route("/criar", methods=["GET", "POST"])
+@exigir_login
+def criar_topico_html():
+    if request.method == "POST":
+        topico, response = _criar_topico_com_dados(_dados_topico_formulario())
+        if response:
+            return response
+        return redirect(url_for("forum.detalhar_topico", topico_id=topico.id))
+
+    contexto = _base_contexto()
+    contexto.update(
+        {
+            "cursos": _opcoes_topicos("curso"),
+            "disciplinas": _opcoes_topicos("disciplina"),
+            "categorias": _opcoes_topicos("categoria"),
+        }
+    )
+    return render_template("forum/criar.html", **contexto)
 
 
 @bp.put("/topicos/<int:topico_id>")
@@ -123,18 +250,32 @@ def editar_topico(topico_id):
     if response:
         return response
 
-    if topico.autor_id != obter_usuario_atual_id() and not usuario_atual_pode_moderar():
+    pode_moderar = usuario_atual_pode_moderar()
+    if topico.autor_id != obter_usuario_atual_id() and not pode_moderar:
         return resposta_proibida("Somente o autor ou um moderador pode editar este topico")
 
     data, response = _payload()
     if response:
         return response
 
-    for campo in ["titulo", "descricao", "curso", "disciplina", "categoria", "status", "tipo"]:
+    if not pode_moderar:
+        campos_restritos = [
+            campo for campo in ["status", "tipo", "aviso_oficial"] if campo in data
+        ]
+        if campos_restritos:
+            return resposta_proibida(
+                "Somente moderadores podem alterar status, tipo ou aviso_oficial"
+            )
+
+    campos_editaveis = ["titulo", "descricao", "curso", "disciplina", "categoria"]
+    if pode_moderar:
+        campos_editaveis.extend(["status", "tipo"])
+
+    for campo in campos_editaveis:
         if campo in data:
             setattr(topico, campo, data[campo])
 
-    if "aviso_oficial" in data:
+    if pode_moderar and "aviso_oficial" in data:
         topico.aviso_oficial = bool(data["aviso_oficial"])
     if topico.tipo == "aviso":
         topico.aviso_oficial = True
@@ -196,9 +337,12 @@ def criar_resposta(topico_id):
     if topico.status != "aberto":
         return resposta_erro("So e possivel responder topicos abertos", 400)
 
-    data, response = _payload()
-    if response:
-        return response
+    if request.form:
+        data = {"conteudo": request.form.get("conteudo", "").strip()}
+    else:
+        data, response = _payload()
+        if response:
+            return response
 
     if not data.get("conteudo"):
         return resposta_erro("Campo obrigatorio ausente", 400, {"campos": ["conteudo"]})
@@ -210,6 +354,9 @@ def criar_resposta(topico_id):
     resposta = ForumResposta(conteudo=data["conteudo"], topico_id=topico.id, autor_id=autor_id)
     db.session.add(resposta)
     db.session.commit()
+    if _prefer_html():
+        return redirect(url_for("forum.detalhar_topico", topico_id=topico.id))
+
     return resposta_sucesso("Resposta criada com sucesso", dados=resposta.to_dict(), codigo_status=201)
 
 

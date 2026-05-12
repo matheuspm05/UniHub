@@ -1,0 +1,11 @@
+USUARIO SIMPLES 
+
+email: felipeyuki@uvv.br;
+senha: senha123
+
+usuario MODERADOR
+mariana.costa@uvv.br
+senha123
+
+
+usuario ADMIN

@@ -1,0 +1,114 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Meus eventos - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-4xl font-extrabold tracking-normal text-unihub-ink">Eventos universitarios</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Gerencie os eventos que voce criou e acompanhe o desempenho de cada um.</p>
+      </div>
+      <a href="/eventos/criar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-6 text-sm font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+        <i data-lucide="plus" class="h-5 w-5"></i>
+        Criar evento
+      </a>
+    </div>
+
+    <nav class="flex gap-6 border-b border-unihub-line">
+      <a href="/eventos" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="home" class="h-5 w-5"></i>
+        Explorar eventos
+      </a>
+      <a href="/eventos/meus-eventos" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-3 pb-3 text-sm font-extrabold text-[#0B5FEA]">
+        <i data-lucide="calendar-days" class="h-5 w-5"></i>
+        Meus eventos
+      </a>
+    </nav>
+
+    <div class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card sm:grid-cols-[1fr_auto]">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white py-3 pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar nos meus eventos...">
+      </label>
+      <select class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+        <option>Mais recentes</option>
+        <option>Data do evento</option>
+      </select>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-extrabold text-unihub-ink">Meus eventos ({{ total_eventos }})</h2>
+      <div class="mt-4 grid gap-4">
+        {% for evento in eventos %}
+          <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card xl:grid-cols-[240px_1fr_250px_240px] xl:items-center">
+            <a href="/eventos/{{ evento.id }}" class="block overflow-hidden rounded-lg bg-unihub-surface">
+              <img src="{{ url_for('static', filename=imagem_padrao) }}" alt="Banner de {{ evento.titulo }}" class="h-36 w-full object-cover xl:h-28">
+            </a>
+
+            <div class="grid gap-3">
+              <h3 class="text-xl font-extrabold text-unihub-ink">{{ evento.titulo }}</h3>
+              <span class="w-fit rounded-md bg-uvv-50 px-2.5 py-1 text-xs font-extrabold text-[#0B5FEA]">{{ evento.categoria }}</span>
+              <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-unihub-muted">
+                <span class="inline-flex items-center gap-2"><i data-lucide="calendar-days" class="h-4 w-4"></i>{{ evento.data_evento.strftime("%d/%m/%Y") }}</span>
+                <span class="inline-flex items-center gap-2"><i data-lucide="map-pin" class="h-4 w-4"></i>{{ evento.local }}</span>
+              </div>
+            </div>
+
+            <div class="grid gap-3 border-y border-unihub-line py-4 text-sm font-semibold text-[#344469] xl:border-x xl:border-y-0 xl:px-6 xl:py-0">
+              <span class="w-fit rounded-full border px-3 py-1 text-xs font-extrabold {% if evento.status == 'ativo' %}border-emerald-200 bg-emerald-50 text-emerald-700{% elif evento.status == 'encerrado' %}border-slate-200 bg-slate-100 text-slate-700{% else %}border-orange-200 bg-orange-50 text-orange-700{% endif %}">{{ evento.status|capitalize }}</span>
+              <span class="inline-flex items-center gap-2"><i data-lucide="users" class="h-4 w-4 text-unihub-muted"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
+              <span class="inline-flex items-center gap-2"><i data-lucide="eye" class="h-4 w-4 text-unihub-muted"></i>{{ evento.visualizacoes }} visualizacoes</span>
+            </div>
+
+            <div class="grid gap-2">
+              <a href="/eventos/{{ evento.id }}/editar" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-uvv-300 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50 {% if evento.status == 'desativado' %}pointer-events-none opacity-50{% endif %}">
+                <i data-lucide="pencil" class="h-4 w-4"></i>
+                Editar
+              </a>
+              {% if evento.status == "ativo" %}
+                <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Cancelar este evento?');">
+                  <input type="hidden" name="status" value="cancelado">
+                  <input type="hidden" name="next" value="/eventos/meus-eventos">
+                  <button type="submit" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-red-300 text-sm font-extrabold text-red-600 transition hover:bg-red-50">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                    Cancelar evento
+                  </button>
+                </form>
+                <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Encerrar este evento?');">
+                  <input type="hidden" name="status" value="encerrado">
+                  <input type="hidden" name="next" value="/eventos/meus-eventos">
+                  <button type="submit" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-uvv-300 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+                    <i data-lucide="flag" class="h-4 w-4"></i>
+                    Encerrar evento
+                  </button>
+                </form>
+              {% elif evento.status == "cancelado" %}
+                <form method="post" action="/eventos/{{ evento.id }}/status">
+                  <input type="hidden" name="status" value="ativo">
+                  <input type="hidden" name="next" value="/eventos/meus-eventos">
+                  <button type="submit" class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 text-sm font-extrabold text-emerald-700 transition hover:bg-emerald-50">
+                    <i data-lucide="play" class="h-4 w-4"></i>
+                    Reativar evento
+                  </button>
+                </form>
+              {% else %}
+                <p class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center text-sm font-bold text-slate-500">Evento encerrado</p>
+              {% endif %}
+            </div>
+          </article>
+        {% else %}
+          <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+            <div>
+              <i data-lucide="calendar-plus" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+              <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Voce ainda nao criou eventos</h2>
+              <p class="mt-2 text-sm font-medium text-unihub-muted">Crie seu primeiro evento para ele aparecer nesta lista.</p>
+              <a href="/eventos/criar" class="mt-4 inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white">Criar evento</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

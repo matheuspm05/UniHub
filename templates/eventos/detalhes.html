@@ -1,0 +1,139 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}{{ evento.titulo }} - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1280px] gap-6">
+    <a href="/eventos" class="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#0B5FEA] transition hover:text-uvv-700">
+      <i data-lucide="arrow-left" class="h-5 w-5"></i>
+      Voltar para eventos
+    </a>
+
+    <div class="grid gap-6 xl:grid-cols-[1fr_380px]">
+      <article class="grid gap-6">
+        <div class="overflow-hidden rounded-lg border border-unihub-line bg-unihub-surface shadow-card">
+          <img src="{{ url_for('static', filename=imagem_padrao) }}" alt="Banner de {{ evento.titulo }}" class="h-64 w-full object-cover md:h-80">
+        </div>
+
+        <div class="grid gap-5">
+          <div class="flex flex-wrap gap-2">
+            <span class="rounded-md bg-violet-50 px-3 py-1.5 text-sm font-extrabold text-violet-700">{{ evento.categoria }}</span>
+            <span class="rounded-md bg-emerald-50 px-3 py-1.5 text-sm font-extrabold text-emerald-700">{{ evento.status|capitalize }}</span>
+          </div>
+
+          <h1 class="text-4xl font-extrabold tracking-normal text-unihub-ink">{{ evento.titulo }}</h1>
+
+          <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-[#344469]">
+            <span class="inline-flex items-center gap-2"><i data-lucide="calendar-days" class="h-5 w-5 text-unihub-muted"></i>{{ evento.data_evento.strftime("%d/%m/%Y") }}</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="clock" class="h-5 w-5 text-unihub-muted"></i>{{ evento.horario }}</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="map-pin" class="h-5 w-5 text-unihub-muted"></i>{{ evento.local }}</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="user" class="h-5 w-5 text-unihub-muted"></i>Organizado por <strong>{{ evento.organizador.nome if evento.organizador else "UniHub" }}</strong></span>
+          </div>
+
+          <p class="inline-flex items-center gap-2 border-b border-unihub-line pb-5 text-sm font-semibold text-unihub-muted">
+            <i data-lucide="calendar-plus" class="h-5 w-5"></i>
+            Publicado em {{ evento.criado_em.strftime("%d/%m/%Y") if evento.criado_em else "data indisponivel" }}
+          </p>
+
+          <div>
+            <h2 class="text-xl font-extrabold text-unihub-ink">Sobre o evento</h2>
+            <p class="mt-4 max-w-3xl whitespace-pre-line text-base font-medium leading-8 text-[#344469]">{{ evento.descricao }}</p>
+            <p class="mt-4 max-w-3xl text-base font-medium leading-8 text-[#344469]">Participe, conecte-se com outros estudantes e acompanhe as atividades academicas da comunidade universitaria.</p>
+          </div>
+        </div>
+      </article>
+
+      <aside class="grid h-fit gap-5">
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Resumo do evento</h2>
+          <div class="mt-5 grid gap-5 text-sm font-medium text-[#344469]">
+            <p class="flex gap-3"><i data-lucide="calendar-days" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Data</strong>{{ evento.data_evento.strftime("%d/%m/%Y") }}</span></p>
+            <p class="flex gap-3"><i data-lucide="clock" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Horario</strong>{{ evento.horario }}</span></p>
+            <p class="flex gap-3"><i data-lucide="map-pin" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Local</strong>{{ evento.local }}</span></p>
+            <p class="flex gap-3"><i data-lucide="users" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Vagas</strong>60 vagas disponiveis</span></p>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Organizador</h2>
+          <div class="mt-5 flex items-center gap-4">
+            <span class="grid h-16 w-16 place-items-center rounded-full bg-unihub-ink text-lg font-extrabold text-white">{{ iniciais(evento.organizador.nome) if evento.organizador else "UH" }}</span>
+            <div>
+              <p class="text-base font-extrabold text-unihub-ink">{{ evento.organizador.nome if evento.organizador else "UniHub" }}</p>
+              <p class="text-sm font-medium text-unihub-muted">Entidade estudantil</p>
+              <a href="#" class="mt-1 inline-flex items-center gap-1 text-sm font-extrabold text-[#0B5FEA]">Ver perfil <i data-lucide="external-link" class="h-4 w-4"></i></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Acoes</h2>
+          <div class="mt-5 grid gap-3">
+            {% if usuario_pode_gerenciar %}
+              <a href="/eventos/{{ evento.id }}/editar" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-uvv-300 text-base font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+                <i data-lucide="pencil" class="h-5 w-5"></i>
+                Editar evento
+              </a>
+              {% if evento.status != "cancelado" %}
+                <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Cancelar este evento? Ele deixara de aparecer como ativo para os estudantes.');">
+                  <input type="hidden" name="status" value="cancelado">
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-orange-300 text-base font-extrabold text-orange-600 transition hover:bg-orange-50" type="submit">
+                    <i data-lucide="triangle-alert" class="h-5 w-5"></i>
+                    Cancelar evento
+                  </button>
+                </form>
+              {% endif %}
+              {% if evento.status != "encerrado" %}
+                <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Encerrar este evento agora?');">
+                  <input type="hidden" name="status" value="encerrado">
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-uvv-300 text-base font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50" type="submit">
+                    <i data-lucide="flag" class="h-5 w-5"></i>
+                    Encerrar evento
+                  </button>
+                </form>
+              {% endif %}
+            {% elif evento_salvo %}
+              <form method="post" action="/eventos/{{ evento.id }}/remover-agenda">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-red-300 text-base font-extrabold text-red-600 transition hover:bg-red-50" type="submit">
+                  <i data-lucide="trash-2" class="h-5 w-5"></i>
+                  Remover da agenda
+                </button>
+              </form>
+            {% else %}
+              <form method="post" action="/eventos/{{ evento.id }}/salvar">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] text-base font-extrabold text-white transition hover:bg-uvv-600" type="submit">
+                  <i data-lucide="bookmark" class="h-5 w-5"></i>
+                  Salvar na agenda
+                </button>
+              </form>
+            {% endif %}
+            <button class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-[#CBD6E6] text-base font-extrabold text-unihub-ink transition hover:bg-unihub-surface" type="button">
+              <i data-lucide="share-2" class="h-5 w-5"></i>
+              Compartilhar
+            </button>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Informacoes rapidas</h2>
+          <div class="mt-5 grid gap-4 text-sm font-semibold text-[#344469]">
+            {% if usuario_pode_gerenciar %}
+              <span class="inline-flex items-center gap-3"><i data-lucide="badge-check" class="h-6 w-6 text-emerald-600"></i>Evento criado por voce</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="eye" class="h-6 w-6 text-violet-600"></i>{{ evento.visualizacoes }} visualizacoes</span>
+            {% else %}
+              <span class="inline-flex items-center gap-3"><i data-lucide="badge-check" class="h-6 w-6 text-emerald-600"></i>Certificado de participacao</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>Vagas limitadas</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="gift" class="h-6 w-6 text-violet-600"></i>Evento gratuito e aberto a todos</span>
+            {% endif %}
+          </div>
+        </section>
+      </aside>
+    </div>
+  </section>
+{% endblock %}

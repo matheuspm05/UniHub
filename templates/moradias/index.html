@@ -1,0 +1,176 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Moradias - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1280px] gap-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-normal text-unihub-ink">Moradias estudantis</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Encontre ou anuncie oportunidades proximas a UVV.</p>
+      </div>
+
+      <a href="/moradias/anunciar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-5 text-base font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+        <i data-lucide="house-plus" class="h-5 w-5"></i>
+        Anunciar moradia
+      </a>
+    </div>
+
+    <form method="get" action="/moradias" class="grid gap-4">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input
+          class="h-13 min-h-12 w-full rounded-lg border border-[#CBD6E6] bg-white py-3 pl-12 pr-4 text-base font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100"
+          type="search"
+          name="busca"
+          value="{{ filtros.get('busca', '') }}"
+          placeholder="Buscar por bairro, titulo ou descricao da moradia..."
+        >
+      </label>
+
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto]">
+        <label class="relative">
+          <i data-lucide="map-pin" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="bairro" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Bairro</option>
+            {% for bairro in bairros %}
+              <option value="{{ bairro }}" {% if filtros.get('bairro') == bairro %}selected{% endif %}>{{ bairro }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="badge-dollar-sign" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="preco_max" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Faixa de preco</option>
+            {% for valor, label in [("800", "Ate R$ 800"), ("1000", "Ate R$ 1.000"), ("1200", "Ate R$ 1.200"), ("1800", "Ate R$ 1.800")] %}
+              <option value="{{ valor }}" {% if filtros.get('preco_max') == valor %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="user" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="vagas" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Numero de vagas</option>
+            {% for valor in ["1", "2", "3", "4"] %}
+              <option value="{{ valor }}" {% if filtros.get('vagas') == valor %}selected{% endif %}>{{ valor }}+ vaga{{ "s" if valor != "1" else "" }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="navigation" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="perto_uvv" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Perto da UVV</option>
+            <option value="true" {% if filtros.get('perto_uvv') == 'true' %}selected{% endif %}>Sim</option>
+            <option value="false" {% if filtros.get('perto_uvv') == 'false' %}selected{% endif %}>Nao</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="users" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="aceita_dividir_quarto" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Aceita dividir quarto</option>
+            <option value="true" {% if filtros.get('aceita_dividir_quarto') == 'true' %}selected{% endif %}>Sim</option>
+            <option value="false" {% if filtros.get('aceita_dividir_quarto') == 'false' %}selected{% endif %}>Nao</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <div class="flex items-center gap-3">
+          <button class="inline-flex h-12 items-center justify-center rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white transition hover:bg-uvv-900" type="submit">Filtrar</button>
+          <a href="/moradias" class="inline-flex h-12 items-center gap-2 rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+            <i data-lucide="rotate-cw" class="h-4 w-4"></i>
+            Limpar
+          </a>
+        </div>
+      </div>
+    </form>
+
+    <div class="flex flex-col gap-3 border-t border-unihub-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm font-semibold text-unihub-muted">{{ total_moradias }} moradia{{ "s" if total_moradias != 1 else "" }} encontrada{{ "s" if total_moradias != 1 else "" }}</p>
+      <form method="get" action="/moradias" class="flex items-center gap-3">
+        {% for nome, valor in filtros.items() %}
+          {% if nome != "ordenacao" and valor %}
+            <input type="hidden" name="{{ nome }}" value="{{ valor }}">
+          {% endif %}
+        {% endfor %}
+        <i data-lucide="arrow-up-down" class="h-5 w-5 text-unihub-muted"></i>
+        <select name="ordenacao" class="h-10 rounded-lg border border-transparent bg-transparent px-2 text-sm font-extrabold text-unihub-ink outline-none transition hover:border-unihub-line focus:border-uvv-500" onchange="this.form.submit()">
+          <option value="recentes" {% if filtros.get('ordenacao', 'recentes') == 'recentes' %}selected{% endif %}>Mais recentes</option>
+          <option value="menor_preco" {% if filtros.get('ordenacao') == 'menor_preco' %}selected{% endif %}>Menor preco</option>
+          <option value="maior_preco" {% if filtros.get('ordenacao') == 'maior_preco' %}selected{% endif %}>Maior preco</option>
+        </select>
+      </form>
+    </div>
+
+    {% if moradias %}
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {% for moradia in moradias %}
+          <article class="overflow-hidden rounded-lg border border-unihub-line bg-white shadow-card">
+            <div class="relative h-36 overflow-hidden bg-unihub-surface">
+              <img
+                src="{{ url_for('static', filename='imgs/moradias/imagem padrao moradia.png') }}"
+                alt="Foto de {{ moradia.titulo }}"
+                class="h-full w-full object-cover"
+              >
+              <span class="absolute left-3 top-3 rounded-md border px-2.5 py-1 text-xs font-extrabold {% if moradia.status == 'disponivel' %}border-emerald-200 bg-emerald-50 text-emerald-700{% elif moradia.status == 'pausado' %}border-amber-200 bg-amber-50 text-amber-700{% else %}border-slate-200 bg-slate-50 text-slate-600{% endif %}">
+                {{ moradia.status|capitalize }}
+              </span>
+              <button class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition hover:bg-white/30" type="button" aria-label="Salvar moradia">
+                <i data-lucide="heart" class="h-6 w-6"></i>
+              </button>
+            </div>
+
+            <div class="grid gap-4 p-4">
+              <div class="grid gap-2">
+                <div class="flex items-start justify-between gap-3">
+                  <h2 class="line-clamp-2 text-base font-extrabold leading-5 text-unihub-ink">{{ moradia.titulo }}</h2>
+                  <p class="shrink-0 text-base font-extrabold text-emerald-600">R$ {{ "%.0f"|format(moradia.preco_mensal) }}/mes</p>
+                </div>
+                <p class="flex items-center gap-1.5 text-sm font-medium text-unihub-muted">
+                  <i data-lucide="map-pin" class="h-4 w-4 text-[#0B5FEA]"></i>
+                  {{ moradia.bairro }}
+                </p>
+                <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium text-unihub-muted">
+                  <span class="inline-flex items-center gap-1.5"><i data-lucide="bed" class="h-4 w-4"></i>{{ moradia.numero_vagas }} vaga{{ "s" if moradia.numero_vagas != 1 else "" }}</span>
+                  <span class="inline-flex items-center gap-1.5"><i data-lucide="navigation" class="h-4 w-4"></i>{{ "Perto da UVV" if moradia.perto_uvv else "Consultar distancia" }}</span>
+                  {% if moradia.aceita_dividir_quarto %}
+                    <span class="inline-flex items-center gap-1.5"><i data-lucide="users" class="h-4 w-4"></i>Divide quarto</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 border-t border-unihub-line pt-3">
+                <span class="grid h-10 w-10 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-uvv-700">
+                  {{ iniciais(moradia.anunciante.nome) if moradia.anunciante else "UH" }}
+                </span>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-extrabold text-unihub-ink">{{ moradia.anunciante.nome if moradia.anunciante else "UniHub" }}</p>
+                  <p class="text-xs font-medium text-unihub-muted">Publicado recentemente</p>
+                </div>
+                <a href="/moradias/{{ moradia.id }}" class="ml-auto inline-flex h-9 shrink-0 items-center justify-center rounded-lg border border-uvv-200 px-4 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver detalhes</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+        <div>
+          <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]">
+            <i data-lucide="house" class="h-7 w-7"></i>
+          </div>
+          <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhuma moradia encontrada</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Ajuste os filtros para encontrar mais oportunidades.</p>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

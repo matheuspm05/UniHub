@@ -1,0 +1,160 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Eventos - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-normal text-unihub-ink">Eventos universitarios</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Descubra eventos, palestras, festas, workshops e atividades da UVV.</p>
+      </div>
+      {% if usuario_pode_moderar %}
+        <a href="/eventos/criar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-6 text-sm font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+          <i data-lucide="plus" class="h-5 w-5"></i>
+          Criar evento
+        </a>
+      {% endif %}
+    </div>
+
+    {% if usuario_pode_moderar %}
+      <nav class="flex gap-6 border-b border-unihub-line">
+        <a href="/eventos" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-3 pb-3 text-sm font-extrabold text-[#0B5FEA]">
+          <i data-lucide="compass" class="h-5 w-5"></i>
+          Explorar eventos
+        </a>
+        <a href="/eventos/meus-eventos" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+          <i data-lucide="calendar-days" class="h-5 w-5"></i>
+          Meus eventos
+        </a>
+      </nav>
+    {% endif %}
+
+    <form method="get" action="/eventos" class="grid gap-4">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input
+          class="min-h-12 w-full rounded-lg border border-[#CBD6E6] bg-white py-3 pl-12 pr-4 text-base font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100"
+          type="search"
+          name="busca"
+          value="{{ filtros.get('busca', '') }}"
+          placeholder="Buscar por nome, local ou categoria do evento..."
+        >
+      </label>
+
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+        <label class="relative">
+          <i data-lucide="layout-grid" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="categoria" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Categoria</option>
+            {% for categoria in categorias %}
+              <option value="{{ categoria }}" {% if filtros.get('categoria') == categoria %}selected{% endif %}>{{ categoria }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="calendar-days" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="ordenacao" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="data" {% if filtros.get('ordenacao', 'data') == 'data' %}selected{% endif %}>Data</option>
+            <option value="recentes" {% if filtros.get('ordenacao') == 'recentes' %}selected{% endif %}>Mais recentes</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="circle-dot" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="status" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Status</option>
+            {% for status, label in [("ativo", "Ativo"), ("encerrado", "Encerrado"), ("cancelado", "Cancelado")] %}
+              <option value="{{ status }}" {% if filtros.get('status') == status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative">
+          <i data-lucide="map-pin" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+          <select name="local" class="h-12 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Local</option>
+            {% for local in locais %}
+              <option value="{{ local }}" {% if filtros.get('local') == local %}selected{% endif %}>{{ local }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <div class="flex items-center gap-3">
+          <button class="inline-flex h-12 items-center justify-center rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white transition hover:bg-uvv-900" type="submit">Filtrar</button>
+          <a href="/eventos" class="inline-flex h-12 items-center gap-2 rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+            <i data-lucide="rotate-cw" class="h-4 w-4"></i>
+            Limpar filtros
+          </a>
+        </div>
+      </div>
+    </form>
+
+    <div class="flex flex-col gap-3 border-t border-unihub-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm font-semibold text-unihub-muted">{{ total_eventos }} evento{{ "s" if total_eventos != 1 else "" }} encontrado{{ "s" if total_eventos != 1 else "" }}</p>
+      <form method="get" action="/eventos" class="flex items-center gap-3">
+        {% for nome, valor in filtros.items() %}
+          {% if nome != "ordenacao" and valor %}
+            <input type="hidden" name="{{ nome }}" value="{{ valor }}">
+          {% endif %}
+        {% endfor %}
+        <span class="text-sm font-semibold text-unihub-muted">Ordenar por:</span>
+        <select name="ordenacao" class="h-10 rounded-lg border border-[#CBD6E6] bg-white px-3 text-sm font-bold text-unihub-ink outline-none" onchange="this.form.submit()">
+          <option value="data" {% if filtros.get('ordenacao', 'data') == 'data' %}selected{% endif %}>Data</option>
+          <option value="recentes" {% if filtros.get('ordenacao') == 'recentes' %}selected{% endif %}>Mais recentes</option>
+        </select>
+      </form>
+    </div>
+
+    {% if eventos %}
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {% for evento in eventos %}
+          <article class="overflow-hidden rounded-lg border border-unihub-line bg-white shadow-card">
+            <div class="relative h-36 overflow-hidden bg-unihub-surface">
+              <img src="{{ url_for('static', filename=imagem_padrao) }}" alt="Banner de {{ evento.titulo }}" class="h-full w-full object-cover">
+              <span class="absolute left-3 top-3 rounded-md border px-2.5 py-1 text-xs font-extrabold {% if evento.status == 'ativo' %}border-emerald-200 bg-emerald-50 text-emerald-700{% else %}border-amber-200 bg-amber-50 text-amber-700{% endif %}">{{ evento.status|capitalize }}</span>
+              <form method="post" action="/eventos/{{ evento.id }}/salvar">
+                <input type="hidden" name="next" value="{{ request.full_path }}">
+                <button class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-[#0B5FEA] shadow-sm transition hover:bg-uvv-50" type="submit" aria-label="Salvar na agenda">
+                  <i data-lucide="{{ 'bookmark-check' if evento.id in eventos_salvos_ids else 'bookmark' }}" class="h-5 w-5"></i>
+                </button>
+              </form>
+            </div>
+
+            <div class="grid gap-3 p-4">
+              <span class="w-fit rounded-md bg-uvv-50 px-2.5 py-1 text-xs font-extrabold text-[#0B5FEA]">{{ evento.categoria }}</span>
+              <h2 class="line-clamp-2 text-base font-extrabold leading-5 text-unihub-ink">{{ evento.titulo }}</h2>
+              <p class="inline-flex items-center gap-2 text-sm font-medium text-unihub-muted"><i data-lucide="calendar-days" class="h-4 w-4"></i>{{ evento.data_evento.strftime("%d/%m/%Y") }} • {{ evento.horario }}</p>
+              <p class="inline-flex items-center gap-2 text-sm font-medium text-unihub-muted"><i data-lucide="map-pin" class="h-4 w-4"></i>{{ evento.local }}</p>
+              <p class="text-sm font-medium text-unihub-muted">Organizado por<br><strong class="font-extrabold text-[#344469]">{{ evento.organizador.nome if evento.organizador else "UniHub" }}</strong></p>
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <a href="/eventos/{{ evento.id }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver detalhes</a>
+                <form method="post" action="/eventos/{{ evento.id }}/salvar">
+                  <input type="hidden" name="next" value="{{ request.full_path }}">
+                  <button class="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50" type="submit">
+                    <i data-lucide="bookmark" class="h-4 w-4"></i>
+                    Salvar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+        <div>
+          <i data-lucide="calendar-x" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+          <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhum evento encontrado</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Ajuste os filtros para encontrar outras atividades.</p>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

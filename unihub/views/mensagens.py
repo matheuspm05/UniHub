@@ -16,6 +16,18 @@ def _payload():
     return data, None
 
 
+def _get_mensagem_do_usuario(mensagem_id):
+    usuario_atual_id = obter_usuario_atual_id()
+    mensagem = db.session.get(Mensagem, mensagem_id)
+    if not mensagem:
+        return None, resposta_erro("Mensagem nao encontrada", 404)
+
+    if usuario_atual_id not in [mensagem.remetente_id, mensagem.destinatario_id]:
+        return None, resposta_erro("Voce nao tem permissao para acessar esta mensagem", 403)
+
+    return mensagem, None
+
+
 @bp.get("")
 @exigir_login
 def listar_conversas():
@@ -105,9 +117,12 @@ def enviar_mensagem():
 @bp.patch("/<int:mensagem_id>/ler")
 @exigir_login
 def marcar_mensagem_como_lida(mensagem_id):
-    mensagem = db.session.get(Mensagem, mensagem_id)
-    if not mensagem:
-        return resposta_erro("Mensagem nao encontrada", 404)
+    mensagem, response = _get_mensagem_do_usuario(mensagem_id)
+    if response:
+        return response
+
+    if mensagem.destinatario_id != obter_usuario_atual_id():
+        return resposta_erro("Somente o destinatario pode marcar a mensagem como lida", 403)
 
     mensagem.lida = True
     db.session.commit()
@@ -117,9 +132,9 @@ def marcar_mensagem_como_lida(mensagem_id):
 @bp.delete("/<int:mensagem_id>")
 @exigir_login
 def excluir_mensagem(mensagem_id):
-    mensagem = db.session.get(Mensagem, mensagem_id)
-    if not mensagem:
-        return resposta_erro("Mensagem nao encontrada", 404)
+    mensagem, response = _get_mensagem_do_usuario(mensagem_id)
+    if response:
+        return response
 
     # Futuramente pode virar soft delete com status/removida_em no model.
     db.session.delete(mensagem)

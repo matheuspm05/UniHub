@@ -1,0 +1,141 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Forum academico - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-normal text-unihub-ink">Forum academico</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Tire duvidas, compartilhe materiais e participe das discussoes da comunidade.</p>
+      </div>
+      <a href="/forum/criar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-6 text-sm font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+        <i data-lucide="plus" class="h-5 w-5"></i>
+        Novo topico
+      </a>
+    </div>
+
+    <form method="get" action="/forum" class="grid gap-4">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input
+          class="min-h-12 w-full rounded-lg border border-[#CBD6E6] bg-white py-3 pl-12 pr-4 text-base font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100"
+          type="search"
+          name="busca"
+          value="{{ filtros.get('busca', '') }}"
+          placeholder="Buscar por topico, disciplina ou palavra-chave"
+        >
+      </label>
+
+      <div class="flex flex-wrap gap-3">
+        <label class="relative min-w-36">
+          <select name="curso" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Curso</option>
+            {% for curso in cursos %}
+              <option value="{{ curso }}" {% if filtros.get('curso') == curso %}selected{% endif %}>{{ curso }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative min-w-40">
+          <select name="disciplina" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Disciplina</option>
+            {% for disciplina in disciplinas %}
+              <option value="{{ disciplina }}" {% if filtros.get('disciplina') == disciplina %}selected{% endif %}>{{ disciplina }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative min-w-40">
+          <select name="categoria" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Categoria</option>
+            {% for categoria in categorias %}
+              <option value="{{ categoria }}" {% if filtros.get('categoria') == categoria %}selected{% endif %}>{{ categoria }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <label class="relative min-w-36">
+          <select name="status" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            <option value="">Status</option>
+            {% for status, label in [("aberto", "Aberto"), ("resolvido", "Resolvido"), ("fechado", "Fechado")] %}
+              <option value="{{ status }}" {% if filtros.get('status') == status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
+        </label>
+
+        <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white transition hover:bg-uvv-900">Filtrar</button>
+      </div>
+    </form>
+
+    <div>
+      <h2 class="text-lg font-extrabold text-unihub-ink">Topicos em destaque para {{ current_user.curso }}</h2>
+      <div class="mt-4 grid gap-3">
+        {% for topico in topicos %}
+          {% set cor = {
+            "Duvida": "bg-uvv-50 text-[#0B5FEA]",
+            "Dúvida": "bg-uvv-50 text-[#0B5FEA]",
+            "Material de estudo": "bg-emerald-50 text-emerald-700",
+            "Grupo de trabalho": "bg-violet-50 text-violet-700",
+            "Monitoria": "bg-amber-50 text-amber-700",
+            "Estagio": "bg-pink-50 text-pink-700",
+            "Estágio": "bg-pink-50 text-pink-700"
+          }.get(topico.categoria, "bg-slate-100 text-slate-700") %}
+          {% set icone = {
+            "Duvida": "circle-help",
+            "Dúvida": "circle-help",
+            "Material de estudo": "book-open",
+            "Grupo de trabalho": "users",
+            "Monitoria": "graduation-cap",
+            "Estagio": "briefcase",
+            "Estágio": "briefcase"
+          }.get(topico.categoria, "message-square") %}
+          <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card lg:grid-cols-[72px_1fr_190px_150px_120px] lg:items-center">
+            <div class="grid h-16 w-16 place-items-center rounded-full {{ cor }}">
+              <i data-lucide="{{ icone }}" class="h-8 w-8"></i>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h3>
+              <div class="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-sm font-semibold text-unihub-muted">
+                <span class="rounded-md {{ cor }} px-2 py-0.5 text-xs font-extrabold">{{ topico.categoria }}</span>
+                <span>{{ topico.curso }}</span>
+                <span>•</span>
+                <span>{{ topico.disciplina }}</span>
+              </div>
+              <p class="mt-1 line-clamp-2 text-sm font-medium leading-6 text-[#344469]">{{ topico.descricao }}</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(topico.autor.nome) if topico.autor else "UH" }}</span>
+              <div>
+                <p class="text-sm font-extrabold text-unihub-ink">{{ topico.autor.nome if topico.autor else "UniHub" }}</p>
+                <p class="inline-flex items-center gap-1 text-sm font-semibold text-unihub-muted"><i data-lucide="message-circle" class="h-4 w-4"></i>{{ topico.respostas|length }} resposta{{ "s" if topico.respostas|length != 1 else "" }}</p>
+              </div>
+            </div>
+
+            <div>
+              <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>
+              <p class="mt-2 text-sm font-semibold text-unihub-muted">Atualizado hoje</p>
+            </div>
+
+            <a href="/forum/topicos/{{ topico.id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver topico</a>
+          </article>
+        {% else %}
+          <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+            <div>
+              <i data-lucide="messages-square" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+              <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhum topico encontrado</h2>
+              <p class="mt-2 text-sm font-medium text-unihub-muted">Tente ajustar os filtros ou crie uma nova discussao.</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

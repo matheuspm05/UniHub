@@ -1,8 +1,8 @@
 # UniHub
 
-Backend Flask da plataforma universitária UniHub.
+Aplicação Flask da plataforma universitária UniHub.
 
-Nesta etapa o projeto está focado em API JSON, SQLite, SQLAlchemy, Flask-Migrate, Blueprints, Flask-Login e regras de acesso por roles. Ainda não existe frontend Jinja/Tailwind.
+Nesta etapa o projeto combina API JSON com páginas renderizadas em Jinja, usando SQLite, SQLAlchemy, Flask-Migrate, Blueprints, Flask-Login e regras de acesso por roles.
 
 ## Estrutura
 
@@ -12,11 +12,11 @@ tasks.py                # atalhos com invoke
 unihub/
   ext/                  # configuração de extensões: db, migrate, swagger, config
   models/               # models SQLAlchemy
-  views/                # blueprints e rotas JSON
+  views/                # blueprints de API e páginas
   services/             # seed e serviços de apoio
   utils/                # respostas JSON e helpers de autenticação/permissão
-templates/              # reservado para Jinja no frontend futuro
-static/                 # reservado para assets futuros
+templates/              # páginas e componentes Jinja
+static/                 # assets da interface
 tests/                  # testes automatizados
 migrations/             # Flask-Migrate/Alembic
 ```
@@ -96,6 +96,14 @@ Se a porta 5000 estiver ocupada:
 invoke dev --port=5001
 ```
 
+Fluxos principais no navegador:
+
+- Landing page: `http://127.0.0.1:5000/`
+- Login: `http://127.0.0.1:5000/auth/login`
+- Dashboard: `http://127.0.0.1:5000/dashboard`
+- Perfil: `http://127.0.0.1:5000/perfil`
+- Notificações: `http://127.0.0.1:5000/notificacoes`
+
 ## Swagger
 
 Interface:
@@ -115,7 +123,13 @@ http://127.0.0.1:5000/swagger.json
 Os testes usam SQLite em memória e fazem seed automaticamente.
 
 ```bash
-python -m unittest
+./venv/bin/python -m unittest
+```
+
+Alternativa sem ativar o ambiente virtual:
+
+```bash
+python3 -m unittest
 ```
 
 ## Autenticação
@@ -155,13 +169,18 @@ Regras atuais:
 - `moderador`: pode criar eventos, criar avisos e moderar fórum/moradias.
 - `admin`: acessa `/admin/*`, gerencia usuários e pode desativar conteúdos.
 
-## Endpoints Principais
+## Rotas Principais
 
 ```text
 GET    /
+GET    /dashboard
+GET    /perfil
+GET    /perfil/editar
 GET    /health
 POST   /auth/cadastro
+GET    /auth/cadastro
 POST   /auth/login
+GET    /auth/login
 POST   /auth/logout
 GET    /auth/me
 GET    /usuarios

@@ -1,0 +1,155 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Editar evento - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1280px] gap-6">
+    <a href="/eventos/meus-eventos" class="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#0B5FEA] transition hover:text-uvv-700">
+      <i data-lucide="arrow-left" class="h-5 w-5"></i>
+      Voltar para meus eventos
+    </a>
+
+    <div>
+      <h1 class="text-4xl font-extrabold tracking-normal text-unihub-ink">Editar evento</h1>
+      <p class="mt-2 text-base font-medium text-unihub-muted">Atualize as informacoes do evento abaixo.</p>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[1fr_340px]">
+      <form id="form-editar-evento" method="post" action="/eventos/{{ evento.id }}/editar" class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+        <div class="grid gap-5">
+          <label class="grid gap-2">
+            <span class="text-sm font-extrabold text-unihub-ink">Titulo do evento *</span>
+            <input name="titulo" required value="{{ evento.titulo }}" class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+          </label>
+
+          <label class="grid gap-2">
+            <span class="text-sm font-extrabold text-unihub-ink">Descricao *</span>
+            <textarea name="descricao" required rows="5" maxlength="600" class="rounded-lg border border-[#CBD6E6] p-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">{{ evento.descricao }}</textarea>
+          </label>
+
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Categoria *</span>
+              <select name="categoria" required class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                {% for categoria in categorias %}
+                  <option value="{{ categoria }}" {% if evento.categoria == categoria %}selected{% endif %}>{{ categoria }}</option>
+                {% endfor %}
+              </select>
+            </label>
+
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Data do evento *</span>
+              <input type="date" name="data_evento" required value="{{ evento.data_evento.isoformat() }}" class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            </label>
+
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Horario *</span>
+              <input type="time" name="horario" required value="{{ evento.horario }}" class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            </label>
+
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Local *</span>
+              <input name="local" required list="locais-eventos" value="{{ evento.local }}" class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+            </label>
+
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Status *</span>
+              <select name="status" required class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                {% for status, label in [("ativo", "Ativo"), ("cancelado", "Cancelado"), ("encerrado", "Encerrado")] %}
+                  <option value="{{ status }}" {% if evento.status == status %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+
+          <datalist id="locais-eventos">
+            {% for local in locais %}
+              <option value="{{ local }}"></option>
+            {% endfor %}
+          </datalist>
+
+          <div>
+            <span class="text-sm font-extrabold text-unihub-ink">Banner / imagem <span class="font-medium text-unihub-muted">(opcional)</span></span>
+            <div class="mt-3 overflow-hidden rounded-lg border border-unihub-line bg-unihub-surface">
+              <img src="{{ url_for('static', filename=imagem_padrao) }}" alt="Banner de {{ evento.titulo }}" class="h-40 w-full object-cover">
+            </div>
+            <div class="mt-3 flex flex-wrap justify-center gap-3">
+              <button type="button" class="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-5 text-sm font-extrabold text-[#0B5FEA]">
+                <i data-lucide="image" class="h-5 w-5"></i>
+                Alterar imagem
+              </button>
+              <button type="button" class="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-red-200 px-5 text-sm font-extrabold text-red-600">
+                <i data-lucide="trash-2" class="h-5 w-5"></i>
+                Remover imagem
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <aside class="grid h-fit gap-5">
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Status do evento</h2>
+          <div class="mt-5 grid gap-3">
+            {% for status, label, icon, classes in [
+              ("ativo", "Ativo", "circle-check", "border-emerald-200 bg-emerald-50 text-emerald-700"),
+              ("cancelado", "Cancelado", "circle-x", "border-orange-200 bg-orange-50 text-orange-700"),
+              ("encerrado", "Encerrado", "flag", "border-slate-200 bg-slate-50 text-slate-700")
+            ] %}
+              <form method="post" action="/eventos/{{ evento.id }}/status">
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="hidden" name="next" value="/eventos/{{ evento.id }}/editar">
+                <button type="submit" class="flex w-full items-center justify-between rounded-lg border p-4 text-left transition hover:shadow-sm {{ classes }} {% if evento.status != status %}bg-white{% endif %}" {% if evento.status == status %}disabled{% endif %}>
+                  <span class="inline-flex items-center gap-3">
+                    <i data-lucide="{{ icon }}" class="h-5 w-5"></i>
+                    <span>
+                      <strong class="block text-sm">{{ label }}</strong>
+                      <span class="text-xs font-semibold text-[#344469]">{{ "Status atual" if evento.status == status else "Alterar status" }}</span>
+                    </span>
+                  </span>
+                  <i data-lucide="{{ 'check-circle-2' if evento.status == status else 'circle' }}" class="h-5 w-5"></i>
+                </button>
+              </form>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Acoes do evento</h2>
+          <div class="mt-5 grid gap-3">
+            <button form="form-editar-evento" type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] text-base font-extrabold text-white transition hover:bg-uvv-600">
+              <i data-lucide="save" class="h-5 w-5"></i>
+              Salvar alteracoes
+            </button>
+            <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Cancelar este evento?');">
+              <input type="hidden" name="status" value="cancelado">
+              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-orange-300 text-base font-extrabold text-orange-600 transition hover:bg-orange-50">
+                <i data-lucide="circle-x" class="h-5 w-5"></i>
+                Cancelar evento
+              </button>
+            </form>
+            <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Encerrar este evento agora?');">
+              <input type="hidden" name="status" value="encerrado">
+              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-uvv-300 text-base font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+                <i data-lucide="flag" class="h-5 w-5"></i>
+                Encerrar evento
+              </button>
+            </form>
+            <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Excluir este evento? Essa acao nao podera ser desfeita.');">
+              <input type="hidden" name="status" value="desativado">
+              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-red-300 text-base font-extrabold text-red-600 transition hover:bg-red-50">
+                <i data-lucide="trash-2" class="h-5 w-5"></i>
+                Excluir evento
+              </button>
+            </form>
+          </div>
+          <p class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">Atencao: eventos excluidos nao podem ser recuperados.</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+{% endblock %}

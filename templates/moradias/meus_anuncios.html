@@ -1,0 +1,124 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Meus anuncios - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-normal text-unihub-ink">Moradias</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Encontre ou anuncie oportunidades proximas a UVV.</p>
+      </div>
+      <a href="/moradias/anunciar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-5 text-base font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+        <i data-lucide="plus" class="h-5 w-5"></i>
+        Anunciar moradia
+      </a>
+    </div>
+
+    <div class="flex gap-8 border-b border-unihub-line">
+      <a href="/moradias" class="inline-flex items-center gap-2 border-b-2 border-transparent px-4 pb-4 text-sm font-bold text-unihub-ink transition hover:text-[#0B5FEA]">
+        <i data-lucide="home" class="h-5 w-5"></i>
+        Explorar moradias
+      </a>
+      <a href="/moradias/meus-anuncios" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-4 pb-4 text-sm font-extrabold text-[#0B5FEA]">
+        <i data-lucide="list" class="h-5 w-5"></i>
+        Meus anuncios
+      </a>
+    </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="text-lg font-extrabold text-unihub-ink">Meus anuncios</h2>
+        <p class="mt-1 text-sm font-medium text-unihub-muted">Gerencie suas moradias publicadas.</p>
+      </div>
+      <form method="get" action="/moradias/meus-anuncios" class="flex items-center gap-3">
+        <span class="text-sm font-medium text-unihub-muted">Ordenar por:</span>
+        <select name="ordenacao" class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" onchange="this.form.submit()">
+          <option value="recentes" {% if ordenacao == "recentes" %}selected{% endif %}>Mais recentes</option>
+          <option value="antigos" {% if ordenacao == "antigos" %}selected{% endif %}>Mais antigos</option>
+        </select>
+      </form>
+    </div>
+
+    {% if moradias %}
+      <div class="grid gap-4">
+        {% for moradia in moradias %}
+          <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card xl:grid-cols-[220px_1fr_170px_230px_24px] xl:items-center">
+            <img
+              src="{{ url_for('static', filename=imagem_padrao) }}"
+              alt="Foto de {{ moradia.titulo }}"
+              class="h-40 w-full rounded-lg object-cover xl:h-32"
+            >
+
+            <div class="grid gap-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <h3 class="text-lg font-extrabold text-unihub-ink">{{ moradia.titulo }}</h3>
+                <span class="inline-flex items-center gap-2 rounded-md border px-3 py-1 text-xs font-extrabold {% if moradia.status == 'disponivel' %}border-emerald-200 bg-emerald-50 text-emerald-700{% elif moradia.status == 'pausado' %}border-orange-200 bg-orange-50 text-orange-600{% elif moradia.status == 'preenchido' %}border-slate-200 bg-slate-100 text-slate-600{% else %}border-red-200 bg-red-50 text-red-600{% endif %}">
+                  <span class="h-2.5 w-2.5 rounded-full {% if moradia.status == 'disponivel' %}bg-emerald-500{% elif moradia.status == 'pausado' %}bg-orange-500{% elif moradia.status == 'preenchido' %}bg-slate-500{% else %}bg-red-500{% endif %}"></span>
+                  {{ moradia.status|capitalize }}
+                </span>
+              </div>
+              <p class="inline-flex items-center gap-1.5 text-sm font-medium text-unihub-muted">
+                <i data-lucide="map-pin" class="h-4 w-4 text-[#0B5FEA]"></i>
+                {{ moradia.bairro }}
+              </p>
+              <p class="text-base font-extrabold text-emerald-600">R$ {{ "%.0f"|format(moradia.preco_mensal) }}/mes</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium text-unihub-muted">
+                <span class="inline-flex items-center gap-1.5"><i data-lucide="bed" class="h-4 w-4"></i>{{ moradia.numero_vagas }} vaga{{ "s" if moradia.numero_vagas != 1 else "" }}</span>
+                <span class="inline-flex items-center gap-1.5"><i data-lucide="navigation" class="h-4 w-4"></i>{{ "600m da UVV" if moradia.perto_uvv else "Distancia a consultar" }}</span>
+              </div>
+              <p class="text-sm font-medium text-unihub-muted">Publicado em {{ moradia.criado_em.strftime("%d/%m/%Y") if moradia.criado_em else "data indisponivel" }}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-center text-sm font-semibold text-unihub-muted xl:grid-cols-1">
+              <span><strong class="block text-base font-extrabold text-unihub-ink">{{ moradia.visualizacoes }}</strong>visualizacoes</span>
+              <span><strong class="block text-base font-extrabold text-unihub-ink">{{ (moradia.visualizacoes // 8) + 1 }}</strong>interessados</span>
+            </div>
+
+            <div class="grid gap-3">
+              {% if moradia.status != "desativado" %}
+                <a href="/moradias/{{ moradia.id }}/editar" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-4 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+                  <i data-lucide="pencil" class="h-4 w-4"></i>
+                  Editar
+                </a>
+                <form method="post" action="/moradias/{{ moradia.id }}/status" onsubmit="return confirm('Confirmar alteracao de status deste anuncio?');">
+                  <input type="hidden" name="status" value="{{ 'disponivel' if moradia.status == 'pausado' else 'pausado' }}">
+                  <button class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-orange-300 px-4 text-sm font-extrabold text-orange-600 transition hover:bg-orange-50" type="submit">
+                    <i data-lucide="{{ 'play' if moradia.status == 'pausado' else 'pause' }}" class="h-4 w-4"></i>
+                    {{ "Ativar anuncio" if moradia.status == "pausado" else "Pausar anuncio" }}
+                  </button>
+                </form>
+                <form method="post" action="/moradias/{{ moradia.id }}/status" onsubmit="return confirm('Marcar este anuncio como preenchido? Ele deixara de aparecer como disponivel, mas voce ainda podera editar e reativar depois.');">
+                  <input type="hidden" name="status" value="preenchido">
+                  <button class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-emerald-300 px-4 text-sm font-extrabold text-emerald-600 transition hover:bg-emerald-50" type="submit">
+                    <i data-lucide="check" class="h-4 w-4"></i>
+                    Marcar como preenchido
+                  </button>
+                </form>
+              {% else %}
+                <a href="/moradias/{{ moradia.id }}/editar" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-[#CBD6E6] px-4 text-sm font-extrabold text-unihub-muted transition hover:bg-unihub-surface">
+                  <i data-lucide="pencil" class="h-4 w-4"></i>
+                  Editar
+                </a>
+                <p class="text-center text-sm font-semibold text-unihub-muted">Anuncio finalizado</p>
+              {% endif %}
+            </div>
+
+            <button class="grid h-10 w-10 place-items-center rounded-lg text-unihub-muted transition hover:bg-unihub-surface hover:text-[#0B5FEA]" type="button" aria-label="Mais opcoes">
+              <i data-lucide="more-vertical" class="h-5 w-5"></i>
+            </button>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+        <div>
+          <i data-lucide="image" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+          <h2 class="mt-4 text-lg font-extrabold text-unihub-ink">Nao encontrou algum anuncio?</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Verifique seus anuncios pausados ou finalizados.</p>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

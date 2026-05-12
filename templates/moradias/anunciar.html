@@ -1,0 +1,181 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Anunciar moradia - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1280px] gap-6">
+    <div>
+      <a href="/moradias" class="inline-flex items-center gap-2 text-sm font-bold text-[#0B5FEA] transition hover:text-uvv-700">
+        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        Voltar para moradias
+      </a>
+      <h1 class="mt-6 text-3xl font-extrabold tracking-normal text-unihub-ink">Anunciar moradia</h1>
+      <p class="mt-2 text-base font-medium text-unihub-muted">Preencha as informacoes abaixo para publicar sua moradia para outros estudantes.</p>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[1fr_380px]">
+      <form method="post" action="/moradias/anunciar" class="grid gap-4">
+        {% if erro %}
+          <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">{{ erro }}</div>
+        {% endif %}
+
+        <section class="rounded-lg border border-unihub-line bg-white p-5 shadow-card md:p-6">
+          <div class="grid gap-5">
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Titulo do anuncio *</span>
+              <input name="titulo" value="{{ dados.get('titulo', '') }}" required class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" placeholder="Ex.: Kitnet mobiliada proxima a UVV">
+            </label>
+
+            <label class="grid gap-2">
+              <span class="text-sm font-extrabold text-unihub-ink">Descricao *</span>
+              <div class="relative">
+                <textarea name="descricao" required maxlength="500" rows="6" class="w-full resize-none rounded-lg border border-[#CBD6E6] bg-white px-4 py-3 text-sm font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" placeholder="Descreva sua moradia: ambiente, comodidades, regras, proximidade, etc.">{{ dados.get('descricao', '') }}</textarea>
+                <span class="absolute bottom-3 right-4 text-xs font-semibold text-unihub-muted">0/500</span>
+              </div>
+            </label>
+
+            <div class="grid gap-5 md:grid-cols-2">
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Bairro *</span>
+                <span class="relative">
+                  <select name="bairro" required class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white px-4 pr-10 text-sm font-medium text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                    <option value="">Selecione o bairro</option>
+                    {% for bairro in bairros %}
+                      <option value="{{ bairro }}" {% if dados.get('bairro') == bairro %}selected{% endif %}>{{ bairro }}</option>
+                    {% endfor %}
+                  </select>
+                  <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                </span>
+              </label>
+
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Preco mensal *</span>
+                <span class="flex h-11 overflow-hidden rounded-lg border border-[#CBD6E6] bg-white focus-within:border-uvv-500 focus-within:ring-4 focus-within:ring-uvv-100">
+                  <span class="grid w-12 place-items-center border-r border-unihub-line text-sm font-extrabold text-unihub-ink">R$</span>
+                  <input name="preco_mensal" value="{{ dados.get('preco_mensal', '') }}" required inputmode="decimal" class="min-w-0 flex-1 px-4 text-sm font-medium text-unihub-ink outline-none placeholder:text-unihub-muted" placeholder="Ex.: 1000,00">
+                </span>
+              </label>
+
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Numero de vagas *</span>
+                <span class="relative">
+                  <select name="numero_vagas" required class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white px-4 pr-10 text-sm font-medium text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                    <option value="">Ex.: 1</option>
+                    {% for valor in ["1", "2", "3", "4", "5"] %}
+                      <option value="{{ valor }}" {% if dados.get('numero_vagas') == valor %}selected{% endif %}>{{ valor }} vaga{{ "s" if valor != "1" else "" }}</option>
+                    {% endfor %}
+                  </select>
+                  <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                </span>
+              </label>
+
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Perto da UVV? *</span>
+                <span class="relative">
+                  <i data-lucide="map-pin" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                  <select name="perto_uvv" required class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-medium text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                    <option value="">Selecione</option>
+                    <option value="true" {% if dados.get('perto_uvv') == 'true' %}selected{% endif %}>Sim</option>
+                    <option value="false" {% if dados.get('perto_uvv') == 'false' %}selected{% endif %}>Nao</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                </span>
+              </label>
+
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Aceita dividir quarto? *</span>
+                <span class="relative">
+                  <i data-lucide="users" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                  <select name="aceita_dividir_quarto" required class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-medium text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                    <option value="">Selecione</option>
+                    <option value="true" {% if dados.get('aceita_dividir_quarto') == 'true' %}selected{% endif %}>Sim</option>
+                    <option value="false" {% if dados.get('aceita_dividir_quarto') == 'false' %}selected{% endif %}>Nao</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                </span>
+              </label>
+
+              <label class="grid gap-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Status *</span>
+                <span class="relative">
+                  <span class="pointer-events-none absolute left-4 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-emerald-500"></span>
+                  <select name="status" required class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-11 pr-10 text-sm font-medium text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
+                    <option value="disponivel" {% if dados.get('status', 'disponivel') == 'disponivel' %}selected{% endif %}>Disponivel (padrao)</option>
+                    <option value="pausado" {% if dados.get('status') == 'pausado' %}selected{% endif %}>Pausado</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+                </span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-unihub-line bg-white p-5 shadow-card md:p-6">
+          <p class="text-sm font-extrabold text-unihub-ink">Fotos (opcional)</p>
+          <p class="mt-1 text-sm font-medium text-unihub-muted">Adicione fotos da moradia para atrair mais interessados.</p>
+          <div class="mt-4 grid gap-4 md:grid-cols-[minmax(220px,320px)_1fr]">
+            <label class="grid min-h-28 place-items-center rounded-lg border border-dashed border-[#CBD6E6] bg-white p-4 text-center text-sm font-semibold text-unihub-muted">
+              <input type="file" name="fotos" class="hidden" multiple accept="image/png,image/jpeg">
+              <span class="grid gap-2">
+                <i data-lucide="image-plus" class="mx-auto h-7 w-7 text-[#0B5FEA]"></i>
+                <strong class="text-[#0B5FEA]">Adicionar fotos</strong>
+                <span>ou arraste e solte aqui<br>PNG, JPG ou JPEG (max. 10MB cada)</span>
+              </span>
+            </label>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {% for item in range(4) %}
+                <div class="min-h-28 rounded-lg border border-unihub-line bg-unihub-surfaceAlt"></div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+
+        <div class="flex flex-col-reverse gap-3 rounded-lg border border-unihub-line bg-white p-4 shadow-card sm:flex-row sm:items-center sm:justify-between">
+          <a href="/moradias" class="inline-flex h-11 items-center justify-center rounded-lg border border-[#CBD6E6] px-8 text-sm font-extrabold text-unihub-muted transition hover:bg-unihub-surface">Cancelar</a>
+          <button class="inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-12 text-sm font-extrabold text-white shadow-card transition hover:bg-uvv-600" type="submit">Publicar anuncio</button>
+        </div>
+      </form>
+
+      <aside class="grid h-fit gap-5">
+        <section class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
+          <h2 class="text-lg font-extrabold text-unihub-ink">Dicas para um bom anuncio</h2>
+          <div class="mt-5 grid gap-5">
+            {% for icon, title, text in [("pencil", "Seja claro e detalhado", "Descreva bem o ambiente, regras e o que esta incluso no valor."), ("camera", "Use boas fotos", "Fotos bem iluminadas ajudam a gerar mais interesse."), ("map-pin", "Informe a localizacao", "Fale sobre a proximidade com a UVV e pontos importantes."), ("users", "Defina as regras", "Deixe claro se aceita visitas, animais de estimacao, etc.")] %}
+              <div class="flex gap-4">
+                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]">
+                  <i data-lucide="{{ icon }}" class="h-5 w-5"></i>
+                </span>
+                <div>
+                  <p class="text-sm font-extrabold text-unihub-ink">{{ title }}</p>
+                  <p class="mt-1 text-sm font-medium leading-6 text-unihub-muted">{{ text }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-amber-200 bg-amber-50/60 p-5">
+          <div class="flex gap-4">
+            <i data-lucide="shield-check" class="h-6 w-6 shrink-0 text-amber-500"></i>
+            <div>
+              <h2 class="text-sm font-extrabold text-unihub-ink">Seguranca em primeiro lugar</h2>
+              <p class="mt-2 text-sm font-medium leading-6 text-[#6B5A2D]">Nao compartilhe contatos pessoais. Toda comunicacao deve ocorrer dentro da plataforma.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-lg border border-violet-200 bg-violet-50/70 p-5">
+          <div class="flex gap-4">
+            <i data-lucide="circle-help" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
+            <div>
+              <h2 class="text-sm font-extrabold text-unihub-ink">Precisa de ajuda?</h2>
+              <p class="mt-2 text-sm font-medium leading-6 text-unihub-muted">Consulte nossas diretrizes para publicacao de anuncios.</p>
+              <a href="#" class="mt-3 inline-flex items-center gap-2 text-sm font-extrabold text-[#0B5FEA]">Ver diretrizes <i data-lucide="external-link" class="h-4 w-4"></i></a>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </section>
+{% endblock %}

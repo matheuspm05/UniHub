@@ -10,16 +10,17 @@
     </a>
   </div>
 
-  <a href="/perfil" class="flex items-center gap-4 px-8 py-7 transition hover:bg-unihub-surface">
-    <span class="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-uvv-100 to-white text-lg font-extrabold text-uvv-700 shadow-sm">
+  {% set nome_partes = current_user.nome.split() %}
+  {% set nome_exibicao = (nome_partes[:2] | join(" ")) if nome_partes else current_user.nome %}
+  {% set papel_exibicao = {"usuario": "Usuario Comum", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize) %}
+
+  <a href="/perfil" class="mx-5 my-6 block rounded-lg border border-uvv-100 bg-[#F4F8FF] px-4 py-5 text-center shadow-sm transition hover:border-uvv-200 hover:bg-[#EEF6FF]">
+    <span class="mx-auto grid h-20 w-20 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-uvv-100 to-white text-2xl font-extrabold text-uvv-700 shadow-card">
       {{ iniciais(current_user.nome) }}
     </span>
-    <div class="min-w-0">
-      <p class="truncate text-base font-extrabold text-unihub-ink">{{ current_user.nome }}</p>
-      <p class="truncate text-sm leading-5 text-unihub-muted">{{ current_user.curso }}</p>
-      <p class="text-sm leading-5 text-unihub-muted">{{ current_user.periodo }}</p>
-    </div>
-    <i data-lucide="chevron-down" class="ml-auto h-5 w-5 text-unihub-muted"></i>
+    <span class="mt-4 block truncate text-lg font-extrabold leading-6 text-unihub-ink">{{ nome_exibicao }}</span>
+    <span class="mt-1 block truncate text-sm font-semibold text-[#5F9DCC]">Matricula: {{ "%06d"|format(current_user.id) }}</span>
+    <span class="mt-1 block text-sm font-semibold leading-5 text-unihub-muted">{{ current_user.curso }} - {{ papel_exibicao }}</span>
   </a>
 
   <nav class="grid gap-1 px-5 text-base font-semibold text-unihub-ink">
@@ -27,15 +28,15 @@
       <i data-lucide="home" class="h-6 w-6"></i>
       Inicio
     </a>
-    <a href="/forum" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+    <a href="/forum" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/forum') %}bg-uvv-50 text-[#0B5FEA]{% else %}text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="messages-square" class="h-6 w-6"></i>
       Forum
     </a>
-    <a href="/eventos" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+    <a href="/eventos" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/eventos') %}bg-uvv-50 text-[#0B5FEA]{% else %}text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="calendar-days" class="h-6 w-6"></i>
       Eventos
     </a>
-    <a href="/moradias" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+    <a href="/moradias" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/moradias') and not request.path.startswith('/moradias/meus-anuncios') and not request.path.endswith('/editar') %}bg-uvv-50 text-[#0B5FEA]{% else %}text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="house" class="h-6 w-6"></i>
       Moradias
     </a>
@@ -57,6 +58,14 @@
       {% if mensagens_count %}
         <span class="ml-auto grid h-6 min-w-6 place-items-center rounded-full bg-[#0B5FEA] px-2 text-xs font-extrabold text-white">{{ mensagens_count }}</span>
       {% endif %}
+    </a>
+    <a href="/agenda" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/agenda') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+      <i data-lucide="calendar-check" class="h-6 w-6"></i>
+      Minha agenda
+    </a>
+    <a href="/moradias/meus-anuncios" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/moradias/meus-anuncios') or request.path.endswith('/editar') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+      <i data-lucide="clipboard-list" class="h-6 w-6"></i>
+      Meus anuncios
     </a>
   </nav>
 
