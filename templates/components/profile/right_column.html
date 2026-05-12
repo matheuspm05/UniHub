@@ -1,0 +1,56 @@
+<aside class="grid gap-5 xl:content-start">
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <h2 class="text-xl font-extrabold text-unihub-ink">Estatisticas</h2>
+    <div class="mt-5 divide-y divide-unihub-line">
+      {% for icone, label, valor, classe in estatisticas %}
+        <div class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+          <span class="grid h-10 w-10 place-items-center rounded-full {{ classe }}">
+            <i data-lucide="{{ icone }}" class="h-5 w-5"></i>
+          </span>
+          <span class="font-semibold text-unihub-ink">{{ label }}</span>
+          <span class="ml-auto text-xl font-extrabold text-unihub-ink">{{ valor }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <h2 class="text-xl font-extrabold text-unihub-ink">Atividade recente</h2>
+    <div class="mt-5 divide-y divide-unihub-line">
+      {% for icone, titulo, texto, tempo, classe in atividades %}
+        <div class="flex gap-4 py-4 first:pt-0 last:pb-0">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full {{ classe }}">
+            <i data-lucide="{{ icone }}" class="h-5 w-5"></i>
+          </span>
+          <span>
+            <span class="block font-semibold text-unihub-ink">{{ titulo }}</span>
+            <span class="block text-sm leading-5 text-unihub-muted">"{{ texto }}"</span>
+            <span class="mt-1 block text-sm text-unihub-muted">{{ tempo }}</span>
+          </span>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="pt-4 text-center">
+      <a href="/forum" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver toda atividade</a>
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <h2 class="text-xl font-extrabold text-unihub-ink">Conexoes em comum <span class="text-[#0B5FEA]">(5)</span></h2>
+    <div class="mt-5 flex items-center">
+      {% for pessoa in conexoes %}
+        <span class="-mr-2 grid h-12 w-12 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-uvv-100 to-white text-sm font-extrabold text-[#0B5FEA] shadow-sm">
+          {{ iniciais(pessoa.nome) }}
+        </span>
+      {% endfor %}
+      {% for extra in ["AM", "JR", "BC"] %}
+        <span class="-mr-2 grid h-12 w-12 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-slate-100 to-white text-sm font-extrabold text-unihub-muted shadow-sm">
+          {{ extra }}
+        </span>
+      {% endfor %}
+    </div>
+    <div class="pt-6 text-center">
+      <a href="/usuarios" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver todas as conexoes</a>
+    </div>
+  </section>
+</aside>

@@ -26,6 +26,9 @@ def create_app(test_config=None):
     from unihub.ext.db import register_models
     register_models()
 
+    from unihub.ext.login import init_app as init_login
+    init_login(flask_app)
+
     from unihub.views import init_app as init_views
     init_views(flask_app)
 

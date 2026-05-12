@@ -13,6 +13,8 @@ from unihub.models import (
     Usuario,
 )
 
+SENHA_PADRAO = "senha123"
+
 
 def _get_or_create(model, defaults=None, **filters):
     instance = model.query.filter_by(**filters).first()
@@ -83,6 +85,8 @@ def seed_database():
             email=item["email"],
             defaults={key: value for key, value in item.items() if key != "email"},
         )
+        if not usuario.senha_hash:
+            usuario.definir_senha(SENHA_PADRAO)
         usuarios[item["nome"]] = usuario
 
     db.session.flush()

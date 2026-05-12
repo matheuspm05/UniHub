@@ -1,0 +1,18 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Editar perfil - UniHub{% endblock %}
+{% block app_main_class %}xl:grid-cols-[1fr_340px]{% endblock %}
+
+{% block app_content %}
+  <section class="grid gap-5">
+    {% include "components/profile/edit_breadcrumb.html" %}
+    <div>
+      <h1 class="text-3xl font-extrabold text-unihub-ink">Editar perfil</h1>
+      <p class="mt-2 text-base text-unihub-muted">Atualize suas informacoes pessoais e preferencias.</p>
+    </div>
+
+    {% include "components/profile/edit_form.html" %}
+  </section>
+
+  {% include "components/profile/edit_right_column.html" %}
+{% endblock %}

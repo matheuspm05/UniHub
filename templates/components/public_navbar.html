@@ -1,0 +1,20 @@
+<header class="sticky top-0 z-40 border-b border-unihub-line/80 bg-white/95 backdrop-blur">
+  <nav class="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-5 sm:px-8" aria-label="Navegacao principal">
+    {% include "components/logo.html" %}
+
+    <div class="hidden items-center gap-12 text-[1.08rem] font-semibold text-unihub-ink lg:flex">
+      <a class="transition hover:text-uvv-700" href="{{ url_for('main.index') }}#sobre">Sobre</a>
+      <a class="transition hover:text-uvv-700" href="{{ url_for('main.index') }}#funcionalidades">Funcionalidades</a>
+      <a class="transition hover:text-uvv-700" href="{{ url_for('main.index') }}#como-funciona">Como funciona</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="/auth/login" class="hidden rounded-xl border border-[#C7D9FA] bg-[#F4F8FF] px-6 py-3.5 text-base font-semibold text-[#0A3F9D] shadow-sm transition hover:border-[#0B5FEA] hover:bg-white hover:text-[#003B8F] sm:inline-flex">
+        Entrar
+      </a>
+      <a href="/auth/cadastro" class="inline-flex rounded-xl bg-[#0B5FEA] px-6 py-3.5 text-base font-semibold text-white shadow-card transition hover:bg-[#004CC5]">
+        Criar conta
+      </a>
+    </div>
+  </nav>
+</header>

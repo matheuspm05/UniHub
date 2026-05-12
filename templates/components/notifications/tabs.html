@@ -1,0 +1,16 @@
+<div class="flex flex-col gap-4 border-b border-unihub-line md:flex-row md:items-end md:justify-between">
+  <nav class="flex gap-10 overflow-x-auto text-sm font-extrabold text-unihub-ink">
+    {% set tabs = [("Todas", 3), ("Nao lidas", 3), ("Mencoes", 1), ("Seguindo", 0)] %}
+    {% for label, count in tabs %}
+      <a href="#" class="flex items-center gap-2 whitespace-nowrap border-b-2 px-1 pb-4 {% if loop.first %}border-[#0B5FEA] text-[#0B5FEA]{% else %}border-transparent hover:text-[#0B5FEA]{% endif %}">
+        {{ label }}
+        <span class="grid h-5 min-w-5 place-items-center rounded-full bg-uvv-100 px-1.5 text-xs font-extrabold text-[#0B5FEA]">{{ count }}</span>
+      </a>
+    {% endfor %}
+  </nav>
+
+  <button class="mb-3 inline-flex items-center gap-2 text-sm font-extrabold text-[#0B5FEA] transition hover:text-[#004CC5]" type="button">
+    <i data-lucide="check-check" class="h-5 w-5"></i>
+    Marcar todas como lidas
+  </button>
+</div>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <main class="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(235,244,255,0.99)_52%,rgba(219,233,255,0.98)_100%)] px-5 py-7 sm:px-8 sm:py-10">
+    <div class="pointer-events-none absolute inset-0">
+      <div class="absolute -left-6 bottom-24 h-72 w-72 rounded-full bg-uvv-100/25 blur-3xl"></div>
+      <div class="absolute right-8 top-28 h-80 w-80 rounded-full bg-uvv-100/20 blur-3xl"></div>
+
+      <div class="absolute -left-10 bottom-0 hidden lg:block">
+        <div class="relative h-80 w-80 opacity-35">
+          <span class="absolute bottom-16 left-0 h-20 w-20 rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute bottom-0 left-28 h-[4.5rem] w-[4.5rem] rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute bottom-44 left-8 h-16 w-16 rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute bottom-40 left-20 h-2 w-28 rotate-[34deg] rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute bottom-20 left-[3.75rem] h-2 w-28 rotate-[-28deg] rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute bottom-10 left-14 h-2 w-28 rotate-[28deg] rounded-full bg-[#D9E8FF]"></span>
+        </div>
+      </div>
+
+      <div class="absolute -right-12 top-44 hidden lg:block">
+        <div class="relative h-96 w-72 opacity-35">
+          <span class="absolute left-8 top-0 h-20 w-20 rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute right-2 top-[6.5rem] h-[4.5rem] w-[4.5rem] rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute left-8 top-64 h-20 w-20 rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute left-20 top-16 h-2 w-36 rotate-[38deg] rounded-full bg-[#D9E8FF]"></span>
+          <span class="absolute left-20 top-[18.5rem] h-2 w-36 rotate-[-38deg] rounded-full bg-[#D9E8FF]"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative mx-auto max-w-[1520px]">
+      <a href="/" class="inline-flex h-[54px] items-center gap-3 rounded-xl border border-[#8EB4F3] bg-white/75 px-5 text-base font-semibold text-[#003B8F] shadow-sm backdrop-blur-sm transition hover:bg-white">
+        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        Voltar para a Home
+      </a>
+
+      <section class="mx-auto flex min-h-[calc(100vh-8rem)] items-center justify-center py-8 sm:py-10">
+        <div class="w-full max-w-[598px]">
+          {% block auth_content %}{% endblock %}
+        </div>
+      </section>
+    </div>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    document.querySelectorAll("[data-toggle-password]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const input = document.getElementById(button.getAttribute("data-toggle-password"));
+        if (!input) return;
+        const showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        const icon = button.querySelector("i");
+        if (icon) {
+          icon.setAttribute("data-lucide", showing ? "eye" : "eye-off");
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}

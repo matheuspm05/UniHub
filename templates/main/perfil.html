@@ -1,0 +1,17 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Perfil - UniHub{% endblock %}
+{% block app_main_class %}xl:grid-cols-[1fr_360px]{% endblock %}
+
+{% block app_content %}
+  <section class="grid gap-5">
+    {% include "components/profile/breadcrumb.html" %}
+    {% include "components/profile/header.html" %}
+    {% include "components/profile/tabs.html" %}
+    {% include "components/profile/about.html" %}
+    {% include "components/profile/interests.html" %}
+    {% include "components/profile/social.html" %}
+  </section>
+
+  {% include "components/profile/right_column.html" %}
+{% endblock %}

@@ -1,4 +1,4 @@
-from invoke import task
+from invoke.tasks import task
 
 
 FLASK = "venv/bin/flask --app app.py"

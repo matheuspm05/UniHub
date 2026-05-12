@@ -1,0 +1,71 @@
+<aside class="grid gap-5 xl:content-start">
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Minha agenda</h2>
+      <a href="/agenda" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver tudo</a>
+    </div>
+    <p class="mt-6 text-base font-extrabold text-unihub-ink">Hoje • 20 de maio</p>
+    <div class="mt-5 grid gap-5">
+      {% for aula in agenda_aulas %}
+        <div class="flex items-center gap-4">
+          <span class="grid min-h-[54px] w-16 place-items-center whitespace-pre-line rounded-lg bg-[#F2F7FF] text-center text-sm font-extrabold leading-5 text-[#0B5FEA]">{{ aula.horario }}</span>
+          <span class="h-2.5 w-2.5 rounded-full {{ aula.cor }}"></span>
+          <div>
+            <p class="font-extrabold text-unihub-ink">{{ aula.titulo }}</p>
+            <p class="text-sm text-unihub-muted">{{ aula.local }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Proximos eventos</h2>
+      <a href="/eventos" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver todos</a>
+    </div>
+    <div class="mt-5 grid gap-5">
+      {% for evento in eventos %}
+        <a href="/eventos/{{ evento.id }}" class="flex gap-4 rounded-lg transition hover:bg-unihub-surface">
+          <span class="grid h-16 w-16 shrink-0 place-items-center rounded-lg {% if loop.index == 1 %}bg-blue-50 text-[#0B5FEA]{% elif loop.index == 2 %}bg-emerald-50 text-emerald-600{% else %}bg-violet-50 text-violet-600{% endif %}">
+            <span class="text-center text-lg font-extrabold leading-5">
+              {{ "%02d"|format(evento.data_evento.day) }}<br>
+              <span class="text-xs">MAI</span>
+            </span>
+          </span>
+          <span>
+            <span class="block font-extrabold text-unihub-ink">{{ evento.titulo }}</span>
+            <span class="mt-1 block text-sm leading-5 text-unihub-muted">{{ evento.data_evento.strftime("%a, %d de mai") }} • {{ evento.horario or "09:00" }}</span>
+            <span class="block text-sm leading-5 text-unihub-muted">{{ evento.local }}</span>
+          </span>
+        </a>
+      {% else %}
+        <p class="text-sm font-semibold text-unihub-muted">Nenhum evento cadastrado.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Conexoes sugeridas</h2>
+      <a href="/usuarios" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver todos</a>
+    </div>
+    <div class="mt-5 divide-y divide-unihub-line">
+      {% for pessoa in conexoes %}
+        <div class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+          <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br from-uvv-100 to-white text-sm font-extrabold text-[#0B5FEA] shadow-sm">
+            {{ iniciais(pessoa.nome) }}
+          </span>
+          <div class="min-w-0">
+            <p class="truncate font-extrabold text-unihub-ink">{{ pessoa.nome }}</p>
+            <p class="truncate text-sm text-unihub-muted">{{ pessoa.curso }}</p>
+            <p class="text-sm text-unihub-muted">{{ pessoa.periodo }}</p>
+          </div>
+          <a href="/usuarios/{{ pessoa.id }}" class="ml-auto rounded-lg border border-[#8EB4F3] px-4 py-2 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Conectar</a>
+        </div>
+      {% else %}
+        <p class="text-sm font-semibold text-unihub-muted">Sem sugestoes agora.</p>
+      {% endfor %}
+    </div>
+  </section>
+</aside>

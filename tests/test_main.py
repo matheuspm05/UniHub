@@ -2,8 +2,14 @@ from tests.base import TesteBase
 
 
 class TesteMain(TesteBase):
-    def test_index_responde_com_api_funcionando(self):
+    def test_index_renderiza_landing_page(self):
         resposta = self.cliente.get("/")
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn(b"Centralize sua vida universitaria", resposta.data)
+
+    def test_api_responde_com_api_funcionando(self):
+        resposta = self.cliente.get("/api")
 
         self.assertEqual(resposta.status_code, 200)
         self.assertTrue(resposta.json["success"])

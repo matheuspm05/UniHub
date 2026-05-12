@@ -1,0 +1,14 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Notificacoes - UniHub{% endblock %}
+{% block app_main_class %}xl:grid-cols-[1fr_340px]{% endblock %}
+
+{% block app_content %}
+  <section class="grid gap-5">
+    {% include "components/notifications/header.html" %}
+    {% include "components/notifications/tabs.html" %}
+    {% include "components/notifications/list.html" %}
+  </section>
+
+  {% include "components/notifications/filters.html" %}
+{% endblock %}

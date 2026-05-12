@@ -1,0 +1,7 @@
+<nav class="flex gap-8 overflow-x-auto border-b border-unihub-line text-base font-extrabold text-unihub-muted">
+  {% for item in ["Sobre mim", "Atividade", "Meu conteudo", "Conexoes", "Configuracoes"] %}
+    <a href="{% if item == 'Configuracoes' %}/perfil/editar{% else %}#{% endif %}" class="whitespace-nowrap border-b-2 px-1 pb-3 {% if loop.first %}border-[#0B5FEA] text-[#0B5FEA]{% else %}border-transparent hover:text-[#0B5FEA]{% endif %}">
+      {{ item }}
+    </a>
+  {% endfor %}
+</nav>

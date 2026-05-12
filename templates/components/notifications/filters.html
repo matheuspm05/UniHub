@@ -1,0 +1,49 @@
+<aside class="rounded-xl border border-unihub-line bg-white p-6 shadow-card xl:self-start">
+  <h2 class="text-xl font-extrabold text-unihub-ink">Filtros</h2>
+
+  <section class="mt-6">
+    <h3 class="text-sm font-extrabold text-unihub-ink">Tipo de notificacao</h3>
+    <nav class="mt-4 grid gap-1 text-sm font-semibold text-unihub-ink">
+      {% set filtros = [
+        ("layout-grid", "Todas", true),
+        ("message-circle", "Respostas", false),
+        ("thumbs-up", "Curtidas", false),
+        ("at-sign", "Mencoes", false),
+        ("megaphone", "Avisos", false),
+        ("calendar-days", "Eventos", false),
+        ("settings", "Sistema", false)
+      ] %}
+      {% for icone, label, ativo in filtros %}
+        <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-3 {% if ativo %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+          <i data-lucide="{{ icone }}" class="h-5 w-5"></i>
+          {{ label }}
+        </a>
+      {% endfor %}
+    </nav>
+  </section>
+
+  <section class="mt-7">
+    <h3 class="text-sm font-extrabold text-unihub-ink">Periodo</h3>
+    <button class="mt-4 flex h-11 w-full items-center gap-3 rounded-lg border border-[#CBD6E6] px-3 text-left text-sm font-semibold text-unihub-ink" type="button">
+      <i data-lucide="calendar-days" class="h-5 w-5 text-unihub-muted"></i>
+      Todos os periodos
+      <i data-lucide="chevron-down" class="ml-auto h-5 w-5 text-unihub-muted"></i>
+    </button>
+  </section>
+
+  <section class="mt-7">
+    <h3 class="text-sm font-extrabold text-unihub-ink">Status</h3>
+    <div class="mt-4 grid gap-4 text-sm font-semibold text-unihub-ink">
+      {% for label, checked in [("Todas", true), ("Nao lidas", false), ("Lidas", false)] %}
+        <label class="flex items-center gap-3">
+          <span class="grid h-4 w-4 place-items-center rounded-full border {% if checked %}border-[#0B5FEA]{% else %}border-unihub-muted{% endif %}">
+            {% if checked %}
+              <span class="h-2 w-2 rounded-full bg-[#0B5FEA]"></span>
+            {% endif %}
+          </span>
+          {{ label }}
+        </label>
+      {% endfor %}
+    </div>
+  </section>
+</aside>

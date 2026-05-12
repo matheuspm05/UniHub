@@ -4,7 +4,12 @@ from flask import Blueprint, request
 
 from unihub.ext.db import db
 from unihub.models import Moradia, Usuario
-from unihub.utils.auth import usuario_atual_pode_moderar, resposta_proibida, obter_usuario_atual_id
+from unihub.utils.auth import (
+    usuario_atual_pode_moderar,
+    resposta_proibida,
+    exigir_login,
+    obter_usuario_atual_id,
+)
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 
@@ -105,6 +110,7 @@ def detalhar_moradia(moradia_id):
 
 
 @bp.post("")
+@exigir_login
 def criar_moradia():
     data, response = _payload()
     if response:
@@ -117,7 +123,7 @@ def criar_moradia():
     if validation:
         return validation
 
-    anunciante_id = data.get("anunciante_id") or obter_usuario_atual_id()
+    anunciante_id = obter_usuario_atual_id()
     if not db.session.get(Usuario, anunciante_id):
         return resposta_erro("Anunciante nao encontrado", 404)
 
@@ -139,6 +145,7 @@ def criar_moradia():
 
 
 @bp.put("/<int:moradia_id>")
+@exigir_login
 def editar_moradia(moradia_id):
     moradia, response = _get_moradia_or_404(moradia_id)
     if response:
@@ -188,21 +195,25 @@ def _alterar_status_moradia(moradia_id, status, mensagem):
 
 
 @bp.patch("/<int:moradia_id>/pausar")
+@exigir_login
 def pausar_moradia(moradia_id):
     return _alterar_status_moradia(moradia_id, "pausado", "Anuncio pausado com sucesso")
 
 
 @bp.patch("/<int:moradia_id>/preencher")
+@exigir_login
 def preencher_moradia(moradia_id):
     return _alterar_status_moradia(moradia_id, "preenchido", "Anuncio marcado como preenchido")
 
 
 @bp.delete("/<int:moradia_id>")
+@exigir_login
 def desativar_moradia(moradia_id):
     return _alterar_status_moradia(moradia_id, "desativado", "Anuncio desativado com sucesso")
 
 
 @bp.get("/meus-anuncios")
+@exigir_login
 def meus_anuncios():
     moradias = Moradia.query.filter_by(
         anunciante_id=obter_usuario_atual_id(),

@@ -1,0 +1,49 @@
+<section class="overflow-hidden rounded-xl border border-unihub-line bg-[linear-gradient(135deg,#F1F7FF_0%,#EAF3FF_100%)] p-7 shadow-card">
+  <div class="relative grid gap-7 md:grid-cols-[150px_1fr_260px]">
+    <div class="relative h-36 w-36">
+      <span class="grid h-36 w-36 place-items-center rounded-full bg-gradient-to-br from-uvv-100 to-white text-4xl font-extrabold text-[#0B5FEA] shadow-sm">
+        {{ iniciais(current_user.nome) }}
+      </span>
+      <button class="absolute bottom-2 right-1 grid h-10 w-10 place-items-center rounded-full border border-unihub-line bg-white text-[#0B5FEA] shadow-sm" type="button" aria-label="Alterar foto">
+        <i data-lucide="camera" class="h-5 w-5"></i>
+      </button>
+    </div>
+
+    <div>
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-3xl font-extrabold text-unihub-ink">{{ current_user.nome }}</h1>
+        <a href="/perfil/editar" class="inline-flex items-center rounded-lg bg-[#0B5FEA] px-4 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#004CC5]">
+          Editar perfil
+        </a>
+      </div>
+      <span class="mt-3 inline-flex rounded-lg border border-[#8EB4F3] bg-white/70 px-3 py-1 text-sm font-extrabold text-[#0B5FEA]">Estudante</span>
+      <p class="mt-4 text-base leading-7 text-unihub-ink">{{ current_user.curso }} • {{ current_user.periodo }}</p>
+      <p class="text-base leading-7 text-unihub-muted">Universidade Vila Velha</p>
+
+      <div class="mt-7 grid gap-3 text-sm font-medium text-unihub-muted">
+        <span class="inline-flex items-center gap-3">
+          <i data-lucide="mail" class="h-5 w-5"></i>
+          {{ current_user.email }}
+        </span>
+        <span class="inline-flex items-center gap-3">
+          <i data-lucide="map-pin" class="h-5 w-5"></i>
+          {{ current_user.cidade }}
+        </span>
+      </div>
+    </div>
+
+    <div class="relative hidden items-center md:flex">
+      <div class="absolute inset-0 opacity-60">
+        <span class="absolute right-0 top-0 h-8 w-8 rounded-full bg-uvv-200"></span>
+        <span class="absolute right-20 top-16 h-8 w-8 rounded-full bg-uvv-200"></span>
+        <span class="absolute right-[13.5rem] top-28 h-7 w-7 rounded-full bg-uvv-200"></span>
+        <span class="absolute right-6 top-6 h-2 w-28 rotate-[42deg] rounded-full bg-uvv-200"></span>
+        <span class="absolute right-[6.5rem] top-20 h-2 w-24 rotate-[-24deg] rounded-full bg-uvv-200"></span>
+      </div>
+      <blockquote class="relative ml-auto max-w-[220px] text-sm leading-6 text-unihub-muted">
+        <i data-lucide="quote" class="mb-2 h-8 w-8 text-uvv-200"></i>
+        Apaixonado por tecnologia e por aprender coisas novas. Sempre aberto para trocar ideias e ajudar!
+      </blockquote>
+    </div>
+  </div>
+</section>

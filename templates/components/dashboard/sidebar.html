@@ -1,0 +1,78 @@
+<aside class="hidden border-r border-unihub-line bg-white lg:flex lg:min-h-screen lg:flex-col">
+  <div class="flex h-24 items-center border-b border-unihub-line px-8">
+    <a href="/dashboard" class="inline-flex items-center gap-3" aria-label="UniHub inicio">
+      <img
+        src="{{ url_for('static', filename='imgs/logos/logo.png') }}"
+        alt="Logo UniHub"
+        class="h-14 w-14 object-cover"
+      >
+      <span class="text-[2.25rem] font-extrabold leading-none tracking-normal text-unihub-ink">UniHub</span>
+    </a>
+  </div>
+
+  <a href="/perfil" class="flex items-center gap-4 px-8 py-7 transition hover:bg-unihub-surface">
+    <span class="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-uvv-100 to-white text-lg font-extrabold text-uvv-700 shadow-sm">
+      {{ iniciais(current_user.nome) }}
+    </span>
+    <div class="min-w-0">
+      <p class="truncate text-base font-extrabold text-unihub-ink">{{ current_user.nome }}</p>
+      <p class="truncate text-sm leading-5 text-unihub-muted">{{ current_user.curso }}</p>
+      <p class="text-sm leading-5 text-unihub-muted">{{ current_user.periodo }}</p>
+    </div>
+    <i data-lucide="chevron-down" class="ml-auto h-5 w-5 text-unihub-muted"></i>
+  </a>
+
+  <nav class="grid gap-1 px-5 text-base font-semibold text-unihub-ink">
+    <a href="/dashboard" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path == '/dashboard' %}bg-uvv-50 text-[#0B5FEA]{% else %}text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+      <i data-lucide="home" class="h-6 w-6"></i>
+      Inicio
+    </a>
+    <a href="/forum" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+      <i data-lucide="messages-square" class="h-6 w-6"></i>
+      Forum
+    </a>
+    <a href="/eventos" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+      <i data-lucide="calendar-days" class="h-6 w-6"></i>
+      Eventos
+    </a>
+    <a href="/moradias" class="flex items-center gap-4 rounded-lg px-4 py-3.5 text-unihub-ink transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+      <i data-lucide="house" class="h-6 w-6"></i>
+      Moradias
+    </a>
+  </nav>
+
+  <div class="mx-8 my-6 h-px bg-unihub-line"></div>
+
+  <nav class="grid gap-1 px-5 text-base font-semibold text-unihub-ink">
+    <a href="/notificacoes" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/notificacoes') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+      <i data-lucide="bell" class="h-6 w-6"></i>
+      Notificacoes
+      {% if notificacoes_count %}
+        <span class="ml-auto grid h-6 min-w-6 place-items-center rounded-full bg-[#0B5FEA] px-2 text-xs font-extrabold text-white">{{ notificacoes_count }}</span>
+      {% endif %}
+    </a>
+    <a href="/mensagens" class="flex items-center gap-4 rounded-lg px-4 py-3.5 transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+      <i data-lucide="mail" class="h-6 w-6"></i>
+      Mensagens
+      {% if mensagens_count %}
+        <span class="ml-auto grid h-6 min-w-6 place-items-center rounded-full bg-[#0B5FEA] px-2 text-xs font-extrabold text-white">{{ mensagens_count }}</span>
+      {% endif %}
+    </a>
+  </nav>
+
+  <div class="mx-8 my-6 h-px bg-unihub-line"></div>
+
+  <div class="mt-auto px-5 pb-8 text-base font-semibold text-unihub-ink">
+    <a href="/perfil" class="flex items-center gap-4 rounded-lg px-4 py-3.5 transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+      <i data-lucide="settings" class="h-6 w-6"></i>
+      Configuracoes
+    </a>
+    <form method="post" action="/auth/logout">
+      <input type="hidden" name="redirect_to_home" value="1">
+      <button class="flex w-full items-center gap-4 rounded-lg px-4 py-3.5 text-left transition hover:bg-unihub-surface hover:text-[#0B5FEA]" type="submit">
+        <i data-lucide="log-out" class="h-6 w-6"></i>
+        Sair
+      </button>
+    </form>
+  </div>
+</aside>

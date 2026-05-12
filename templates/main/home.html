@@ -1,0 +1,12 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Inicio - UniHub{% endblock %}
+
+{% block app_content %}
+  <section class="grid gap-6">
+    {% include "components/dashboard/welcome.html" %}
+    {% include "components/dashboard/recent_posts.html" %}
+  </section>
+
+  {% include "components/dashboard/right_column.html" %}
+{% endblock %}

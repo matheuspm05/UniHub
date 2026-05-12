@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from unihub.ext.db import db
 from unihub.models import Mensagem, Usuario
-from unihub.utils.auth import obter_usuario_atual_id
+from unihub.utils.auth import exigir_login, obter_usuario_atual_id
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 
@@ -17,6 +17,7 @@ def _payload():
 
 
 @bp.get("")
+@exigir_login
 def listar_conversas():
     usuario_atual_id = obter_usuario_atual_id()
     mensagens = (
@@ -52,6 +53,7 @@ def listar_conversas():
 
 
 @bp.get("/<int:usuario_id>")
+@exigir_login
 def listar_conversa(usuario_id):
     usuario_atual_id = obter_usuario_atual_id()
     if not db.session.get(Usuario, usuario_id):
@@ -77,6 +79,7 @@ def listar_conversa(usuario_id):
 
 
 @bp.post("")
+@exigir_login
 def enviar_mensagem():
     data, response = _payload()
     if response:
@@ -100,6 +103,7 @@ def enviar_mensagem():
 
 
 @bp.patch("/<int:mensagem_id>/ler")
+@exigir_login
 def marcar_mensagem_como_lida(mensagem_id):
     mensagem = db.session.get(Mensagem, mensagem_id)
     if not mensagem:
@@ -111,6 +115,7 @@ def marcar_mensagem_como_lida(mensagem_id):
 
 
 @bp.delete("/<int:mensagem_id>")
+@exigir_login
 def excluir_mensagem(mensagem_id):
     mensagem = db.session.get(Mensagem, mensagem_id)
     if not mensagem:

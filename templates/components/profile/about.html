@@ -1,0 +1,29 @@
+<section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-extrabold text-unihub-ink">Sobre mim</h2>
+  </div>
+  <p class="mt-5 text-base leading-7 text-unihub-ink">
+    Estudante de {{ current_user.curso }} no {{ current_user.periodo }}. Gosto de programacao, inteligencia artificial
+    e desenvolvimento de software. Estou sempre em busca de novos desafios e oportunidades para aprender e colaborar com outras pessoas.
+  </p>
+
+  <div class="mt-6 grid gap-4 rounded-lg border border-unihub-line p-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% set dados = [
+      ("user-round", "Curso", current_user.curso, "bg-blue-50 text-[#0B5FEA]"),
+      ("calendar-days", "Periodo", current_user.periodo, "bg-blue-50 text-[#0B5FEA]"),
+      ("users", "Ingresso", "2024/1", "bg-emerald-50 text-emerald-600"),
+      ("clock", "Turno", "Manha", "bg-violet-50 text-violet-600")
+    ] %}
+    {% for icone, label, valor, classe in dados %}
+      <div class="flex items-center gap-3">
+        <span class="grid h-10 w-10 place-items-center rounded-full {{ classe }}">
+          <i data-lucide="{{ icone }}" class="h-5 w-5"></i>
+        </span>
+        <span>
+          <span class="block text-sm text-unihub-muted">{{ label }}</span>
+          <span class="block text-sm font-extrabold text-unihub-ink">{{ valor }}</span>
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+</section>

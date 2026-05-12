@@ -9,6 +9,7 @@ class TesteEventos(TesteBase):
         self.assertGreaterEqual(len(resposta.json["data"]), 4)
 
     def test_usuario_comum_nao_cria_evento(self):
+        self.login_usuario(1)
         resposta = self.cliente.post(
             "/eventos",
             json={
@@ -24,9 +25,9 @@ class TesteEventos(TesteBase):
         self.assertEqual(resposta.status_code, 403)
 
     def test_moderador_cria_evento(self):
+        self.login_usuario(3)
         resposta = self.cliente.post(
             "/eventos",
-            headers=self.cabecalho_usuario(3),
             json={
                 "titulo": "Aulao de Python",
                 "descricao": "Encontro pratico",
@@ -41,12 +42,14 @@ class TesteEventos(TesteBase):
         self.assertEqual(resposta.json["data"]["organizador"]["id"], 3)
 
     def test_salva_evento_na_agenda(self):
+        self.login_usuario(1)
         resposta = self.cliente.post("/eventos/1/salvar")
 
         self.assertEqual(resposta.status_code, 201)
         self.assertEqual(resposta.json["data"]["usuario_id"], 1)
 
     def test_nao_duplica_evento_na_agenda(self):
+        self.login_usuario(1)
         self.cliente.post("/eventos/1/salvar")
         resposta = self.cliente.post("/eventos/1/salvar")
 

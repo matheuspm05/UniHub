@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="min-h-screen bg-white">
+    {% include "components/public_navbar.html" %}
+    <main id="conteudo">
+      {% block content %}{% endblock %}
+    </main>
+    {% include "components/public_footer.html" %}
+  </div>
+{% endblock %}

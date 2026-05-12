@@ -2,7 +2,7 @@
 
 Backend Flask da plataforma universitária UniHub.
 
-Nesta etapa o projeto está focado em API JSON, SQLite, SQLAlchemy, Flask-Migrate, Blueprints e regras mockadas de usuário/roles. Ainda não existe login real, JWT, Flask-Login ou frontend Jinja/Tailwind.
+Nesta etapa o projeto está focado em API JSON, SQLite, SQLAlchemy, Flask-Migrate, Blueprints, Flask-Login e regras de acesso por roles. Ainda não existe frontend Jinja/Tailwind.
 
 ## Estrutura
 
@@ -14,7 +14,7 @@ unihub/
   models/               # models SQLAlchemy
   views/                # blueprints e rotas JSON
   services/             # seed e serviços de apoio
-  utils/                # respostas JSON e autenticação mockada
+  utils/                # respostas JSON e helpers de autenticação/permissão
 templates/              # reservado para Jinja no frontend futuro
 static/                 # reservado para assets futuros
 tests/                  # testes automatizados
@@ -118,12 +118,15 @@ Os testes usam SQLite em memória e fazem seed automaticamente.
 python -m unittest
 ```
 
-## Roles Mockadas
+## Autenticação
 
-Ainda não existe login real. Para simular usuário logado, o backend usa:
+O projeto usa Flask-Login com sessão do Flask. Primeiro faça login:
 
-```python
-USUARIO_MOCK_ID = 1
+```bash
+curl -X POST http://127.0.0.1:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email":"lucas.almeida@uvv.br","senha":"senha123"}'
 ```
 
 Usuários principais do seed:
@@ -134,16 +137,22 @@ Usuários principais do seed:
 5 Rafael Souza      admin
 ```
 
-Para testar outra role, envie o header:
+A senha padrão dos usuários do seed é:
+
+```text
+senha123
+```
+
+Para chamar uma rota protegida via cURL, envie o cookie salvo no login:
 
 ```bash
-curl -H "X-Mock-User-Id: 5" http://127.0.0.1:5000/admin/dashboard
+curl -b cookies.txt http://127.0.0.1:5000/auth/me
 ```
 
 Regras atuais:
 
 - `usuario`: cria tópicos, responde fórum, salva eventos e anuncia moradias.
-- `moderador`: pode criar/gerenciar eventos e moderar fórum/moradias.
+- `moderador`: pode criar eventos, criar avisos e moderar fórum/moradias.
 - `admin`: acessa `/admin/*`, gerencia usuários e pode desativar conteúdos.
 
 ## Endpoints Principais
@@ -151,6 +160,10 @@ Regras atuais:
 ```text
 GET    /
 GET    /health
+POST   /auth/cadastro
+POST   /auth/login
+POST   /auth/logout
+GET    /auth/me
 GET    /usuarios
 GET    /usuarios/me
 PATCH  /usuarios/me
@@ -183,25 +196,41 @@ curl http://127.0.0.1:5000/moradias
 Criar tópico:
 
 ```bash
+curl -X POST http://127.0.0.1:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email":"lucas.almeida@uvv.br","senha":"senha123"}'
+
 curl -X POST http://127.0.0.1:5000/forum/topicos \
   -H "Content-Type: application/json" \
+  -b cookies.txt \
   -d '{"titulo":"Duvida Flask","descricao":"Como usar Blueprints?","curso":"Ciencia da Computacao","disciplina":"Web","categoria":"Duvida"}'
 ```
 
 Criar evento como moderador:
 
 ```bash
+curl -X POST http://127.0.0.1:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email":"mariana.costa@uvv.br","senha":"senha123"}'
+
 curl -X POST http://127.0.0.1:5000/eventos \
   -H "Content-Type: application/json" \
-  -H "X-Mock-User-Id: 3" \
+  -b cookies.txt \
   -d '{"titulo":"Workshop Flask","descricao":"API com Flask","categoria":"Workshop","data_evento":"2026-05-20","horario":"19:00","local":"UVV"}'
 ```
 
 Alterar role como admin:
 
 ```bash
+curl -X POST http://127.0.0.1:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email":"rafael.souza@uvv.br","senha":"senha123"}'
+
 curl -X PATCH http://127.0.0.1:5000/admin/usuarios/2/role \
   -H "Content-Type: application/json" \
-  -H "X-Mock-User-Id: 5" \
+  -b cookies.txt \
   -d '{"role":"moderador"}'
 ```

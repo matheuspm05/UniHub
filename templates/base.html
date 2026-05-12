@@ -1,49 +1,70 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#003B8F">
     <title>{% block title %}UniHub{% endblock %}</title>
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                uvv: {
+                  50: "#F2F7FF",
+                  100: "#DCEAFF",
+                  200: "#BFD5FF",
+                  500: "#0B5FEA",
+                  600: "#004CC5",
+                  700: "#003B8F",
+                  900: "#061B3A"
+                },
+                unihub: {
+                  ink: "#07142F",
+                  muted: "#5F6F8D",
+                  line: "#DDE7F3",
+                  surface: "#F7FAFF",
+                  surfaceAlt: "#FBFDFF"
+                }
+              },
+              boxShadow: {
+                soft: "0 28px 80px rgba(7, 20, 47, 0.10)",
+                card: "0 14px 38px rgba(7, 20, 47, 0.08)"
+              },
+              fontFamily: {
+                sans: ["Inter", "ui-sans-serif", "system-ui", "Arial", "sans-serif"]
+              }
+            }
+          }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7fb;
-        color: #1f2937;
+      [x-cloak] { display: none !important; }
+      .dot-grid {
+        background-image: radial-gradient(#9bb7e8 1.2px, transparent 1.2px);
+        background-size: 18px 18px;
       }
-
-      main {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-      }
-
-      section {
-        width: min(640px, 100%);
-        background: #ffffff;
-        border: 1px solid #dbe2ea;
-        border-radius: 8px;
-        padding: 32px;
-        box-sizing: border-box;
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: 2rem;
-      }
-
-      p {
-        margin: 0;
-        line-height: 1.6;
+      .dashed-connector {
+        background-image: radial-gradient(#9bb7e8 1.6px, transparent 1.6px);
+        background-size: 12px 12px;
+        background-repeat: repeat-x;
       }
     </style>
     {% block styles %}{% endblock %}
   </head>
-  <body>
-    <main id="content">
-      {% block content %}{% endblock %}
-    </main>
+  <body class="bg-white font-sans text-unihub-ink antialiased">
+    {% block body %}{% endblock %}
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    </script>
     {% block scripts %}{% endblock %}
   </body>
 </html>

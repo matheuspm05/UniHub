@@ -1,0 +1,118 @@
+{% extends "layouts/auth.html" %}
+
+{% block title %}Criar conta - UniHub{% endblock %}
+
+{% block auth_content %}
+  <div class="rounded-[24px] border border-white bg-white px-7 py-10 shadow-soft sm:px-[3.125rem] sm:py-12">
+    <div class="text-center">
+      <a href="/" class="inline-flex items-center justify-center gap-5" aria-label="UniHub inicio">
+        <img
+          src="{{ url_for('static', filename='imgs/logos/logo.png') }}"
+          alt="Logo UniHub"
+          class="h-20 w-20 object-cover sm:h-24 sm:w-24"
+        >
+        <span class="text-[3.4rem] font-extrabold leading-none tracking-normal text-unihub-ink sm:text-[4rem]">UniHub</span>
+      </a>
+      <h1 class="mt-7 text-4xl font-extrabold tracking-normal text-unihub-ink sm:text-[3.25rem]">Criar conta</h1>
+      <p class="mt-3 text-lg leading-8 text-unihub-muted">Preencha os dados para se cadastrar</p>
+    </div>
+
+    {% if erro %}
+      <div class="mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{{ erro }}</div>
+    {% endif %}
+
+    <form class="mt-10 grid gap-6" method="post" action="/auth/cadastro">
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Nome completo
+        <span class="relative">
+          <i data-lucide="user" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-4 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="text" name="nome" autocomplete="name" placeholder="Digite seu nome completo" required>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        E-mail
+        <span class="relative">
+          <i data-lucide="mail" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-4 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="email" name="email" autocomplete="email" placeholder="Digite seu e-mail institucional ou pessoal" required>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+          Curso
+          <span class="relative">
+            <i data-lucide="graduation-cap" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+            <select class="h-[58px] w-full appearance-none rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-[#5F6F8D] outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" name="curso" required>
+              <option value="" selected disabled>Selecione seu curso</option>
+              <option value="Ciencia da Computacao">Ciencia da Computacao</option>
+              <option value="Engenharia de Software">Engenharia de Software</option>
+              <option value="Sistemas de Informacao">Sistemas de Informacao</option>
+              <option value="Design">Design</option>
+              <option value="Administracao">Administracao</option>
+            </select>
+            <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Periodo
+        <span class="relative">
+          <i data-lucide="calendar-days" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <select class="h-[58px] w-full appearance-none rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-[#5F6F8D] outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" name="periodo" required>
+            <option value="" selected disabled>Selecione seu periodo</option>
+            {% for periodo in ["1 periodo", "2 periodo", "3 periodo", "4 periodo", "5 periodo", "6 periodo", "7 periodo", "8 periodo"] %}
+              <option value="{{ periodo }}">{{ periodo }}</option>
+            {% endfor %}
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Cidade
+        <span class="relative">
+          <i data-lucide="map-pin" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-4 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="text" name="cidade" placeholder="Digite sua cidade" required>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Senha
+        <span class="relative">
+          <i data-lucide="lock" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input id="senha-cadastro" class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="password" name="senha" autocomplete="new-password" placeholder="Crie uma senha" minlength="8" required>
+          <button type="button" data-toggle-password="senha-cadastro" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#6E7E9D] transition hover:text-uvv-700" aria-label="Mostrar senha">
+            <i data-lucide="eye" class="h-6 w-6"></i>
+          </button>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Confirmar senha
+        <span class="relative">
+          <i data-lucide="lock" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input id="senha-confirmacao" class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="password" name="confirmacao_senha" autocomplete="new-password" placeholder="Confirme sua senha" minlength="8" required>
+          <button type="button" data-toggle-password="senha-confirmacao" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#6E7E9D] transition hover:text-uvv-700" aria-label="Mostrar senha">
+            <i data-lucide="eye" class="h-6 w-6"></i>
+          </button>
+        </span>
+        <span class="text-sm font-medium text-unihub-muted">A senha deve ter pelo menos 8 caracteres, com letras e numeros.</span>
+      </label>
+
+      <button class="mt-1 inline-flex h-[58px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#0B5FEA_0%,#2A6BFF_100%)] px-5 text-lg font-extrabold text-white shadow-card transition hover:brightness-95" type="submit">
+        Cadastrar
+      </button>
+    </form>
+
+    <div class="mt-7 flex items-center gap-4 text-unihub-muted">
+      <span class="h-px flex-1 bg-unihub-line"></span>
+      <span class="text-sm font-medium">ou</span>
+      <span class="h-px flex-1 bg-unihub-line"></span>
+    </div>
+
+    <p class="mt-7 text-center text-lg text-unihub-muted">
+      Ja tem uma conta?
+      <a class="font-bold text-[#0B5FEA] hover:text-[#004CC5]" href="/auth/login">Entrar</a>
+    </p>
+  </div>
+{% endblock %}

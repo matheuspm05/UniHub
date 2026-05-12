@@ -8,7 +8,8 @@ class TesteForum(TesteBase):
         self.assertEqual(resposta.status_code, 200)
         self.assertGreaterEqual(len(resposta.json["data"]), 5)
 
-    def test_cria_topico_com_usuario_mockado(self):
+    def test_cria_topico_com_usuario_logado(self):
+        self.login_usuario(1)
         resposta = self.cliente.post(
             "/forum/topicos",
             json={
@@ -24,6 +25,7 @@ class TesteForum(TesteBase):
         self.assertEqual(resposta.json["data"]["autor"]["id"], 1)
 
     def test_usuario_comum_nao_cria_aviso(self):
+        self.login_usuario(1)
         resposta = self.cliente.post(
             "/forum/topicos",
             json={
@@ -39,9 +41,9 @@ class TesteForum(TesteBase):
         self.assertEqual(resposta.status_code, 403)
 
     def test_moderador_cria_aviso(self):
+        self.login_usuario(3)
         resposta = self.cliente.post(
             "/forum/topicos",
-            headers=self.cabecalho_usuario(3),
             json={
                 "titulo": "Aviso de monitoria",
                 "descricao": "Monitoria extra nesta semana.",
@@ -56,7 +58,10 @@ class TesteForum(TesteBase):
         self.assertTrue(resposta.json["data"]["aviso_oficial"])
 
     def test_nao_responde_topico_fechado(self):
-        self.cliente.patch("/forum/topicos/1/fechar", headers=self.cabecalho_usuario(3))
+        self.login_usuario(3)
+        self.cliente.patch("/forum/topicos/1/fechar")
+        self.logout_usuario()
+        self.login_usuario(1)
 
         resposta = self.cliente.post(
             "/forum/topicos/1/respostas",

@@ -9,6 +9,7 @@ class TesteMoradias(TesteBase):
         self.assertGreaterEqual(len(resposta.json["data"]), 3)
 
     def test_cria_moradia(self):
+        self.login_usuario(1)
         resposta = self.cliente.post(
             "/moradias",
             json={
@@ -26,6 +27,7 @@ class TesteMoradias(TesteBase):
         self.assertEqual(resposta.json["data"]["anunciante"]["id"], 1)
 
     def test_valida_preco_negativo(self):
+        self.login_usuario(1)
         resposta = self.cliente.post(
             "/moradias",
             json={
@@ -40,6 +42,7 @@ class TesteMoradias(TesteBase):
         self.assertEqual(resposta.status_code, 400)
 
     def test_usuario_nao_edita_moradia_de_outro(self):
+        self.login_usuario(1)
         resposta = self.cliente.put(
             "/moradias/1",
             json={"titulo": "Tentativa de edicao"},

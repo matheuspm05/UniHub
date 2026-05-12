@@ -1,0 +1,68 @@
+{% extends "layouts/auth.html" %}
+
+{% block title %}Entrar - UniHub{% endblock %}
+
+{% block auth_content %}
+  <div class="rounded-[24px] border border-white bg-white px-7 py-10 shadow-soft sm:px-[3.125rem] sm:py-12">
+    <div class="text-center">
+      <a href="/" class="inline-flex items-center justify-center gap-5" aria-label="UniHub inicio">
+        <img
+          src="{{ url_for('static', filename='imgs/logos/logo.png') }}"
+          alt="Logo UniHub"
+          class="h-20 w-20 object-cover sm:h-24 sm:w-24"
+        >
+        <span class="text-[3.4rem] font-extrabold leading-none tracking-normal text-unihub-ink sm:text-[4rem]">UniHub</span>
+      </a>
+      <h1 class="mt-7 text-4xl font-extrabold tracking-normal text-unihub-ink sm:text-[3.25rem]">Entrar</h1>
+      <p class="mt-3 text-lg leading-8 text-unihub-muted">Acesse sua conta para continuar</p>
+    </div>
+
+    {% if erro %}
+      <div class="mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{{ erro }}</div>
+    {% endif %}
+
+    <form class="mt-10 grid gap-7" method="post" action="/auth/login">
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        E-mail
+        <span class="relative">
+          <i data-lucide="mail" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-4 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="email" name="email" autocomplete="email" placeholder="seu@email.com" required>
+        </span>
+      </label>
+
+      <label class="grid gap-2 text-sm font-bold text-unihub-ink">
+        Senha
+        <span class="relative">
+          <i data-lucide="lock" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
+          <input id="senha-login" class="h-[58px] w-full rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-unihub-ink outline-none transition placeholder:text-[#5F6F8D] focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="password" name="senha" autocomplete="current-password" placeholder="Digite sua senha" required>
+          <button type="button" data-toggle-password="senha-login" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#6E7E9D] transition hover:text-uvv-700" aria-label="Mostrar senha">
+            <i data-lucide="eye" class="h-6 w-6"></i>
+          </button>
+        </span>
+      </label>
+
+      <div class="flex flex-col gap-3 text-sm font-medium text-unihub-muted sm:flex-row sm:items-center sm:justify-between">
+        <label class="flex items-center gap-3">
+          <input class="h-5 w-5 rounded-md border-unihub-line text-uvv-700 focus:ring-uvv-500" type="checkbox" name="lembrar" value="1">
+          Lembrar-me
+        </label>
+        <a href="#" class="font-semibold text-[#0B5FEA] transition hover:text-[#004CC5]">Esqueci minha senha</a>
+      </div>
+
+      <button class="inline-flex h-[58px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#0B5FEA_0%,#2A6BFF_100%)] px-5 text-lg font-extrabold text-white shadow-card transition hover:brightness-95" type="submit">
+        Entrar
+      </button>
+    </form>
+
+    <div class="mt-7 flex items-center gap-4 text-unihub-muted">
+      <span class="h-px flex-1 bg-unihub-line"></span>
+      <span class="text-sm font-medium">ou</span>
+      <span class="h-px flex-1 bg-unihub-line"></span>
+    </div>
+
+    <p class="mt-7 text-center text-lg text-unihub-muted">
+      Nao tem uma conta?
+      <a class="font-bold text-[#0B5FEA] hover:text-[#004CC5]" href="/auth/cadastro">Cadastre-se</a>
+    </p>
+  </div>
+{% endblock %}

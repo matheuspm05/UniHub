@@ -6,6 +6,7 @@ from unihub.utils.auth import (
     usuario_atual_pode_moderar,
     resposta_proibida,
     obter_usuario_atual_id,
+    exigir_login,
     exigir_moderador,
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
@@ -26,7 +27,7 @@ def _missing_fields(data, fields):
 
 
 def _get_autor_id(data):
-    return data.get("autor_id") or data.get("usuario_id") or obter_usuario_atual_id()
+    return obter_usuario_atual_id()
 
 
 def _get_topico_or_404(topico_id):
@@ -79,6 +80,7 @@ def detalhar_topico(topico_id):
 
 
 @bp.post("/topicos")
+@exigir_login
 def criar_topico():
     data, response = _payload()
     if response:
@@ -115,12 +117,12 @@ def criar_topico():
 
 
 @bp.put("/topicos/<int:topico_id>")
+@exigir_login
 def editar_topico(topico_id):
     topico, response = _get_topico_or_404(topico_id)
     if response:
         return response
 
-    # Quando entrar autenticacao real, esta regra deve usar current_user.id.
     if topico.autor_id != obter_usuario_atual_id() and not usuario_atual_pode_moderar():
         return resposta_proibida("Somente o autor ou um moderador pode editar este topico")
 
@@ -185,6 +187,7 @@ def listar_respostas(topico_id):
 
 
 @bp.post("/topicos/<int:topico_id>/respostas")
+@exigir_login
 def criar_resposta(topico_id):
     topico, response = _get_topico_or_404(topico_id)
     if response:
@@ -211,6 +214,7 @@ def criar_resposta(topico_id):
 
 
 @bp.put("/respostas/<int:resposta_id>")
+@exigir_login
 def editar_resposta(resposta_id):
     resposta = db.session.get(ForumResposta, resposta_id)
     if not resposta:
@@ -231,6 +235,7 @@ def editar_resposta(resposta_id):
 
 
 @bp.delete("/respostas/<int:resposta_id>")
+@exigir_login
 def desativar_resposta(resposta_id):
     resposta = db.session.get(ForumResposta, resposta_id)
     if not resposta:
@@ -244,6 +249,7 @@ def desativar_resposta(resposta_id):
 
 
 @bp.get("/meus-posts")
+@exigir_login
 def meus_posts():
     usuario_atual_id = obter_usuario_atual_id()
     topicos = ForumTopico.query.filter_by(autor_id=usuario_atual_id).all()

@@ -1,0 +1,10 @@
+<section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-extrabold text-unihub-ink">Interesses</h2>
+  </div>
+  <div class="mt-5 flex flex-wrap gap-4">
+    {% for interesse in interesses %}
+      <span class="rounded-lg border border-unihub-line bg-[#F2F7FF] px-4 py-2 text-sm font-semibold text-unihub-ink">{{ interesse }}</span>
+    {% endfor %}
+  </div>
+</section>

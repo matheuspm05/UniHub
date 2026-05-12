@@ -5,6 +5,19 @@ except ImportError:
 
 
 CORPOS_ESPERADOS = {
+    ("POST", "/auth/login"): {
+        "email": "lucas.almeida@uvv.br",
+        "senha": "senha123",
+        "lembrar": False,
+    },
+    ("POST", "/auth/cadastro"): {
+        "nome": "Novo Aluno",
+        "email": "novo.aluno@uvv.br",
+        "senha": "senha123",
+        "curso": "Ciencia da Computacao",
+        "periodo": "1o periodo",
+        "cidade": "Vila Velha",
+    },
     ("PATCH", "/usuarios/me"): {
         "nome": "Lucas Almeida",
         "curso": "Ciencia da Computacao",

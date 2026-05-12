@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="min-h-screen bg-[#F8FBFF] text-unihub-ink">
+    <div class="grid min-h-screen lg:grid-cols-[256px_1fr]">
+      {% include "components/dashboard/sidebar.html" %}
+
+      <div class="min-w-0">
+        {% include "components/dashboard/topbar.html" %}
+        <main class="grid w-full max-w-none gap-6 px-5 py-6 sm:px-7 {% block app_main_class %}xl:grid-cols-[1fr_360px]{% endblock %}">
+          {% block app_content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </div>
+{% endblock %}

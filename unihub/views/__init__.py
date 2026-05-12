@@ -1,5 +1,6 @@
 def init_app(app):
     from unihub.views.admin import bp as admin_bp
+    from unihub.views.auth import bp as auth_bp
     from unihub.views.eventos import agenda_bp
     from unihub.views.eventos import bp as eventos_bp
     from unihub.views.forum import bp as forum_bp
@@ -10,6 +11,7 @@ def init_app(app):
     from unihub.views.usuarios import bp as usuarios_bp
 
     app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(forum_bp)
     app.register_blueprint(eventos_bp)

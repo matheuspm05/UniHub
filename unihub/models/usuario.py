@@ -1,9 +1,12 @@
 from datetime import datetime
 
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from unihub.ext.db import db
 
 
-class Usuario(db.Model):
+class Usuario(UserMixin, db.Model):
     __tablename__ = "usuarios"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +62,18 @@ class Usuario(db.Model):
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
             "atualizado_em": self.atualizado_em.isoformat() if self.atualizado_em else None,
         }
+
+    @property
+    def is_active(self):
+        return self.ativo
+
+    def definir_senha(self, senha):
+        self.senha_hash = generate_password_hash(senha)
+
+    def verificar_senha(self, senha):
+        if not self.senha_hash:
+            return False
+        return check_password_hash(self.senha_hash, senha)
 
     def __repr__(self):
         return f"<Usuario {self.email}>"

@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from unihub.ext.db import db
 from unihub.models import Usuario
-from unihub.utils.auth import obter_usuario_atual_id
+from unihub.utils.auth import exigir_login, obter_usuario_atual_id
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 
@@ -16,19 +16,21 @@ def listar_usuarios():
 
 
 @bp.get("/me")
-def usuario_mockado():
+@exigir_login
+def usuario_atual():
     usuario = db.session.get(Usuario, obter_usuario_atual_id())
     if not usuario:
-        return resposta_erro("Usuario mockado nao encontrado", 404)
+        return resposta_erro("Usuario logado nao encontrado", 404)
 
     return resposta_sucesso(dados=usuario.to_dict())
 
 
 @bp.patch("/me")
-def atualizar_usuario_mockado():
+@exigir_login
+def atualizar_usuario_atual():
     usuario = db.session.get(Usuario, obter_usuario_atual_id())
     if not usuario:
-        return resposta_erro("Usuario mockado nao encontrado", 404)
+        return resposta_erro("Usuario logado nao encontrado", 404)
 
     data = request.get_json(silent=True) or {}
     if not data:

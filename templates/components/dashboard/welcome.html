@@ -1,0 +1,46 @@
+<section class="overflow-hidden rounded-xl border border-unihub-line bg-[linear-gradient(135deg,#F1F7FF_0%,#EAF3FF_100%)] p-7 shadow-card">
+  <div class="relative">
+    <div class="absolute right-0 top-0 hidden h-36 w-72 opacity-70 md:block">
+      <span class="absolute right-14 top-2 h-8 w-8 rounded-full bg-uvv-200"></span>
+      <span class="absolute right-3 top-0 h-9 w-9 rounded-full bg-uvv-200"></span>
+      <span class="absolute right-28 top-10 h-8 w-8 rounded-full bg-uvv-200"></span>
+      <span class="absolute right-72 top-20 h-8 w-8 rounded-full bg-uvv-200"></span>
+      <span class="absolute right-44 top-16 h-8 w-8 rounded-full bg-uvv-200"></span>
+      <span class="absolute right-8 top-10 h-1.5 w-20 rotate-[18deg] rounded-full bg-uvv-200"></span>
+      <span class="absolute right-[5.5rem] top-8 h-1.5 w-24 rotate-[34deg] rounded-full bg-uvv-200"></span>
+      <span class="absolute right-[12.5rem] top-14 h-1.5 w-24 rotate-[-70deg] rounded-full bg-uvv-200"></span>
+    </div>
+
+    <div class="relative">
+      <h1 class="text-3xl font-extrabold tracking-normal text-unihub-ink">Ola, {{ current_user.nome.split()[0] }}! <span aria-hidden="true">👋</span></h1>
+      <p class="mt-3 max-w-xl text-base leading-7 text-unihub-ink">
+        Que bom ter voce de volta ao UniHub.<br>
+        Conecte-se, compartilhe e faca parte da comunidade.
+      </p>
+    </div>
+
+    <div class="relative mt-6 grid gap-5 md:grid-cols-3">
+      <a href="/forum" class="grid min-h-[148px] place-items-center rounded-lg border border-unihub-line bg-white p-5 text-center shadow-sm transition hover:border-uvv-500">
+        <span class="grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-[#0B5FEA]">
+          <i data-lucide="messages-square" class="h-8 w-8"></i>
+        </span>
+        <span class="mt-4 text-lg font-extrabold text-unihub-ink">Forum</span>
+        <span class="mt-2 text-sm leading-5 text-unihub-muted">Participe das discussoes<br>e tire duvidas</span>
+      </a>
+      <a href="/eventos" class="grid min-h-[148px] place-items-center rounded-lg border border-unihub-line bg-white p-5 text-center shadow-sm transition hover:border-emerald-500">
+        <span class="grid h-12 w-12 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+          <i data-lucide="calendar" class="h-8 w-8"></i>
+        </span>
+        <span class="mt-4 text-lg font-extrabold text-unihub-ink">Eventos</span>
+        <span class="mt-2 text-sm leading-5 text-unihub-muted">Confira os proximos<br>eventos</span>
+      </a>
+      <a href="/moradias" class="grid min-h-[148px] place-items-center rounded-lg border border-unihub-line bg-white p-5 text-center shadow-sm transition hover:border-violet-500">
+        <span class="grid h-12 w-12 place-items-center rounded-full bg-violet-50 text-violet-600">
+          <i data-lucide="house" class="h-8 w-8"></i>
+        </span>
+        <span class="mt-4 text-lg font-extrabold text-unihub-ink">Moradias</span>
+        <span class="mt-2 text-sm leading-5 text-unihub-muted">Encontre ou anuncie<br>moradias</span>
+      </a>
+    </div>
+  </div>
+</section>

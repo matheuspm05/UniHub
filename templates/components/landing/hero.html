@@ -1,0 +1,57 @@
+<section id="sobre" class="relative scroll-mt-28 overflow-hidden border-b border-unihub-line bg-[radial-gradient(circle_at_top_left,rgba(220,234,255,0.78),transparent_34%),linear-gradient(180deg,#fdfefe_0%,#f6faff_72%,#eef5ff_100%)]">
+  <div class="absolute right-8 top-16 hidden h-80 w-36 opacity-70 dot-grid lg:block"></div>
+  <div class="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:py-20">
+    <div>
+      <h1 class="max-w-2xl text-5xl font-extrabold leading-[0.98] tracking-[-0.04em] text-unihub-ink lg:text-[5.15rem]">
+        Centralize sua vida universitaria em um so lugar
+      </h1>
+      <p class="mt-7 max-w-xl text-[1.02rem] leading-9 text-unihub-muted">
+        O UniHub reune eventos, forum, moradias e agenda em uma unica plataforma feita para estudantes da UVV.
+      </p>
+
+      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+        <a href="/auth/cadastro" class="inline-flex items-center justify-center gap-3 rounded-xl bg-[#0B5FEA] px-8 py-[1.125rem] text-base font-bold text-white shadow-card transition hover:bg-[#004CC5]">
+          Comecar agora
+          <i data-lucide="arrow-right" class="h-5 w-5"></i>
+        </a>
+        <a href="/auth/login" class="inline-flex items-center justify-center rounded-xl border border-[#C7D9FA] bg-[#F4F8FF] px-8 py-[1.125rem] text-base font-bold text-[#0A3F9D] shadow-sm transition hover:border-[#0B5FEA] hover:bg-white hover:text-[#003B8F]">
+          Ja tenho conta
+        </a>
+      </div>
+
+      <div class="mt-12 flex items-center gap-5">
+        <div class="flex -space-x-3">
+          {% for inicial in ["A", "L", "M", "J", "R"] %}
+            <span class="grid h-11 w-11 place-items-center rounded-full border-2 border-white bg-white text-base font-bold text-unihub-ink shadow-sm">{{ inicial }}</span>
+          {% endfor %}
+        </div>
+        <p class="text-base font-semibold leading-6 text-unihub-muted">
+          <span class="block text-[1.05rem] font-extrabold text-uvv-900">+2.500 estudantes da UVV</span>
+          ja fazem parte do UniHub
+        </p>
+      </div>
+    </div>
+
+    <div class="relative">
+      <div class="absolute -left-16 top-20 hidden h-80 w-80 rounded-full border border-uvv-100 lg:block"></div>
+      <div class="relative rounded-[32px] border border-[#d6e5fb] bg-white/90 p-4 shadow-soft backdrop-blur-sm">
+        <img
+          src="{{ url_for('static', filename='imgs/home.png') }}"
+          alt="Preview do dashboard UniHub"
+          class="w-full rounded-[24px] border border-unihub-line object-cover"
+        >
+      </div>
+
+      <div class="absolute -right-7 top-24 hidden grid-cols-1 gap-5 xl:grid">
+        {% for item in [("calendar", "Eventos", "blue"), ("messages-square", "Forum", "violet"), ("home", "Moradias", "emerald"), ("calendar-days", "Agenda", "orange")] %}
+          <div class="flex w-36 items-center gap-3 rounded-2xl border border-unihub-line bg-white px-5 py-4 text-sm font-bold shadow-card">
+            <i data-lucide="{{ item[0] }}" class="h-5 w-5 {% if item[2] == 'blue' %}text-uvv-500{% elif item[2] == 'violet' %}text-violet-600{% elif item[2] == 'emerald' %}text-emerald-600{% else %}text-orange-500{% endif %}"></i>
+            {{ item[1] }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="absolute inset-x-10 -bottom-5 hidden h-12 rounded-full bg-slate-200/70 blur-xl lg:block"></div>
+    </div>
+  </div>
+</section>

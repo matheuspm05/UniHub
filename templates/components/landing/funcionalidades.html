@@ -1,0 +1,114 @@
+<section id="funcionalidades" class="scroll-mt-28 bg-unihub-surface px-5 py-11 sm:px-8">
+  <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
+    <article class="rounded-[28px] border border-unihub-line bg-white p-7 shadow-card">
+      <div class="flex items-start gap-4">
+        <span class="grid h-14 w-14 place-items-center rounded-full bg-blue-100 text-uvv-600">
+          <i data-lucide="calendar-days" class="h-7 w-7"></i>
+        </span>
+        <div>
+          <h2 class="text-xl font-extrabold">Eventos universitarios</h2>
+          <p class="mt-2 text-sm leading-6 text-unihub-muted">Descubra, participe e organize eventos academicos e culturais.</p>
+        </div>
+      </div>
+      <div class="mt-6 overflow-hidden rounded-2xl border border-unihub-line shadow-sm">
+        <div class="h-32 bg-[linear-gradient(135deg,#0a1f49_0%,#003b8f_45%,#2f7ef7_100%)] p-4 text-white">
+          <p class="text-sm font-bold">Semana Academica de Engenharia</p>
+          <p class="mt-2 text-xs text-blue-100">20 a 24 de maio</p>
+          <span class="mt-5 inline-flex rounded-md bg-white/15 px-3 py-1 text-xs font-bold">Evento em destaque</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="rounded-[28px] border border-unihub-line bg-white p-7 shadow-card">
+      <div class="flex items-start gap-4">
+        <span class="grid h-14 w-14 place-items-center rounded-full bg-violet-100 text-violet-600">
+          <i data-lucide="message-circle" class="h-7 w-7"></i>
+        </span>
+        <div>
+          <h2 class="text-xl font-extrabold">Forum academico</h2>
+          <p class="mt-2 text-sm leading-6 text-unihub-muted">Tire duvidas, compartilhe conhecimento e ajude colegas.</p>
+        </div>
+      </div>
+      <div class="mt-6 grid gap-3">
+        <div class="flex items-center justify-between rounded-2xl border border-unihub-line p-3.5">
+          <span class="text-sm font-semibold">Como foi a prova de Calculo I?</span>
+          <span class="rounded-md bg-violet-50 px-2 py-1 text-xs font-bold text-violet-700">12 respostas</span>
+        </div>
+        <div class="flex items-center justify-between rounded-2xl border border-unihub-line p-3.5">
+          <span class="text-sm font-semibold">Indicacao de estagio na area de TI</span>
+          <span class="rounded-md bg-violet-50 px-2 py-1 text-xs font-bold text-violet-700">8 respostas</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="rounded-[28px] border border-unihub-line bg-white p-7 shadow-card">
+      <div class="flex items-start gap-4">
+        <span class="grid h-14 w-14 place-items-center rounded-full bg-emerald-100 text-emerald-600">
+          <i data-lucide="home" class="h-7 w-7"></i>
+        </span>
+        <div>
+          <h2 class="text-xl font-extrabold">Moradias estudantis</h2>
+          <p class="mt-2 text-sm leading-6 text-unihub-muted">Encontre ou anuncie moradias perto da UVV com seguranca.</p>
+        </div>
+      </div>
+      <div class="mt-6 flex gap-4 rounded-2xl border border-unihub-line p-3.5">
+        <img
+          src="{{ url_for('static', filename='imgs/moradias/moradia-home.png') }}"
+          alt="Preview de moradia estudantil"
+          class="h-24 w-32 shrink-0 rounded-lg object-cover"
+        >
+        <div>
+          <p class="font-bold leading-5">Kitnet mobiliada proxima a UVV</p>
+          <p class="mt-2 text-sm text-unihub-muted">1 quarto · 600m</p>
+          <p class="mt-2 font-extrabold text-emerald-600">R$ 1.000/mes</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="rounded-[28px] border border-unihub-line bg-white p-7 shadow-card lg:col-span-1">
+      <div class="flex items-start gap-4">
+        <span class="grid h-14 w-14 place-items-center rounded-full bg-orange-100 text-orange-500">
+          <i data-lucide="calendar" class="h-7 w-7"></i>
+        </span>
+        <div>
+          <h2 class="text-xl font-extrabold">Minha agenda</h2>
+          <p class="mt-2 text-sm leading-6 text-unihub-muted">Organize suas aulas, prazos e compromissos em um so lugar.</p>
+        </div>
+      </div>
+      <div class="mt-6 rounded-2xl border border-unihub-line p-4">
+        <div class="flex items-center justify-between text-sm font-bold">
+          <span>Maio 2026</span>
+          <span class="text-unihub-muted">15</span>
+        </div>
+        <div class="mt-4 flex gap-2 text-center text-xs font-bold">
+          {% for dia in ["11", "12", "13", "14", "15", "16", "17"] %}
+            <span class="grid h-9 w-9 place-items-center rounded-xl {% if dia == '14' %}bg-uvv-700 text-white{% else %}bg-unihub-surfaceAlt text-unihub-muted{% endif %}">{{ dia }}</span>
+          {% endfor %}
+        </div>
+        <div class="mt-4 border-l-4 border-orange-400 pl-3 text-sm">
+          <p class="font-bold">Entrega do trabalho - Design</p>
+          <p class="text-unihub-muted">14:00 · Laboratorio 2</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="rounded-[28px] border border-unihub-line bg-white p-7 shadow-card lg:col-span-2">
+      <div class="flex items-start gap-4">
+        <span class="grid h-14 w-14 place-items-center rounded-full bg-blue-100 text-uvv-600">
+          <i data-lucide="network" class="h-7 w-7"></i>
+        </span>
+        <div>
+          <h2 class="text-xl font-extrabold">Networking</h2>
+          <p class="mt-2 text-sm leading-6 text-unihub-muted">Conecte-se com estudantes, professores e ex-alunos.</p>
+        </div>
+      </div>
+      <div class="mt-7 flex items-center">
+        {% for inicial in ["A", "J", "M", "R", "B"] %}
+          <span class="-mr-2 grid h-14 w-14 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-uvv-100 to-blue-50 text-base font-extrabold text-uvv-700 shadow-sm">{{ inicial }}</span>
+        {% endfor %}
+        <span class="ml-5 grid h-14 w-14 place-items-center rounded-full bg-blue-50 text-sm font-extrabold text-uvv-700">+120</span>
+      </div>
+      <p class="mt-4 text-sm font-semibold text-unihub-muted">Conexoes sugeridas para voce</p>
+    </article>
+  </div>
+</section>

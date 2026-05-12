@@ -5,7 +5,13 @@ from sqlalchemy.exc import IntegrityError
 
 from unihub.ext.db import db
 from unihub.models import AgendaEvento, Evento, Usuario
-from unihub.utils.auth import obter_usuario_atual_id, exigir_moderador
+from unihub.utils.auth import (
+    usuario_atual_e_admin,
+    resposta_proibida,
+    exigir_login,
+    exigir_moderador,
+    obter_usuario_atual_id,
+)
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 
@@ -33,6 +39,10 @@ def _get_evento_or_404(evento_id):
     if not evento:
         return None, resposta_erro("Evento nao encontrado", 404)
     return evento, None
+
+
+def _pode_gerenciar_evento(evento):
+    return evento.organizador_id == obter_usuario_atual_id() or usuario_atual_e_admin()
 
 
 @bp.get("")
@@ -89,7 +99,7 @@ def criar_evento():
     if faltando:
         return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
 
-    organizador_id = data.get("organizador_id") or obter_usuario_atual_id()
+    organizador_id = obter_usuario_atual_id()
     if not db.session.get(Usuario, organizador_id):
         return resposta_erro("Organizador nao encontrado", 404)
 
@@ -120,6 +130,8 @@ def editar_evento(evento_id):
     evento, response = _get_evento_or_404(evento_id)
     if response:
         return response
+    if not _pode_gerenciar_evento(evento):
+        return resposta_proibida("Somente o organizador ou um admin pode editar este evento")
 
     data, response = _payload()
     if response:
@@ -143,6 +155,8 @@ def _alterar_status_evento(evento_id, status, mensagem):
     evento, response = _get_evento_or_404(evento_id)
     if response:
         return response
+    if not _pode_gerenciar_evento(evento):
+        return resposta_proibida("Somente o organizador ou um admin pode alterar este evento")
 
     evento.status = status
     db.session.commit()
@@ -168,6 +182,7 @@ def desativar_evento(evento_id):
 
 
 @bp.post("/<int:evento_id>/salvar")
+@exigir_login
 def salvar_evento(evento_id):
     evento, response = _get_evento_or_404(evento_id)
     if response:
@@ -185,6 +200,7 @@ def salvar_evento(evento_id):
 
 
 @bp.delete("/<int:evento_id>/remover-agenda")
+@exigir_login
 def remover_evento_agenda(evento_id):
     agenda = AgendaEvento.query.filter_by(
         usuario_id=obter_usuario_atual_id(),
@@ -199,6 +215,7 @@ def remover_evento_agenda(evento_id):
 
 
 @bp.get("/meus-eventos")
+@exigir_login
 def meus_eventos():
     eventos = Evento.query.filter_by(
         organizador_id=obter_usuario_atual_id(),
@@ -207,6 +224,7 @@ def meus_eventos():
 
 
 @agenda_bp.get("/agenda")
+@exigir_login
 def listar_agenda():
     agenda = (
         AgendaEvento.query.filter_by(usuario_id=obter_usuario_atual_id())
