@@ -16,8 +16,17 @@ load_dotenv(BASE_DIR / ENV_FILE_BY_CONFIG.get(flask_config, ".env.dev"))
 load_dotenv(BASE_DIR / ".env")
 
 
+def _secret_key():
+    secret_key = os.getenv("SECRET_KEY")
+    if secret_key:
+        return secret_key
+    if flask_config == "production":
+        raise RuntimeError("SECRET_KEY precisa estar configurada em producao")
+    return "dev-secret-key"
+
+
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+    SECRET_KEY = _secret_key()
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
         "sqlite:///unihub.db",

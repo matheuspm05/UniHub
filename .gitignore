@@ -24,5 +24,6 @@ instance/
 .coverage
 htmlcov/
 *.log
+temp.txt
 
 .vscode/

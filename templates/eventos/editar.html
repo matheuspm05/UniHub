@@ -5,9 +5,9 @@
 
 {% block app_content %}
   <section class="mx-auto grid w-full max-w-[1280px] gap-6">
-    <a href="/eventos/meus-eventos" class="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#0B5FEA] transition hover:text-uvv-700">
+    <a href="{{ '/admin/eventos' if current_user.role == 'admin' else '/eventos/meus-eventos' }}" class="inline-flex w-fit items-center gap-2 text-sm font-bold text-[#0B5FEA] transition hover:text-uvv-700">
       <i data-lucide="arrow-left" class="h-5 w-5"></i>
-      Voltar para meus eventos
+      {{ "Voltar para gerenciar eventos" if current_user.role == "admin" else "Voltar para meus eventos" }}
     </a>
 
     <div>
@@ -124,7 +124,7 @@
             </button>
             <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Cancelar este evento?');">
               <input type="hidden" name="status" value="cancelado">
-              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <input type="hidden" name="next" value="{{ '/admin/eventos' if current_user.role == 'admin' else '/eventos/meus-eventos' }}">
               <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-orange-300 text-base font-extrabold text-orange-600 transition hover:bg-orange-50">
                 <i data-lucide="circle-x" class="h-5 w-5"></i>
                 Cancelar evento
@@ -132,7 +132,7 @@
             </form>
             <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Encerrar este evento agora?');">
               <input type="hidden" name="status" value="encerrado">
-              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <input type="hidden" name="next" value="{{ '/admin/eventos' if current_user.role == 'admin' else '/eventos/meus-eventos' }}">
               <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-uvv-300 text-base font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
                 <i data-lucide="flag" class="h-5 w-5"></i>
                 Encerrar evento
@@ -140,7 +140,7 @@
             </form>
             <form method="post" action="/eventos/{{ evento.id }}/status" onsubmit="return confirm('Excluir este evento? Essa acao nao podera ser desfeita.');">
               <input type="hidden" name="status" value="desativado">
-              <input type="hidden" name="next" value="/eventos/meus-eventos">
+              <input type="hidden" name="next" value="{{ '/admin/eventos' if current_user.role == 'admin' else '/eventos/meus-eventos' }}">
               <button type="submit" class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-red-300 text-base font-extrabold text-red-600 transition hover:bg-red-50">
                 <i data-lucide="trash-2" class="h-5 w-5"></i>
                 Excluir evento

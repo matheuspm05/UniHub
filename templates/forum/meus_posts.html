@@ -1,0 +1,135 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Meus posts - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-4xl font-extrabold tracking-normal text-unihub-ink">Meus posts</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">{% if usuario_pode_moderar %}Acompanhe os topicos e avisos que voce criou.{% else %}Acompanhe os topicos que voce criou e as respostas que voce publicou no forum.{% endif %}</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        {% if usuario_pode_moderar %}
+          <a href="/forum/criar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-6 text-sm font-extrabold text-white transition hover:bg-uvv-600">
+            <i data-lucide="plus" class="h-5 w-5"></i>
+            Novo topico
+          </a>
+          <a href="/forum/criar?tipo=aviso" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-6 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+            <i data-lucide="megaphone" class="h-5 w-5"></i>
+            Criar aviso
+          </a>
+        {% endif %}
+        <a href="/forum" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-6 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+          <i data-lucide="external-link" class="h-5 w-5"></i>
+          Ver no forum
+        </a>
+      </div>
+    </div>
+
+    <nav class="flex gap-8 border-b border-unihub-line">
+      <a href="/forum/meus-posts" class="inline-flex items-center border-b-2 border-[#0B5FEA] px-3 pb-4 text-base font-extrabold text-[#0B5FEA]">Meus topicos</a>
+      {% if usuario_pode_moderar %}
+        <a href="#meus-avisos" class="inline-flex items-center px-3 pb-4 text-base font-bold text-unihub-muted transition hover:text-[#0B5FEA]">Meus avisos</a>
+      {% else %}
+        <a href="#minhas-respostas" class="inline-flex items-center px-3 pb-4 text-base font-bold text-unihub-muted transition hover:text-[#0B5FEA]">Minhas respostas</a>
+      {% endif %}
+    </nav>
+
+    <div class="grid gap-4 rounded-lg border border-unihub-line bg-white p-6 shadow-card md:grid-cols-4">
+      <div class="flex items-center gap-4">
+        <span class="grid h-16 w-16 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]"><i data-lucide="list-collapse" class="h-7 w-7"></i></span>
+        <p class="text-sm font-semibold text-unihub-muted">Topicos criados<br><strong class="text-2xl font-extrabold text-unihub-ink">{{ total_topicos }}</strong></p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-700"><i data-lucide="messages-square" class="h-7 w-7"></i></span>
+        <p class="text-sm font-semibold text-unihub-muted">Respostas publicadas<br><strong class="text-2xl font-extrabold text-unihub-ink">{{ total_respostas }}</strong></p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="grid h-16 w-16 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]"><i data-lucide="circle-check" class="h-7 w-7"></i></span>
+        <p class="text-sm font-semibold text-unihub-muted">Topicos resolvidos<br><strong class="text-2xl font-extrabold text-unihub-ink">{{ total_resolvidos }}</strong></p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="grid h-16 w-16 place-items-center rounded-full bg-amber-50 text-amber-600"><i data-lucide="star" class="h-7 w-7"></i></span>
+        <p class="text-sm font-semibold text-unihub-muted">Curtidas recebidas<br><strong class="text-2xl font-extrabold text-unihub-ink">0</strong></p>
+      </div>
+    </div>
+
+    <div class="grid gap-4">
+      {% for topico in topicos %}
+        <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card lg:grid-cols-[1fr_130px_130px_180px_260px] lg:items-center">
+          <div class="flex gap-4">
+            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(current_user.nome) }}</span>
+            <div>
+              <h2 class="text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h2>
+              <p class="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-unihub-muted"><i data-lucide="book-open" class="h-4 w-4"></i>{{ topico.disciplina }}</p>
+              <p class="mt-1 text-sm font-medium text-unihub-muted">Por {{ current_user.nome }} • {{ current_user.periodo }} periodo</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-unihub-muted">Status</p>
+            <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-unihub-muted">Respostas</p>
+            <p class="mt-2 inline-flex items-center gap-2 text-base font-bold text-[#344469]"><i data-lucide="message-circle" class="h-5 w-5"></i>{{ topico.respostas|length }}</p>
+          </div>
+
+          <div>
+            <p class="text-xs font-bold text-unihub-muted">Ultima atualizacao</p>
+            <p class="mt-2 text-sm font-semibold text-[#344469]">{{ topico.atualizado_em.strftime("%d/%m/%Y") if topico.atualizado_em else "hoje" }}</p>
+          </div>
+
+          <div class="grid gap-2 sm:grid-cols-2">
+            <a href="/forum/topicos/{{ topico.id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver topico</a>
+            <a href="/forum/topicos/{{ topico.id }}/editar" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-[#CBD6E6] text-sm font-extrabold text-unihub-muted transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+              <i data-lucide="pencil" class="h-4 w-4"></i>
+              Editar
+            </a>
+          </div>
+        </article>
+      {% else %}
+        <div class="grid min-h-72 place-items-center rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+          <div>
+            <i data-lucide="square-pen" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+            <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Voce ainda nao criou topicos</h2>
+            <p class="mt-2 text-sm font-medium text-unihub-muted">Crie um topico para acompanhar suas discussoes por aqui.</p>
+            <a href="/forum/criar" class="mt-4 inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white">Criar topico</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <section id="{{ 'meus-avisos' if usuario_pode_moderar else 'minhas-respostas' }}" class="rounded-lg border border-unihub-line bg-white p-5 shadow-card">
+      <h2 class="text-xl font-extrabold text-unihub-ink">{% if usuario_pode_moderar %}Meus avisos{% else %}Minhas respostas{% endif %}</h2>
+      <div class="mt-4 grid gap-3">
+        {% if usuario_pode_moderar %}
+          {% for aviso in avisos %}
+            <article class="grid gap-3 rounded-lg border border-unihub-line bg-unihub-surface p-4 md:grid-cols-[1fr_auto_auto] md:items-center">
+              <div>
+                <p class="text-sm font-extrabold text-unihub-ink">{{ aviso.titulo }}</p>
+                <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ aviso.disciplina }} • {{ aviso.status|capitalize }}</p>
+              </div>
+              <a href="/forum/topicos/{{ aviso.id }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-uvv-200 px-4 text-sm font-extrabold text-[#0B5FEA]">Ver topico</a>
+              <a href="/forum/topicos/{{ aviso.id }}/editar" class="inline-flex h-9 items-center justify-center rounded-lg border border-[#CBD6E6] px-4 text-sm font-extrabold text-unihub-muted">Editar</a>
+            </article>
+          {% else %}
+            <p class="text-sm font-semibold text-unihub-muted">Voce ainda nao publicou avisos.</p>
+          {% endfor %}
+        {% else %}
+        {% for resposta in respostas %}
+          <article class="rounded-lg border border-unihub-line bg-unihub-surface p-4">
+            <p class="text-sm font-semibold text-unihub-muted">Em <a href="/forum/topicos/{{ resposta.topico_id }}" class="font-extrabold text-[#0B5FEA]">{{ resposta.topico.titulo if resposta.topico else "topico" }}</a></p>
+            <p class="mt-2 text-sm font-medium leading-6 text-[#344469]">{{ resposta.conteudo }}</p>
+          </article>
+        {% else %}
+          <p class="text-sm font-semibold text-unihub-muted">Voce ainda nao publicou respostas.</p>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </section>
+  </section>
+{% endblock %}

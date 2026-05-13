@@ -11,6 +11,8 @@ class Mensagem(db.Model):
     destinatario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
     conteudo = db.Column(db.Text, nullable=False)
     lida = db.Column(db.Boolean, default=False, nullable=False)
+    removida_pelo_remetente = db.Column(db.Boolean, default=False, nullable=False)
+    removida_pelo_destinatario = db.Column(db.Boolean, default=False, nullable=False)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     remetente = db.relationship(
@@ -33,5 +35,7 @@ class Mensagem(db.Model):
             "destinatario": self.destinatario.to_dict() if self.destinatario else None,
             "conteudo": self.conteudo,
             "lida": self.lida,
+            "removida_pelo_remetente": self.removida_pelo_remetente,
+            "removida_pelo_destinatario": self.removida_pelo_destinatario,
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
         }

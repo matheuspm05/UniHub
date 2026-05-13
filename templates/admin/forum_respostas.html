@@ -1,0 +1,102 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Gerenciar respostas - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="text-sm font-extrabold uppercase tracking-wide text-[#0B5FEA]">Administracao</p>
+        <h1 class="mt-1 text-4xl font-extrabold tracking-normal text-unihub-ink">Gerenciar respostas</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Analise respostas individuais e restaure ou desative conteudos quando necessario.</p>
+      </div>
+      <a href="/admin/forum/topicos" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-uvv-200 bg-white px-6 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+        <i data-lucide="list-checks" class="h-5 w-5"></i>
+        Gerenciar topicos
+      </a>
+    </div>
+
+    <nav class="flex gap-6 border-b border-unihub-line">
+      <a href="/forum" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="compass" class="h-5 w-5"></i>
+        Explorar forum
+      </a>
+      <a href="/admin/forum/topicos" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="list-checks" class="h-5 w-5"></i>
+        Gerenciar topicos
+      </a>
+      <a href="/admin/forum/respostas" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-3 pb-3 text-sm font-extrabold text-[#0B5FEA]">
+        <i data-lucide="message-square-text" class="h-5 w-5"></i>
+        Gerenciar respostas
+      </a>
+    </nav>
+
+    <form method="get" action="/admin/forum/respostas" class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por trecho da resposta ou topico relacionado">
+      </label>
+
+      <div class="flex flex-wrap gap-3">
+        <select name="status" class="h-12 min-w-44 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Status</option>
+          {% for status, label in [("ativo", "Ativo"), ("editado", "Editado"), ("desativado", "Desativado")] %}
+            <option value="{{ status }}" {% if filtros.get('status') == status %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <button class="h-12 rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
+        <a href="/admin/forum/respostas" class="inline-flex h-12 items-center rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Limpar</a>
+      </div>
+    </form>
+
+    <h2 class="text-xl font-extrabold text-unihub-ink">Respostas cadastradas ({{ total_respostas }})</h2>
+
+    <div class="grid gap-3">
+      {% for resposta in respostas %}
+        <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card xl:grid-cols-[240px_1fr_180px_260px] xl:items-center">
+          <div class="flex items-center gap-3">
+            <span class="grid h-12 w-12 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(resposta.autor.nome) if resposta.autor else "UH" }}</span>
+            <div>
+              <p class="text-sm font-extrabold text-unihub-ink">{{ resposta.autor.nome if resposta.autor else "UniHub" }}</p>
+              <p class="text-xs font-semibold text-unihub-muted">{{ resposta.autor.curso if resposta.autor else "Comunidade" }}</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="line-clamp-2 text-sm font-medium leading-6 text-[#1F2D4D]">{{ resposta.conteudo }}</p>
+            <p class="mt-2 text-sm font-semibold text-unihub-muted">Topico: <a href="/forum/topicos/{{ resposta.topico_id }}" class="font-extrabold text-[#0B5FEA]">{{ resposta.topico.titulo if resposta.topico else "Topico removido" }}</a></p>
+          </div>
+
+          <div>
+            <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if resposta.status == 'desativado' %}bg-red-50 text-red-700{% elif resposta.status == 'editado' %}bg-amber-50 text-amber-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">{{ resposta.status|capitalize }}</span>
+            <p class="mt-2 text-sm font-semibold text-unihub-muted">{{ resposta.criado_em.strftime("%d/%m/%Y %H:%M") if resposta.criado_em else "Sem data" }}</p>
+          </div>
+
+          <div class="grid gap-2 sm:grid-cols-2">
+            <a href="/forum/topicos/{{ resposta.topico_id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Ver topico</a>
+            {% if resposta.status == "desativado" %}
+              <form method="post" action="/admin/forum/respostas/{{ resposta.id }}/status" onsubmit="return confirm('Restaurar esta resposta?');">
+                <input type="hidden" name="status" value="ativo">
+                <input type="hidden" name="next" value="/admin/forum/respostas">
+                <button class="inline-flex h-10 w-full items-center justify-center rounded-lg border border-emerald-300 text-sm font-extrabold text-emerald-700 hover:bg-emerald-50" type="submit">Restaurar</button>
+              </form>
+            {% else %}
+              <form method="post" action="/admin/forum/respostas/{{ resposta.id }}/status" onsubmit="return confirm('Desativar esta resposta?');">
+                <input type="hidden" name="status" value="desativado">
+                <input type="hidden" name="next" value="/admin/forum/respostas">
+                <button class="inline-flex h-10 w-full items-center justify-center rounded-lg border border-red-300 text-sm font-extrabold text-red-600 hover:bg-red-50" type="submit">Desativar</button>
+              </form>
+            {% endif %}
+          </div>
+        </article>
+      {% else %}
+        <div class="rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+          <i data-lucide="message-square-off" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+          <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhuma resposta encontrada</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Ajuste os filtros para encontrar outros registros.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

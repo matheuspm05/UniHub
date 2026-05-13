@@ -1,0 +1,134 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Gerenciar forum - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="text-sm font-extrabold uppercase tracking-wide text-[#0B5FEA]">Administracao</p>
+        <h1 class="mt-1 text-4xl font-extrabold tracking-normal text-unihub-ink">Gerenciar forum</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Administre topicos, avisos oficiais e conteudos inadequados.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="/forum/criar" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-6 text-sm font-extrabold text-white shadow-card transition hover:bg-uvv-600">
+          <i data-lucide="plus" class="h-5 w-5"></i>
+          Criar topico
+        </a>
+        <a href="/forum/criar?tipo=aviso" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-uvv-200 bg-white px-6 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+          <i data-lucide="megaphone" class="h-5 w-5"></i>
+          Criar aviso
+        </a>
+      </div>
+    </div>
+
+    <nav class="flex gap-6 border-b border-unihub-line">
+      <a href="/forum" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="compass" class="h-5 w-5"></i>
+        Explorar forum
+      </a>
+      <a href="/admin/forum/topicos" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-3 pb-3 text-sm font-extrabold text-[#0B5FEA]">
+        <i data-lucide="list-checks" class="h-5 w-5"></i>
+        Gerenciar topicos
+      </a>
+      <a href="/admin/forum/respostas" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="message-square-text" class="h-5 w-5"></i>
+        Gerenciar respostas
+      </a>
+    </nav>
+
+    <form method="get" action="/admin/forum/topicos" class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por topico, disciplina, categoria ou palavra-chave">
+      </label>
+
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+        <select name="curso" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Curso</option>
+          {% for curso in cursos %}
+            <option value="{{ curso }}" {% if filtros.get('curso') == curso %}selected{% endif %}>{{ curso }}</option>
+          {% endfor %}
+        </select>
+        <select name="disciplina" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Disciplina</option>
+          {% for disciplina in disciplinas %}
+            <option value="{{ disciplina }}" {% if filtros.get('disciplina') == disciplina %}selected{% endif %}>{{ disciplina }}</option>
+          {% endfor %}
+        </select>
+        <select name="categoria" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Categoria</option>
+          {% for categoria in categorias %}
+            <option value="{{ categoria }}" {% if filtros.get('categoria') == categoria %}selected{% endif %}>{{ categoria }}</option>
+          {% endfor %}
+        </select>
+        <select name="status" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Status</option>
+          {% for status, label in [("aberto", "Aberto"), ("resolvido", "Resolvido"), ("fechado", "Fechado"), ("desativado", "Desativado")] %}
+            <option value="{{ status }}" {% if filtros.get('status') == status %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <div class="flex gap-2">
+          <button class="h-12 rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
+          <a href="/admin/forum/topicos" class="inline-flex h-12 items-center rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Limpar</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Topicos cadastrados ({{ total_topicos }})</h2>
+      <a href="/admin/forum/respostas" class="text-sm font-extrabold text-[#0B5FEA]">Ir para respostas</a>
+    </div>
+
+    <div class="grid gap-3">
+      {% for topico in topicos %}
+        <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card xl:grid-cols-[1fr_220px_150px_260px] xl:items-center">
+          <div>
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-md px-2.5 py-1 text-xs font-extrabold {% if topico.tipo == 'aviso' or topico.aviso_oficial %}bg-orange-50 text-orange-700{% else %}bg-uvv-50 text-[#0B5FEA]{% endif %}">{{ "Aviso oficial" if topico.tipo == "aviso" or topico.aviso_oficial else topico.categoria }}</span>
+              <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% elif topico.status == 'fechado' %}bg-slate-100 text-slate-700{% else %}bg-red-50 text-red-700{% endif %}">{{ topico.status|capitalize }}</span>
+            </div>
+            <h3 class="mt-2 text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h3>
+            <p class="mt-1 line-clamp-2 text-sm font-medium text-[#344469]">{{ topico.descricao }}</p>
+            <p class="mt-2 text-sm font-semibold text-unihub-muted">{{ topico.curso }} • {{ topico.disciplina or "Geral" }}</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(topico.autor.nome) if topico.autor else "UH" }}</span>
+            <div>
+              <p class="text-sm font-extrabold text-unihub-ink">{{ topico.autor.nome if topico.autor else "UniHub" }}</p>
+              <p class="text-xs font-semibold text-unihub-muted">{{ topico.autor.role|capitalize if topico.autor else "Plataforma" }}</p>
+            </div>
+          </div>
+
+          <div class="text-sm font-semibold text-[#344469]">
+            <p class="inline-flex items-center gap-2"><i data-lucide="message-circle" class="h-4 w-4"></i>{{ topico.respostas|length }} resposta{{ "s" if topico.respostas|length != 1 else "" }}</p>
+            <p class="mt-2 text-unihub-muted">{{ topico.atualizado_em.strftime("%d/%m/%Y %H:%M") if topico.atualizado_em else "Sem data" }}</p>
+          </div>
+
+          <div class="grid gap-2 sm:grid-cols-2">
+            <a href="/forum/topicos/{{ topico.id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Ver</a>
+            <a href="/forum/topicos/{{ topico.id }}/editar" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Editar</a>
+            <form method="post" action="/admin/forum/topicos/{{ topico.id }}/status" onsubmit="return confirm('Fechar este topico?');">
+              <input type="hidden" name="status" value="fechado">
+              <input type="hidden" name="next" value="/admin/forum/topicos">
+              <button class="inline-flex h-10 w-full items-center justify-center rounded-lg border border-orange-300 text-sm font-extrabold text-orange-600 hover:bg-orange-50" type="submit">Fechar</button>
+            </form>
+            <form method="post" action="/admin/forum/topicos/{{ topico.id }}/status" onsubmit="return confirm('Desativar este topico? Ele deixara de aparecer para a comunidade.');">
+              <input type="hidden" name="status" value="desativado">
+              <input type="hidden" name="next" value="/admin/forum/topicos">
+              <button class="inline-flex h-10 w-full items-center justify-center rounded-lg border border-red-300 text-sm font-extrabold text-red-600 hover:bg-red-50" type="submit">Desativar</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <div class="rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+          <i data-lucide="messages-square" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+          <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhum topico encontrado</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Ajuste os filtros para encontrar outros registros.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

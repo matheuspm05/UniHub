@@ -5,6 +5,12 @@ from unihub.ext.db import db
 
 class Moradia(db.Model):
     __tablename__ = "moradias"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status in ('disponivel', 'pausado', 'preenchido', 'desativado')",
+            name="ck_moradias_status_valido",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(180), nullable=False)

@@ -117,7 +117,7 @@ def cadastrar_usuario():
     usuario.cidade = str(dados["cidade"])
     usuario.bio = str(dados["bio"]) if dados.get("bio") else None
     usuario.role = "usuario"
-    usuario.selo = str(dados.get("selo", "Aluno"))
+    usuario.selo = "Aluno"
     usuario.definir_senha(str(dados["senha"]))
 
     db.session.add(usuario)

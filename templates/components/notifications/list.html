@@ -1,36 +1,49 @@
 <section class="grid gap-4">
-  {% for grupo in notificacoes_demo %}
-    <div>
-      <h2 class="mb-2 text-sm font-extrabold text-unihub-ink">{{ grupo.grupo }}</h2>
-      <div class="overflow-hidden rounded-lg border border-unihub-line bg-white shadow-card">
-        {% for icone, titulo, meta, texto, hora, classe, unread in grupo.itens %}
-          <article class="flex items-center gap-5 border-b border-unihub-line px-4 py-4 last:border-b-0">
-            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-lg {{ classe }}">
-              <i data-lucide="{{ icone }}" class="h-6 w-6"></i>
-            </span>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-extrabold leading-6 text-unihub-ink">{{ titulo }}</h3>
-              <p class="mt-1 text-sm font-medium text-unihub-muted">{{ meta }}</p>
-              {% if texto %}
-                <p class="mt-1 text-sm font-medium text-unihub-muted">{{ texto }}</p>
-              {% endif %}
-            </div>
-            <div class="flex shrink-0 items-center gap-4 text-sm font-semibold text-unihub-muted">
-              <span>{{ hora }}</span>
-              {% if unread %}
-                <span class="h-2.5 w-2.5 rounded-full bg-[#0B5FEA]"></span>
-              {% else %}
-                <span class="h-2.5 w-2.5"></span>
-              {% endif %}
-            </div>
-          </article>
-        {% endfor %}
-      </div>
+  <div>
+    <h2 class="mb-2 text-sm font-extrabold text-unihub-ink">Suas notificacoes</h2>
+    <div class="overflow-hidden rounded-lg border border-unihub-line bg-white shadow-card">
+      {% for notificacao in notificacoes %}
+        {% set icone = 'bell' %}
+        {% set classe = 'bg-blue-50 text-[#0B5FEA]' %}
+        {% if notificacao.tipo == 'forum' %}
+          {% set icone = 'message-circle' %}
+          {% set classe = 'bg-blue-50 text-[#0B5FEA]' %}
+        {% elif notificacao.tipo == 'evento' %}
+          {% set icone = 'calendar' %}
+          {% set classe = 'bg-orange-50 text-orange-500' %}
+        {% elif notificacao.tipo == 'mensagem' %}
+          {% set icone = 'mail' %}
+          {% set classe = 'bg-emerald-50 text-emerald-600' %}
+        {% endif %}
+        <article class="flex items-center gap-5 border-b border-unihub-line px-4 py-4 last:border-b-0">
+          <span class="grid h-12 w-12 shrink-0 place-items-center rounded-lg {{ classe }}">
+            <i data-lucide="{{ icone }}" class="h-6 w-6"></i>
+          </span>
+          <div class="min-w-0 flex-1">
+            <h3 class="font-extrabold leading-6 text-unihub-ink">{{ notificacao.titulo }}</h3>
+            <p class="mt-1 text-sm font-medium text-unihub-muted">{{ notificacao.mensagem }}</p>
+            {% if notificacao.link %}
+              <a href="{{ notificacao.link }}" class="mt-2 inline-flex text-sm font-extrabold text-[#0B5FEA]">Abrir notificacao</a>
+            {% endif %}
+          </div>
+          <div class="flex shrink-0 items-center gap-4 text-sm font-semibold text-unihub-muted">
+            <span>{{ notificacao.criado_em.strftime('%d/%m/%Y %H:%M') if notificacao.criado_em else '' }}</span>
+            {% if not notificacao.lida %}
+              <span class="h-2.5 w-2.5 rounded-full bg-[#0B5FEA]"></span>
+            {% else %}
+              <span class="h-2.5 w-2.5"></span>
+            {% endif %}
+          </div>
+        </article>
+      {% else %}
+        <div class="px-5 py-12 text-center">
+          <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]">
+            <i data-lucide="bell-off" class="h-6 w-6"></i>
+          </div>
+          <h3 class="mt-4 text-base font-extrabold text-unihub-ink">Nenhuma notificacao por enquanto</h3>
+          <p class="mt-1 text-sm font-medium text-unihub-muted">Quando algo importante acontecer, vai aparecer aqui.</p>
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-
-  <button class="rounded-b-lg border border-unihub-line bg-white px-5 py-4 text-sm font-extrabold text-[#0B5FEA] shadow-card transition hover:bg-uvv-50" type="button">
-    Carregar mais notificacoes
-    <i data-lucide="chevron-down" class="ml-2 inline h-4 w-4 align-middle"></i>
-  </button>
+  </div>
 </section>

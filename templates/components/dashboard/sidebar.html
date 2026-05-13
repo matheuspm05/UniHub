@@ -44,6 +44,21 @@
 
   <div class="mx-8 my-6 h-px bg-unihub-line"></div>
 
+  {% if current_user.role == "admin" %}
+    <nav class="grid gap-1 px-5 text-base font-semibold text-unihub-ink">
+      <a href="/admin/forum/topicos" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/admin/forum') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+        <i data-lucide="shield-check" class="h-6 w-6"></i>
+        Admin forum
+      </a>
+      <a href="/admin/eventos" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/admin/eventos') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+        <i data-lucide="calendar-cog" class="h-6 w-6"></i>
+        Admin eventos
+      </a>
+    </nav>
+
+    <div class="mx-8 my-6 h-px bg-unihub-line"></div>
+  {% endif %}
+
   <nav class="grid gap-1 px-5 text-base font-semibold text-unihub-ink">
     <a href="/notificacoes" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/notificacoes') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="bell" class="h-6 w-6"></i>
@@ -52,7 +67,7 @@
         <span class="ml-auto grid h-6 min-w-6 place-items-center rounded-full bg-[#0B5FEA] px-2 text-xs font-extrabold text-white">{{ notificacoes_count }}</span>
       {% endif %}
     </a>
-    <a href="/mensagens" class="flex items-center gap-4 rounded-lg px-4 py-3.5 transition hover:bg-unihub-surface hover:text-[#0B5FEA]">
+    <a href="/mensagens" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/mensagens') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="mail" class="h-6 w-6"></i>
       Mensagens
       {% if mensagens_count %}
@@ -62,6 +77,10 @@
     <a href="/agenda" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/agenda') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="calendar-check" class="h-6 w-6"></i>
       Minha agenda
+    </a>
+    <a href="/forum/meus-posts" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/forum/meus-posts') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
+      <i data-lucide="square-pen" class="h-6 w-6"></i>
+      Meus posts
     </a>
     <a href="/moradias/meus-anuncios" class="flex items-center gap-4 rounded-lg px-4 py-3.5 {% if request.path.startswith('/moradias/meus-anuncios') or request.path.endswith('/editar') %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
       <i data-lucide="clipboard-list" class="h-6 w-6"></i>

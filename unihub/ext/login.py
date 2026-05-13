@@ -1,3 +1,4 @@
+from flask import redirect, request, url_for
 from flask_login import LoginManager
 
 from unihub.ext.db import db
@@ -18,6 +19,8 @@ def carregar_usuario(usuario_id):
 
 @login_manager.unauthorized_handler
 def usuario_nao_autenticado():
+    if request.accept_mimetypes.best_match(["text/html", "application/json"]) == "text/html":
+        return redirect(url_for("auth.tela_login"))
     return resposta_erro("Autenticacao obrigatoria", 401)
 
 

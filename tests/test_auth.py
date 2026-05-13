@@ -21,6 +21,12 @@ class TesteAuth(TesteBase):
 
         self.assertEqual(resposta.status_code, 401)
 
+    def test_rota_html_protegida_redireciona_para_login(self):
+        resposta = self.cliente.get("/forum/criar", headers={"Accept": "text/html"})
+
+        self.assertEqual(resposta.status_code, 302)
+        self.assertIn("/auth/login", resposta.headers["Location"])
+
     def test_logout_encerra_sessao(self):
         self.login_usuario(1)
         resposta = self.logout_usuario()

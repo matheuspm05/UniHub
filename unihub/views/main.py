@@ -2,18 +2,16 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
-from unihub.models import Evento, ForumTopico, Mensagem, Notificacao, Usuario
+from unihub.models import Evento, ForumTopico, Notificacao, Usuario
 from unihub.utils.responses import resposta_sucesso
+from unihub.utils.view_helpers import contar_mensagens_nao_lidas, iniciais
 
 
 bp = Blueprint("main", __name__)
 
 
 def _iniciais(nome):
-    partes = [parte for parte in nome.split() if parte]
-    if not partes:
-        return "U"
-    return "".join(parte[0].upper() for parte in partes[:2])
+    return iniciais(nome)
 
 
 def _dashboard_contexto():
@@ -35,22 +33,16 @@ def _dashboard_contexto():
         .limit(2)
         .all()
     )
-    notificacoes_count = Notificacao.query.filter_by(
-        usuario_id=usuario_id,
-        lida=False,
-    ).count()
-    mensagens_count = Mensagem.query.filter_by(
-        destinatario_id=usuario_id,
-        lida=False,
-    ).count()
-
     return {
         "iniciais": _iniciais,
         "topicos": topicos,
         "eventos": eventos,
         "conexoes": conexoes,
-        "notificacoes_count": notificacoes_count,
-        "mensagens_count": mensagens_count,
+        "notificacoes_count": Notificacao.query.filter_by(
+            usuario_id=usuario_id,
+            lida=False,
+        ).count(),
+        "mensagens_count": contar_mensagens_nao_lidas(usuario_id),
         "agenda_aulas": [
             {
                 "horario": "10:00\n12:00",

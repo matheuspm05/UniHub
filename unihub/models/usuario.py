@@ -8,6 +8,12 @@ from unihub.ext.db import db
 
 class Usuario(UserMixin, db.Model):
     __tablename__ = "usuarios"
+    __table_args__ = (
+        db.CheckConstraint(
+            "role in ('usuario', 'moderador', 'admin')",
+            name="ck_usuarios_role_valido",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)

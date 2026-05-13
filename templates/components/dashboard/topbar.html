@@ -29,6 +29,17 @@
           <span class="absolute right-1 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-[#0B5FEA] px-1 text-xs font-extrabold text-white">{{ mensagens_count }}</span>
         {% endif %}
       </a>
+      {% if current_user.is_authenticated and current_user.role != "usuario" %}
+        {% set papel_topbar = {"moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize) %}
+        <a href="/perfil" class="hidden items-center gap-3 rounded-full border border-emerald-200 bg-white px-3 py-2 shadow-sm transition hover:bg-emerald-50 md:flex" aria-label="Perfil do usuario">
+          <span class="grid h-10 w-10 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(current_user.nome) }}</span>
+          <span class="leading-tight">
+            <span class="block max-w-32 truncate text-sm font-extrabold text-unihub-ink">{{ current_user.nome }}</span>
+            <span class="mt-0.5 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-extrabold text-emerald-700">{{ papel_topbar }}</span>
+          </span>
+          <i data-lucide="chevron-down" class="h-4 w-4 text-unihub-muted"></i>
+        </a>
+      {% endif %}
     </div>
   </div>
 </header>

@@ -13,8 +13,8 @@
     <article class="rounded-lg border border-unihub-line bg-white p-6 shadow-card">
       <div class="flex flex-wrap gap-2 text-sm font-semibold text-unihub-muted">
         <span class="inline-flex items-center gap-1 rounded-md bg-uvv-50 px-2 py-1 text-xs font-extrabold text-[#0B5FEA]">
-          <i data-lucide="circle-help" class="h-4 w-4"></i>
-          {{ topico.categoria }}
+          <i data-lucide="{{ 'megaphone' if topico.tipo == 'aviso' or topico.aviso_oficial else 'circle-help' }}" class="h-4 w-4"></i>
+          {{ "Aviso oficial" if topico.tipo == "aviso" or topico.aviso_oficial else topico.categoria }}
         </span>
         <span>•</span>
         <span>{{ topico.curso }}</span>
@@ -22,12 +22,15 @@
         <span>{{ topico.disciplina }}</span>
       </div>
 
-      <h1 class="mt-3 text-3xl font-extrabold tracking-normal text-unihub-ink">{{ topico.titulo }}</h1>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-normal text-unihub-ink">{% if topico.tipo == "aviso" or topico.aviso_oficial %}Aviso: {% endif %}{{ topico.titulo }}</h1>
 
       <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-semibold text-unihub-muted">
         <span class="inline-flex items-center gap-3">
           <span class="grid h-11 w-11 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(topico.autor.nome) if topico.autor else "UH" }}</span>
           <strong class="text-unihub-ink">{{ topico.autor.nome if topico.autor else "UniHub" }}</strong>
+          {% if topico.autor and topico.autor.role != "usuario" %}
+            <span class="rounded-full bg-uvv-50 px-2 py-0.5 text-xs font-extrabold text-[#0B5FEA]">{{ topico.autor.role|capitalize }}</span>
+          {% endif %}
         </span>
         <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>
         <span>Criado em {{ topico.criado_em.strftime("%d/%m/%Y") if topico.criado_em else "data indisponivel" }}</span>
@@ -48,12 +51,42 @@
           </button>
         </div>
 
-        {% if usuario_e_autor %}
+        {% if usuario_e_autor or usuario_pode_moderar %}
           <div class="flex flex-wrap gap-3">
-            <button type="button" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-5 text-sm font-extrabold text-[#0B5FEA] opacity-60" title="Edicao completa entra na proxima etapa">
+            <a href="/forum/topicos/{{ topico.id }}/editar" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-5 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
               <i data-lucide="pencil" class="h-4 w-4"></i>
-              Editar topico
-            </button>
+              Editar
+            </a>
+            {% if usuario_pode_moderar and topico.status != "resolvido" %}
+              <form method="post" action="/forum/topicos/{{ topico.id }}/status">
+                <input type="hidden" name="status" value="resolvido">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-uvv-200 px-5 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+                  <i data-lucide="circle-check" class="h-4 w-4"></i>
+                  Marcar como resolvido
+                </button>
+              </form>
+            {% endif %}
+            {% if usuario_pode_moderar and topico.status != "fechado" %}
+              <form method="post" action="/forum/topicos/{{ topico.id }}/status" onsubmit="return confirm('Fechar este topico?');">
+                <input type="hidden" name="status" value="fechado">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-orange-300 px-5 text-sm font-extrabold text-orange-600 transition hover:bg-orange-50">
+                  <i data-lucide="lock" class="h-4 w-4"></i>
+                  Fechar topico
+                </button>
+              </form>
+            {% endif %}
+            {% if current_user.role == "admin" and topico.status != "desativado" %}
+              <form method="post" action="/admin/forum/topicos/{{ topico.id }}/status" onsubmit="return confirm('Desativar este topico? Ele deixara de aparecer para a comunidade.');">
+                <input type="hidden" name="status" value="desativado">
+                <input type="hidden" name="next" value="/admin/forum/topicos">
+                <button type="submit" class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-red-300 px-5 text-sm font-extrabold text-red-600 transition hover:bg-red-50">
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                  Desativar topico
+                </button>
+              </form>
+            {% endif %}
           </div>
         {% endif %}
       </div>
@@ -66,7 +99,7 @@
 
     <div class="grid gap-3">
       {% for resposta in respostas %}
-        <article class="flex gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card">
+        <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card sm:grid-cols-[auto_1fr_auto]">
           <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(resposta.autor.nome) if resposta.autor else "UH" }}</span>
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-unihub-muted">
@@ -80,11 +113,42 @@
               <span>{{ resposta.criado_em.strftime("%d/%m/%Y") if resposta.criado_em else "agora" }}</span>
             </div>
             <p class="mt-2 text-sm font-medium leading-6 text-[#1F2D4D]">{{ resposta.conteudo }}</p>
+            {% if resposta.autor_id == current_user.id %}
+              <details class="mt-3 rounded-lg border border-unihub-line bg-unihub-surface p-3">
+                <summary class="cursor-pointer text-sm font-extrabold text-[#0B5FEA]">Editar resposta</summary>
+                <form method="post" action="/forum/respostas/{{ resposta.id }}/editar" class="mt-3 grid gap-3">
+                  <textarea name="conteudo" required rows="3" class="w-full rounded-lg border border-[#CBD6E6] p-3 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">{{ resposta.conteudo }}</textarea>
+                  <div class="flex justify-end gap-2">
+                    <button type="submit" class="inline-flex h-9 items-center justify-center rounded-lg bg-[#0B5FEA] px-4 text-sm font-extrabold text-white transition hover:bg-uvv-600">Salvar resposta</button>
+                  </div>
+                </form>
+              </details>
+            {% endif %}
           </div>
-          <button type="button" class="hidden h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold text-unihub-muted transition hover:bg-unihub-surface hover:text-[#0B5FEA] sm:inline-flex">
-            <i data-lucide="thumbs-up" class="h-4 w-4"></i>
-            0
-          </button>
+          <div class="flex items-start justify-end gap-2">
+            {% if resposta.autor_id == current_user.id %}
+              <form method="post" action="/forum/respostas/{{ resposta.id }}/remover" onsubmit="return confirm('Remover esta resposta?');">
+                <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold text-red-600 transition hover:bg-red-50">
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                  Remover
+                </button>
+              </form>
+            {% elif current_user.role == "admin" %}
+              <form method="post" action="/admin/forum/respostas/{{ resposta.id }}/status" onsubmit="return confirm('Desativar esta resposta?');">
+                <input type="hidden" name="status" value="desativado">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button type="submit" class="inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold text-red-600 transition hover:bg-red-50">
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                  Desativar
+                </button>
+              </form>
+            {% else %}
+              <button type="button" class="hidden h-9 items-center gap-2 rounded-lg px-3 text-sm font-bold text-unihub-muted transition hover:bg-unihub-surface hover:text-[#0B5FEA] sm:inline-flex">
+                <i data-lucide="thumbs-up" class="h-4 w-4"></i>
+                0
+              </button>
+            {% endif %}
+          </div>
         </article>
       {% else %}
         <div class="rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">

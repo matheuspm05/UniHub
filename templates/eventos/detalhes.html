@@ -123,7 +123,7 @@
           <h2 class="text-lg font-extrabold text-unihub-ink">Informacoes rapidas</h2>
           <div class="mt-5 grid gap-4 text-sm font-semibold text-[#344469]">
             {% if usuario_pode_gerenciar %}
-              <span class="inline-flex items-center gap-3"><i data-lucide="badge-check" class="h-6 w-6 text-emerald-600"></i>Evento criado por voce</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="badge-check" class="h-6 w-6 text-emerald-600"></i>{% if current_user.role == "admin" and evento.organizador_id != current_user.id %}Evento administravel por admin{% else %}Evento criado por voce{% endif %}</span>
               <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
               <span class="inline-flex items-center gap-3"><i data-lucide="eye" class="h-6 w-6 text-violet-600"></i>{{ evento.visualizacoes }} visualizacoes</span>
             {% else %}

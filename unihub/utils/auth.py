@@ -1,5 +1,6 @@
 from functools import wraps
 
+from flask import redirect, request, url_for
 from flask_login import current_user
 
 from unihub.utils.responses import resposta_erro
@@ -42,6 +43,8 @@ def usuario_atual_e_admin():
 
 
 def resposta_nao_autenticada(mensagem="Autenticacao obrigatoria"):
+    if request.accept_mimetypes.best_match(["text/html", "application/json"]) == "text/html":
+        return redirect(url_for("auth.tela_login"))
     return resposta_erro(mensagem, 401)
 
 

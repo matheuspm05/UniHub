@@ -5,6 +5,16 @@ from unihub.ext.db import db
 
 class ForumTopico(db.Model):
     __tablename__ = "forum_topicos"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status in ('aberto', 'resolvido', 'fechado', 'desativado')",
+            name="ck_forum_topicos_status_valido",
+        ),
+        db.CheckConstraint(
+            "tipo in ('topico', 'aviso')",
+            name="ck_forum_topicos_tipo_valido",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(180), nullable=False)
@@ -58,6 +68,12 @@ class ForumTopico(db.Model):
 
 class ForumResposta(db.Model):
     __tablename__ = "forum_respostas"
+    __table_args__ = (
+        db.CheckConstraint(
+            "status in ('ativo', 'editado', 'desativado')",
+            name="ck_forum_respostas_status_valido",
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     conteudo = db.Column(db.Text, nullable=False)

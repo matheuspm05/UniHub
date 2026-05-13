@@ -4,7 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
-from unihub.models import Mensagem, Moradia, Notificacao, Usuario
+from unihub.models import Moradia, Usuario
 from unihub.utils.auth import (
     usuario_atual_pode_moderar,
     resposta_proibida,
@@ -12,6 +12,7 @@ from unihub.utils.auth import (
     obter_usuario_atual_id,
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
+from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
 
 
 bp = Blueprint("moradias", __name__, url_prefix="/moradias")
@@ -32,29 +33,15 @@ def _as_bool(value):
 
 
 def _prefer_html():
-    return request.accept_mimetypes.best_match(["text/html", "application/json"]) == "text/html"
+    return prefere_html()
 
 
 def _iniciais(nome):
-    partes = [parte for parte in nome.split() if parte]
-    if not partes:
-        return "U"
-    return "".join(parte[0].upper() for parte in partes[:2])
+    return iniciais(nome)
 
 
 def _base_contexto():
-    usuario_id = obter_usuario_atual_id()
-    return {
-        "iniciais": _iniciais,
-        "notificacoes_count": Notificacao.query.filter_by(
-            usuario_id=usuario_id,
-            lida=False,
-        ).count(),
-        "mensagens_count": Mensagem.query.filter_by(
-            destinatario_id=usuario_id,
-            lida=False,
-        ).count(),
-    }
+    return contexto_dashboard()
 
 
 def _bairros_disponiveis():
