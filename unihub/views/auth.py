@@ -26,6 +26,14 @@ def _campos_ausentes(dados: dict[str, Any], campos: list[str]):
     return [campo for campo in campos if dados.get(campo) in [None, ""]]
 
 
+def _erro_senha(senha):
+    if len(senha) < 8:
+        return "A senha deve ter pelo menos 8 caracteres"
+    if not any(char.isalpha() for char in senha) or not any(char.isdigit() for char in senha):
+        return "A senha deve conter letras e numeros"
+    return None
+
+
 @bp.post("/login")
 def login():
     dados = _obter_json()
@@ -103,6 +111,13 @@ def cadastrar_usuario():
             return render_template("auth/cadastro.html", erro="As senhas nao conferem."), 400
         return resposta_erro("As senhas nao conferem", 400)
 
+    senha = str(dados["senha"])
+    erro_senha = _erro_senha(senha)
+    if erro_senha:
+        if not request.is_json:
+            return render_template("auth/cadastro.html", erro=erro_senha), 400
+        return resposta_erro(erro_senha, 400)
+
     email = str(dados["email"])
     if Usuario.query.filter_by(email=email).first():
         if not request.is_json:
@@ -118,7 +133,7 @@ def cadastrar_usuario():
     usuario.bio = str(dados["bio"]) if dados.get("bio") else None
     usuario.role = "usuario"
     usuario.selo = "Aluno"
-    usuario.definir_senha(str(dados["senha"]))
+    usuario.definir_senha(senha)
 
     db.session.add(usuario)
     db.session.commit()

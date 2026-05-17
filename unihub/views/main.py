@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
-from unihub.models import Evento, ForumTopico, Notificacao, Usuario
+from unihub.models import AgendaEvento, Evento, ForumResposta, ForumTopico, Notificacao, Usuario
 from unihub.utils.responses import resposta_sucesso
 from unihub.utils.view_helpers import contar_mensagens_nao_lidas, iniciais
 
@@ -33,60 +33,80 @@ def _dashboard_contexto():
         .limit(2)
         .all()
     )
+    eventos_agenda = (
+        AgendaEvento.query.filter_by(usuario_id=usuario_id)
+        .join(Evento)
+        .order_by(Evento.data_evento.asc())
+        .limit(3)
+        .all()
+    )
     return {
         "iniciais": _iniciais,
         "topicos": topicos,
         "eventos": eventos,
+        "eventos_agenda": [item.evento for item in eventos_agenda],
         "conexoes": conexoes,
         "notificacoes_count": Notificacao.query.filter_by(
             usuario_id=usuario_id,
             lida=False,
         ).count(),
         "mensagens_count": contar_mensagens_nao_lidas(usuario_id),
-        "agenda_aulas": [
-            {
-                "horario": "10:00\n12:00",
-                "titulo": "Calculo I",
-                "local": "Sala 203 - Bloco B",
-                "cor": "bg-emerald-500",
-            },
-            {
-                "horario": "14:00\n16:00",
-                "titulo": "Estruturas de Dados",
-                "local": "Sala 105 - Bloco A",
-                "cor": "bg-blue-500",
-            },
-            {
-                "horario": "19:00\n21:00",
-                "titulo": "Projeto Integrador",
-                "local": "Sala 301 - Bloco C",
-                "cor": "bg-violet-500",
-            },
-        ],
     }
 
 
 def _perfil_contexto():
     contexto = _dashboard_contexto()
+    usuario_id = current_user.id
+    topicos_usuario = ForumTopico.query.filter_by(autor_id=usuario_id).all()
+    respostas_usuario = ForumResposta.query.filter_by(autor_id=usuario_id).all()
+    eventos_salvos = AgendaEvento.query.filter_by(usuario_id=usuario_id).count()
+
+    atividades = []
+    topicos_recentes = sorted(
+        topicos_usuario,
+        key=lambda item: item.atualizado_em or item.criado_em,
+        reverse=True,
+    )[:2]
+    for topico in topicos_recentes:
+        atividades.append(
+            (
+                "pencil",
+                "Criou ou atualizou o topico",
+                topico.titulo,
+                topico.atualizado_em.strftime("%d/%m/%Y %H:%M") if topico.atualizado_em else "",
+                "bg-violet-50 text-violet-600",
+            )
+        )
+
+    resposta_recente = (
+        ForumResposta.query.filter_by(autor_id=usuario_id)
+        .order_by(ForumResposta.atualizado_em.desc())
+        .first()
+    )
+    if resposta_recente:
+        atividades.append(
+            (
+                "messages-square",
+                "Respondeu no forum",
+                resposta_recente.topico.titulo if resposta_recente.topico else "Topico removido",
+                resposta_recente.atualizado_em.strftime("%d/%m/%Y %H:%M") if resposta_recente.atualizado_em else "",
+                "bg-blue-50 text-[#0B5FEA]",
+            )
+        )
+
     contexto.update(
         {
             "estatisticas": [
-                ("clipboard-list", "Topicos criados", 8, "bg-blue-50 text-[#0B5FEA]"),
-                ("messages-square", "Respostas", 24, "bg-emerald-50 text-emerald-600"),
-                ("eye", "Visualizacoes recebidas", 156, "bg-violet-50 text-violet-600"),
-                ("users", "Conexoes", 18, "bg-amber-50 text-amber-600"),
+                ("clipboard-list", "Topicos criados", len(topicos_usuario), "bg-blue-50 text-[#0B5FEA]"),
+                ("messages-square", "Respostas", len(respostas_usuario), "bg-emerald-50 text-emerald-600"),
+                ("eye", "Visualizacoes recebidas", sum(topico.visualizacoes for topico in topicos_usuario), "bg-violet-50 text-violet-600"),
+                ("calendar-check", "Eventos salvos", eventos_salvos, "bg-amber-50 text-amber-600"),
             ],
-            "atividades": [
-                ("messages-square", "Respondeu o topico", "Duvida sobre Algoritmos de Ordenacao", "ha 2h", "bg-blue-50 text-[#0B5FEA]"),
-                ("pencil", "Criou o topico", "Indicacao de grupo de estudos", "ha 7h", "bg-violet-50 text-violet-600"),
-                ("calendar", "Confirmou presenca no evento", "Workshop: Git e GitHub", "ontem", "bg-emerald-50 text-emerald-600"),
-            ],
+            "atividades": atividades,
             "interesses": [
-                "Inteligencia Artificial",
-                "Desenvolvimento Web",
-                "Algoritmos",
-                "Banco de Dados",
-                "UI/UX Design",
+                current_user.curso,
+                current_user.periodo,
+                current_user.cidade,
             ],
         }
     )
@@ -136,6 +156,13 @@ def editar_perfil():
         return redirect(url_for("main.perfil"))
 
     return render_template("main/perfil_editar.html", **contexto)
+
+
+@bp.get("/configuracoes")
+def configuracoes():
+    if not current_user.is_authenticated:
+        return redirect(url_for("auth.tela_login"))
+    return render_template("main/configuracoes.html", **_perfil_contexto())
 
 
 @bp.get("/api")

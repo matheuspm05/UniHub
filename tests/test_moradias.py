@@ -17,7 +17,7 @@ class TesteMoradias(TesteBase):
         self.assertIn(b"Anunciar moradia", resposta.data)
         self.assertIn(b"Meus anuncios", resposta.data)
         self.assertIn(b"Usuario", resposta.data)
-        self.assertIn(b"Matricula:", resposta.data)
+        self.assertNotIn(b"Matricula:", resposta.data)
         self.assertIn(b"imagem%20padrao%20moradia.png", resposta.data)
 
     def test_renderiza_detalhes_de_moradia_para_usuario_logado(self):
@@ -123,6 +123,22 @@ class TesteMoradias(TesteBase):
 
         self.assertEqual(resposta.status_code, 201)
         self.assertEqual(resposta.json["data"]["anunciante"]["id"], 1)
+
+    def test_recebe_400_para_status_invalido_ao_criar_moradia(self):
+        self.login_usuario(1)
+        resposta = self.cliente.post(
+            "/moradias",
+            json={
+                "titulo": "Moradia invalida",
+                "descricao": "Teste de validacao.",
+                "bairro": "Boa Vista",
+                "preco_mensal": 900,
+                "numero_vagas": 1,
+                "status": "invalido",
+            },
+        )
+
+        self.assertEqual(resposta.status_code, 400)
 
     def test_valida_preco_negativo(self):
         self.login_usuario(1)

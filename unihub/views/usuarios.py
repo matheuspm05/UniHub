@@ -10,16 +10,7 @@ bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
 
 def _usuario_publico(usuario):
-    return {
-        "id": usuario.id,
-        "nome": usuario.nome,
-        "curso": usuario.curso,
-        "periodo": usuario.periodo,
-        "cidade": usuario.cidade,
-        "bio": usuario.bio,
-        "role": usuario.role,
-        "selo": usuario.selo,
-    }
+    return usuario.to_public_dict()
 
 
 @bp.get("")

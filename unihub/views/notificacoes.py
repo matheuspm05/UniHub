@@ -48,10 +48,14 @@ def listar_notificacoes():
 
     notificacoes = query.order_by(Notificacao.criado_em.desc()).all()
     if _prefer_html():
+        todas = Notificacao.query.filter_by(usuario_id=obter_usuario_atual_id()).all()
         contexto = _base_contexto()
         contexto.update(
             {
                 "notificacoes": notificacoes,
+                "notificacoes_total": len(todas),
+                "notificacoes_nao_lidas": len([item for item in todas if not item.lida]),
+                "tipos_notificacao": sorted({item.tipo for item in todas}),
             }
         )
         return render_template("main/notificacoes.html", **contexto)

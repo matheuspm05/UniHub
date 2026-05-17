@@ -69,6 +69,18 @@ class Usuario(UserMixin, db.Model):
             "atualizado_em": self.atualizado_em.isoformat() if self.atualizado_em else None,
         }
 
+    def to_public_dict(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "curso": self.curso,
+            "periodo": self.periodo,
+            "cidade": self.cidade,
+            "bio": self.bio,
+            "role": self.role,
+            "selo": self.selo,
+        }
+
     @property
     def is_active(self):
         return self.ativo

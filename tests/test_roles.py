@@ -22,6 +22,18 @@ class TesteRoles(TesteBase):
         self.assertEqual(resposta.status_code, 200)
         self.assertGreaterEqual(len(resposta.json["data"]), 5)
 
+    def test_admin_renderiza_tela_de_usuarios_com_busca(self):
+        self.login_usuario(5)
+        resposta = self.cliente.get(
+            "/admin/usuarios?busca=Lucas",
+            headers={"Accept": "text/html"},
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn(b"Usuarios da plataforma", resposta.data)
+        self.assertIn(b"Lucas Almeida", resposta.data)
+        self.assertIn(b"Salvar role", resposta.data)
+
     def test_admin_altera_role_usuario(self):
         self.login_usuario(5)
         resposta = self.cliente.patch(
@@ -32,6 +44,28 @@ class TesteRoles(TesteBase):
         self.assertEqual(resposta.status_code, 200)
         self.assertEqual(resposta.json["data"]["role"], "moderador")
 
+    def test_admin_altera_role_usuario_pelo_html(self):
+        self.login_usuario(5)
+        resposta = self.cliente.post(
+            "/admin/usuarios/2/role",
+            data={"role": "moderador", "next": "/admin/usuarios"},
+            headers={"Accept": "text/html"},
+        )
+        detalhe = self.cliente.get("/admin/usuarios")
+        usuario = next(item for item in detalhe.json["data"] if item["id"] == 2)
+
+        self.assertEqual(resposta.status_code, 302)
+        self.assertEqual(usuario["role"], "moderador")
+
+    def test_admin_nao_remove_propria_role_admin(self):
+        self.login_usuario(5)
+        resposta = self.cliente.patch(
+            "/admin/usuarios/5/role",
+            json={"role": "usuario"},
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+
     def test_admin_desativa_usuario(self):
         self.login_usuario(5)
         resposta = self.cliente.patch(
@@ -40,6 +74,12 @@ class TesteRoles(TesteBase):
 
         self.assertEqual(resposta.status_code, 200)
         self.assertFalse(resposta.json["data"]["ativo"])
+
+    def test_admin_nao_desativa_propria_conta(self):
+        self.login_usuario(5)
+        resposta = self.cliente.patch("/admin/usuarios/5/desativar")
+
+        self.assertEqual(resposta.status_code, 400)
 
     def test_admin_renderiza_telas_de_forum(self):
         self.login_usuario(5)

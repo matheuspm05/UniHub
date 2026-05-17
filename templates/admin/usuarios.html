@@ -1,0 +1,113 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Gerenciar usuarios - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[1320px] gap-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="text-sm font-extrabold uppercase tracking-wide text-[#0B5FEA]">Administracao</p>
+        <h1 class="mt-1 text-4xl font-extrabold tracking-normal text-unihub-ink">Usuarios da plataforma</h1>
+        <p class="mt-2 text-base font-medium text-unihub-muted">Pesquise usuarios e ajuste permissoes de acesso por role.</p>
+      </div>
+      <a href="/admin/dashboard" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-uvv-200 bg-white px-6 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">
+        <i data-lucide="chart-no-axes-combined" class="h-5 w-5"></i>
+        Resumo admin
+      </a>
+    </div>
+
+    <nav class="flex gap-6 overflow-x-auto border-b border-unihub-line">
+      <a href="/admin/usuarios" class="inline-flex items-center gap-2 border-b-2 border-[#0B5FEA] px-3 pb-3 text-sm font-extrabold text-[#0B5FEA]">
+        <i data-lucide="users-round" class="h-5 w-5"></i>
+        Usuarios
+      </a>
+      <a href="/admin/forum/topicos" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="list-checks" class="h-5 w-5"></i>
+        Forum
+      </a>
+      <a href="/admin/eventos" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
+        <i data-lucide="calendar-cog" class="h-5 w-5"></i>
+        Eventos
+      </a>
+    </nav>
+
+    <form method="get" action="/admin/usuarios" class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card">
+      <label class="relative block">
+        <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
+        <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por nome, email, curso ou cidade">
+      </label>
+
+      <div class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+        <select name="role" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Todas as roles</option>
+          {% for role in roles_validas %}
+            <option value="{{ role }}" {% if filtros.get('role') == role %}selected{% endif %}>{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}[role] }}</option>
+          {% endfor %}
+        </select>
+
+        <select name="ativo" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+          <option value="">Todos os status</option>
+          <option value="1" {% if filtros.get('ativo') == "1" %}selected{% endif %}>Ativos</option>
+          <option value="0" {% if filtros.get('ativo') == "0" %}selected{% endif %}>Desativados</option>
+        </select>
+
+        <div class="flex gap-2">
+          <button class="h-12 rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
+          <a href="/admin/usuarios" class="inline-flex h-12 items-center rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Limpar</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Usuarios encontrados ({{ total_usuarios }})</h2>
+      <p class="text-sm font-semibold text-unihub-muted">Admins nao podem remover a propria permissao.</p>
+    </div>
+
+    <div class="grid gap-3">
+      {% for usuario in usuarios %}
+        {% set role_label = {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}.get(usuario.role, usuario.role|capitalize) %}
+        <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card xl:grid-cols-[1fr_190px_300px] xl:items-center">
+          <div class="flex min-w-0 items-center gap-4">
+            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-uvv-50 text-base font-extrabold text-[#0B5FEA]">
+              {{ iniciais(usuario.nome) }}
+            </span>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="truncate text-lg font-extrabold text-unihub-ink">{{ usuario.nome }}</h3>
+                {% if usuario.id == current_user.id %}
+                  <span class="rounded-full bg-uvv-50 px-2.5 py-1 text-xs font-extrabold text-[#0B5FEA]">Voce</span>
+                {% endif %}
+              </div>
+              <p class="truncate text-sm font-semibold text-unihub-muted">{{ usuario.email }}</p>
+              <p class="mt-1 text-sm font-medium text-[#344469]">{{ usuario.curso }} • {{ usuario.periodo }} • {{ usuario.cidade }}</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 xl:grid">
+            <span class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.role == 'admin' %}bg-red-50 text-red-700{% elif usuario.role == 'moderador' %}bg-orange-50 text-orange-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">{{ role_label }}</span>
+            <span class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.ativo %}bg-emerald-50 text-emerald-700{% else %}bg-slate-100 text-slate-700{% endif %}">{{ "Ativo" if usuario.ativo else "Desativado" }}</span>
+          </div>
+
+          <form method="post" action="/admin/usuarios/{{ usuario.id }}/role" class="grid gap-2 sm:grid-cols-[1fr_auto]">
+            <input type="hidden" name="next" value="{{ request.full_path }}">
+            <select name="role" class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-3 text-sm font-bold text-unihub-ink outline-none" {% if usuario.id == current_user.id %}disabled{% endif %}>
+              {% for role in roles_validas %}
+                <option value="{{ role }}" {% if usuario.role == role %}selected{% endif %}>{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}[role] }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-4 text-sm font-extrabold text-white transition hover:bg-uvv-600 disabled:cursor-not-allowed disabled:bg-slate-300" {% if usuario.id == current_user.id %}disabled{% endif %}>
+              Salvar role
+            </button>
+          </form>
+        </article>
+      {% else %}
+        <div class="rounded-lg border border-dashed border-unihub-line bg-white p-8 text-center">
+          <i data-lucide="user-search" class="mx-auto h-10 w-10 text-unihub-muted"></i>
+          <h2 class="mt-4 text-xl font-extrabold text-unihub-ink">Nenhum usuario encontrado</h2>
+          <p class="mt-2 text-sm font-medium text-unihub-muted">Ajuste a busca ou limpe os filtros para ver outros usuarios.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

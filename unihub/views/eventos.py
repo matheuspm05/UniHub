@@ -15,12 +15,14 @@ from unihub.utils.auth import (
     obter_usuario_atual_id,
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
+from unihub.utils.security import safe_redirect_target
 from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
 
 
 bp = Blueprint("eventos", __name__, url_prefix="/eventos")
 agenda_bp = Blueprint("agenda", __name__)
 EVENTO_IMAGEM_PADRAO = "imgs/eventos/foto padrao evento.png"
+STATUS_EVENTO_VALIDOS = {"ativo", "cancelado", "encerrado", "desativado"}
 
 
 def _payload():
@@ -124,6 +126,10 @@ def _criar_evento_com_dados(data):
     except ValueError:
         return None, resposta_erro("data_evento deve estar no formato YYYY-MM-DD", 400)
 
+    status = data.get("status", "ativo")
+    if status not in STATUS_EVENTO_VALIDOS:
+        return None, resposta_erro("Status invalido", 400)
+
     evento = Evento(
         titulo=data["titulo"],
         descricao=data["descricao"],
@@ -131,7 +137,7 @@ def _criar_evento_com_dados(data):
         data_evento=data_evento,
         horario=data["horario"],
         local=data["local"],
-        status=data.get("status", "ativo"),
+        status=status,
         banner_url=data.get("banner_url"),
         organizador_id=organizador_id,
     )
@@ -141,6 +147,9 @@ def _criar_evento_com_dados(data):
 
 
 def _atualizar_evento_com_dados(evento, data):
+    if "status" in data and data["status"] not in STATUS_EVENTO_VALIDOS:
+        return resposta_erro("Status invalido", 400)
+
     for campo in ["titulo", "descricao", "categoria", "horario", "local", "status", "banner_url"]:
         if campo in data:
             setattr(evento, campo, data[campo])
@@ -326,7 +335,11 @@ def _alterar_status_evento(evento_id, status, mensagem):
     evento.status = status
     db.session.commit()
     if _prefer_html():
-        return redirect(request.form.get("next") or url_for("eventos.detalhar_evento", evento_id=evento.id))
+        destino = safe_redirect_target(
+            request.form.get("next"),
+            url_for("eventos.detalhar_evento", evento_id=evento.id),
+        )
+        return redirect(destino)
     return resposta_sucesso(mensagem, dados=evento.to_dict())
 
 
@@ -334,7 +347,7 @@ def _alterar_status_evento(evento_id, status, mensagem):
 @exigir_moderador
 def alterar_status_evento_html(evento_id):
     status = request.form.get("status")
-    if status not in {"ativo", "cancelado", "encerrado", "desativado"}:
+    if status not in STATUS_EVENTO_VALIDOS:
         return resposta_erro("Status invalido", 400)
     mensagens = {
         "ativo": "Evento ativado com sucesso",
@@ -377,11 +390,13 @@ def salvar_evento(evento_id):
     except IntegrityError:
         db.session.rollback()
         if _prefer_html():
-            return redirect(request.form.get("next") or url_for("agenda.listar_agenda"))
+            destino = safe_redirect_target(request.form.get("next"), url_for("agenda.listar_agenda"))
+            return redirect(destino)
         return resposta_sucesso("Evento ja esta salvo na agenda")
 
     if _prefer_html():
-        return redirect(request.form.get("next") or url_for("agenda.listar_agenda"))
+        destino = safe_redirect_target(request.form.get("next"), url_for("agenda.listar_agenda"))
+        return redirect(destino)
 
     return resposta_sucesso("Evento salvo na agenda", dados=agenda.to_dict(), codigo_status=201)
 
@@ -409,7 +424,8 @@ def _remover_evento_agenda(evento_id):
     db.session.delete(agenda)
     db.session.commit()
     if _prefer_html():
-        return redirect(request.form.get("next") or url_for("agenda.listar_agenda"))
+        destino = safe_redirect_target(request.form.get("next"), url_for("agenda.listar_agenda"))
+        return redirect(destino)
     return resposta_sucesso("Evento removido da agenda")
 
 

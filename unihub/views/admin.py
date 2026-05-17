@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, url_for
+from flask_login import current_user
 
 from unihub.ext.db import db
 from unihub.models import (
@@ -12,6 +13,7 @@ from unihub.models import (
 )
 from unihub.utils.auth import exigir_admin
 from unihub.utils.responses import resposta_erro, resposta_sucesso
+from unihub.utils.security import safe_redirect_target
 from unihub.utils.view_helpers import contexto_dashboard
 
 
@@ -103,6 +105,34 @@ def _respostas_query():
         )
 
     return query.order_by(ForumResposta.criado_em.desc())
+
+
+def _usuarios_query():
+    query = Usuario.query
+
+    busca = request.args.get("busca")
+    if busca:
+        termo = f"%{busca}%"
+        query = query.filter(
+            db.or_(
+                Usuario.nome.ilike(termo),
+                Usuario.email.ilike(termo),
+                Usuario.curso.ilike(termo),
+                Usuario.cidade.ilike(termo),
+            )
+        )
+
+    role = request.args.get("role")
+    if role in ROLES_VALIDAS:
+        query = query.filter(Usuario.role == role)
+
+    ativo = request.args.get("ativo")
+    if ativo == "1":
+        query = query.filter(Usuario.ativo.is_(True))
+    elif ativo == "0":
+        query = query.filter(Usuario.ativo.is_(False))
+
+    return query.order_by(Usuario.nome.asc())
 
 
 def _opcoes_distintas(model, campo):
@@ -202,8 +232,31 @@ def listar_todas_respostas():
 @bp.get("/usuarios")
 @exigir_admin
 def listar_usuarios():
-    usuarios = Usuario.query.order_by(Usuario.nome.asc()).all()
+    usuarios = _usuarios_query().all()
+    if _prefer_html():
+        contexto = contexto_dashboard()
+        contexto.update(
+            {
+                "usuarios": usuarios,
+                "total_usuarios": len(usuarios),
+                "filtros": request.args,
+                "roles_validas": ["usuario", "moderador", "admin"],
+            }
+        )
+        return render_template("admin/usuarios.html", **contexto)
+
     return resposta_sucesso(dados=[usuario.to_dict() for usuario in usuarios])
+
+
+def _alterar_role_usuario(usuario, nova_role):
+    if nova_role not in ROLES_VALIDAS:
+        return resposta_erro("Role invalida", 400, {"roles_validas": sorted(ROLES_VALIDAS)})
+    if usuario.id == current_user.id and nova_role != "admin":
+        return resposta_erro("Voce nao pode remover sua propria permissao de admin", 400)
+
+    usuario.role = nova_role
+    db.session.commit()
+    return None
 
 
 @bp.patch("/usuarios/<int:usuario_id>/role")
@@ -218,12 +271,26 @@ def alterar_role_usuario(usuario_id):
         return resposta_erro("JSON vazio ou invalido", 400)
 
     nova_role = dados.get("role")
-    if nova_role not in ROLES_VALIDAS:
-        return resposta_erro("Role invalida", 400, {"roles_validas": sorted(ROLES_VALIDAS)})
+    response = _alterar_role_usuario(usuario, nova_role)
+    if response:
+        return response
 
-    usuario.role = nova_role
-    db.session.commit()
     return resposta_sucesso("Role atualizada com sucesso", dados=usuario.to_dict())
+
+
+@bp.post("/usuarios/<int:usuario_id>/role")
+@exigir_admin
+def alterar_role_usuario_html(usuario_id):
+    usuario = db.session.get(Usuario, usuario_id)
+    if not usuario:
+        return resposta_erro("Usuario nao encontrado", 404)
+
+    response = _alterar_role_usuario(usuario, request.form.get("role"))
+    if response:
+        return response
+
+    destino = safe_redirect_target(request.form.get("next"), url_for("admin.listar_usuarios"))
+    return redirect(destino)
 
 
 @bp.patch("/usuarios/<int:usuario_id>/desativar")
@@ -232,6 +299,8 @@ def desativar_usuario(usuario_id):
     usuario = db.session.get(Usuario, usuario_id)
     if not usuario:
         return resposta_erro("Usuario nao encontrado", 404)
+    if usuario.id == current_user.id:
+        return resposta_erro("Voce nao pode desativar sua propria conta", 400)
 
     usuario.ativo = False
     db.session.commit()
@@ -263,7 +332,7 @@ def alterar_status_topico_html(topico_id):
 
     topico.status = status
     db.session.commit()
-    return redirect(request.form.get("next") or url_for("admin.listar_todos_topicos"))
+    return redirect(safe_redirect_target(request.form.get("next"), url_for("admin.listar_todos_topicos")))
 
 
 @bp.patch("/forum/respostas/<int:resposta_id>/desativar")
@@ -303,4 +372,4 @@ def alterar_status_resposta_html(resposta_id):
 
     resposta.status = status
     db.session.commit()
-    return redirect(request.form.get("next") or url_for("admin.listar_todas_respostas"))
+    return redirect(safe_redirect_target(request.form.get("next"), url_for("admin.listar_todas_respostas")))

@@ -29,6 +29,9 @@
           </span>
         </div>
       {% endfor %}
+      {% if not atividades %}
+        <p class="py-4 text-sm font-semibold text-unihub-muted">Nenhuma atividade recente registrada.</p>
+      {% endif %}
     </div>
     <div class="pt-4 text-center">
       <a href="/forum" class="text-sm font-extrabold text-[#0B5FEA] hover:text-[#004CC5]">Ver toda atividade</a>
@@ -36,16 +39,11 @@
   </section>
 
   <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
-    <h2 class="text-xl font-extrabold text-unihub-ink">Conexoes em comum <span class="text-[#0B5FEA]">(5)</span></h2>
+    <h2 class="text-xl font-extrabold text-unihub-ink">Conexoes sugeridas <span class="text-[#0B5FEA]">({{ conexoes|length }})</span></h2>
     <div class="mt-5 flex items-center">
       {% for pessoa in conexoes %}
         <span class="-mr-2 grid h-12 w-12 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-uvv-100 to-white text-sm font-extrabold text-[#0B5FEA] shadow-sm">
           {{ iniciais(pessoa.nome) }}
-        </span>
-      {% endfor %}
-      {% for extra in ["AM", "JR", "BC"] %}
-        <span class="-mr-2 grid h-12 w-12 place-items-center rounded-full border-4 border-white bg-gradient-to-br from-slate-100 to-white text-sm font-extrabold text-unihub-muted shadow-sm">
-          {{ extra }}
         </span>
       {% endfor %}
     </div>

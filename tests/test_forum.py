@@ -189,6 +189,22 @@ class TesteForum(TesteBase):
         self.assertEqual(resposta.status_code, 201)
         self.assertTrue(resposta.json["data"]["aviso_oficial"])
 
+    def test_moderador_recebe_400_para_tipo_invalido(self):
+        self.login_usuario(3)
+        resposta = self.cliente.post(
+            "/forum/topicos",
+            json={
+                "titulo": "Tipo invalido",
+                "descricao": "Teste de validacao.",
+                "curso": "Ciencia da Computacao",
+                "disciplina": "Banco de Dados",
+                "categoria": "Aviso",
+                "tipo": "comunicado",
+            },
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+
     def test_moderador_ve_identificacao_e_acoes_no_forum(self):
         self.login_usuario(3)
         resposta = self.cliente.get("/forum", headers={"Accept": "text/html"})

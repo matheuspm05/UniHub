@@ -11,10 +11,13 @@ from unihub.utils.auth import (
     exigir_moderador,
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
+from unihub.utils.security import safe_redirect_target
 from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
 
 
 bp = Blueprint("forum", __name__, url_prefix="/forum")
+STATUS_TOPICO_VALIDOS = {"aberto", "resolvido", "fechado", "desativado"}
+TIPOS_TOPICO_VALIDOS = {"topico", "aviso"}
 
 
 def _prefer_html():
@@ -130,6 +133,8 @@ def _criar_topico_com_dados(data):
         return None, resposta_erro("Autor nao encontrado", 404)
 
     tipo = data.get("tipo", "topico")
+    if tipo not in TIPOS_TOPICO_VALIDOS:
+        return None, resposta_erro("Tipo invalido", 400)
     if tipo == "aviso" and not usuario_atual_pode_moderar():
         return None, resposta_proibida("Somente moderadores podem criar avisos oficiais")
 
@@ -163,6 +168,11 @@ def _atualizar_topico_com_dados(topico, data, pode_moderar):
             return resposta_proibida(
                 "Somente moderadores podem alterar status, tipo ou aviso_oficial"
             )
+
+    if "status" in data and data["status"] not in STATUS_TOPICO_VALIDOS:
+        return resposta_erro("Status invalido", 400)
+    if "tipo" in data and data["tipo"] not in TIPOS_TOPICO_VALIDOS:
+        return resposta_erro("Tipo invalido", 400)
 
     obrigatorios = ["titulo", "descricao", "curso", "disciplina", "categoria"]
     faltando = _missing_fields(data, obrigatorios)
@@ -365,7 +375,11 @@ def _alterar_status_topico(topico_id, status, mensagem):
     topico.status = status
     db.session.commit()
     if _prefer_html():
-        return redirect(request.form.get("next") or url_for("forum.detalhar_topico", topico_id=topico.id))
+        destino = safe_redirect_target(
+            request.form.get("next"),
+            url_for("forum.detalhar_topico", topico_id=topico.id),
+        )
+        return redirect(destino)
     return resposta_sucesso(mensagem, dados=topico.to_dict())
 
 
@@ -373,7 +387,7 @@ def _alterar_status_topico(topico_id, status, mensagem):
 @exigir_moderador
 def alterar_status_topico_html(topico_id):
     status = request.form.get("status")
-    if status not in {"aberto", "resolvido", "fechado", "desativado"}:
+    if status not in STATUS_TOPICO_VALIDOS:
         return resposta_erro("Status invalido", 400)
     mensagens = {
         "aberto": "Topico reaberto com sucesso",

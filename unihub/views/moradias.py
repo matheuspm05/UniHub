@@ -17,6 +17,7 @@ from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
 
 bp = Blueprint("moradias", __name__, url_prefix="/moradias")
 MORADIA_IMAGEM_PADRAO = "imgs/moradias/imagem padrao moradia.png"
+STATUS_MORADIA_VALIDOS = {"disponivel", "pausado", "preenchido", "desativado"}
 
 
 def _payload():
@@ -79,6 +80,8 @@ def _validar_moradia(data, partial=False):
         return resposta_erro("preco_mensal nao pode ser negativo", 400)
     if "numero_vagas" in data and int(data["numero_vagas"]) < 1:
         return resposta_erro("numero_vagas deve ser maior ou igual a 1", 400)
+    if "status" in data and data["status"] not in STATUS_MORADIA_VALIDOS:
+        return resposta_erro("Status invalido", 400)
     return None
 
 
@@ -336,7 +339,7 @@ def editar_moradia_html(moradia_id):
 @exigir_login
 def alterar_status_moradia_html(moradia_id):
     status = request.form.get("status")
-    if status not in ["disponivel", "pausado", "preenchido", "desativado"]:
+    if status not in STATUS_MORADIA_VALIDOS:
         return resposta_erro("Status invalido", 400)
 
     moradia, response = _get_moradia_or_404(moradia_id)

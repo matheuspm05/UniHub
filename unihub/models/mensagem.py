@@ -30,9 +30,9 @@ class Mensagem(db.Model):
         return {
             "id": self.id,
             "remetente_id": self.remetente_id,
-            "remetente": self.remetente.to_dict() if self.remetente else None,
+            "remetente": self.remetente.to_public_dict() if self.remetente else None,
             "destinatario_id": self.destinatario_id,
-            "destinatario": self.destinatario.to_dict() if self.destinatario else None,
+            "destinatario": self.destinatario.to_public_dict() if self.destinatario else None,
             "conteudo": self.conteudo,
             "lida": self.lida,
             "removida_pelo_remetente": self.removida_pelo_remetente,

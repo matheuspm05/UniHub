@@ -69,6 +69,23 @@ class TesteEventos(TesteBase):
         self.assertEqual(resposta.status_code, 201)
         self.assertEqual(resposta.json["data"]["organizador"]["id"], 3)
 
+    def test_moderador_recebe_400_para_status_invalido_ao_criar_evento(self):
+        self.login_usuario(3)
+        resposta = self.cliente.post(
+            "/eventos",
+            json={
+                "titulo": "Evento invalido",
+                "descricao": "Descricao",
+                "categoria": "Workshop",
+                "data_evento": "2026-05-20",
+                "horario": "19:00",
+                "local": "UVV",
+                "status": "invalido",
+            },
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+
     def test_moderador_acessa_telas_de_gestao_de_eventos(self):
         self.login_usuario(3)
 

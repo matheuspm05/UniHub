@@ -1,0 +1,73 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Configuracoes - UniHub{% endblock %}
+{% block app_main_class %}grid-cols-1{% endblock %}
+
+{% block app_content %}
+  <section class="mx-auto grid w-full max-w-[980px] gap-6">
+    <div>
+      <nav class="flex items-center gap-3 text-sm font-medium text-unihub-muted" aria-label="Breadcrumb">
+        <a href="/dashboard" class="hover:text-[#0B5FEA]">Inicio</a>
+        <i data-lucide="chevron-right" class="h-4 w-4"></i>
+        <span class="font-semibold text-unihub-ink">Configuracoes</span>
+      </nav>
+      <h1 class="mt-5 text-3xl font-extrabold text-unihub-ink">Configuracoes</h1>
+      <p class="mt-2 text-base text-unihub-muted">Confira os dados da sua conta e acesse as preferencias basicas.</p>
+    </div>
+
+    <section class="grid gap-4 rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <span class="grid h-16 w-16 place-items-center rounded-full bg-uvv-50 text-lg font-extrabold text-[#0B5FEA]">
+            {{ iniciais(current_user.nome) }}
+          </span>
+          <div>
+            <h2 class="text-xl font-extrabold text-unihub-ink">{{ current_user.nome }}</h2>
+            <p class="text-sm font-semibold text-unihub-muted">{{ current_user.email }}</p>
+          </div>
+        </div>
+        <a href="/perfil/editar" class="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white transition hover:bg-uvv-600">
+          <i data-lucide="user-pen" class="h-5 w-5"></i>
+          Editar perfil
+        </a>
+      </div>
+
+      <div class="grid gap-4 border-t border-unihub-line pt-5 md:grid-cols-3">
+        {% set dados = [
+          ("shield-check", "Permissao", {"usuario": "Usuario comum", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize)),
+          ("badge-check", "Status", "Ativo" if current_user.ativo else "Desativado"),
+          ("map-pin", "Cidade", current_user.cidade)
+        ] %}
+        {% for icone, label, valor in dados %}
+          <div class="rounded-lg border border-unihub-line bg-unihub-surface p-4">
+            <span class="inline-flex items-center gap-2 text-sm font-bold text-unihub-muted">
+              <i data-lucide="{{ icone }}" class="h-4 w-4"></i>
+              {{ label }}
+            </span>
+            <p class="mt-2 text-base font-extrabold text-unihub-ink">{{ valor }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="grid gap-4 rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+      <h2 class="text-xl font-extrabold text-unihub-ink">Preferencias basicas</h2>
+      <div class="grid gap-3">
+        <label class="flex items-center justify-between gap-4 rounded-lg border border-unihub-line p-4">
+          <span>
+            <span class="block text-sm font-extrabold text-unihub-ink">Receber notificacoes da comunidade</span>
+            <span class="block text-sm font-medium text-unihub-muted">{{ notificacoes_count }} notificacao{{ "es" if notificacoes_count != 1 else "" }} nao lida{{ "s" if notificacoes_count != 1 else "" }}</span>
+          </span>
+          <input type="checkbox" checked class="h-5 w-5 accent-[#0B5FEA]">
+        </label>
+        <label class="flex items-center justify-between gap-4 rounded-lg border border-unihub-line p-4">
+          <span>
+            <span class="block text-sm font-extrabold text-unihub-ink">Alertas de mensagens</span>
+            <span class="block text-sm font-medium text-unihub-muted">{{ mensagens_count }} mensagem{{ "s" if mensagens_count != 1 else "" }} nao lida{{ "s" if mensagens_count != 1 else "" }}</span>
+          </span>
+          <input type="checkbox" checked class="h-5 w-5 accent-[#0B5FEA]">
+        </label>
+      </div>
+    </section>
+  </section>
+{% endblock %}

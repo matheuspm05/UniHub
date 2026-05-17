@@ -61,8 +61,10 @@
             <span class="grid h-16 w-16 place-items-center rounded-full bg-unihub-ink text-lg font-extrabold text-white">{{ iniciais(evento.organizador.nome) if evento.organizador else "UH" }}</span>
             <div>
               <p class="text-base font-extrabold text-unihub-ink">{{ evento.organizador.nome if evento.organizador else "UniHub" }}</p>
-              <p class="text-sm font-medium text-unihub-muted">Entidade estudantil</p>
-              <a href="#" class="mt-1 inline-flex items-center gap-1 text-sm font-extrabold text-[#0B5FEA]">Ver perfil <i data-lucide="external-link" class="h-4 w-4"></i></a>
+              <p class="text-sm font-medium text-unihub-muted">{{ evento.organizador.curso if evento.organizador else "Plataforma" }}</p>
+              {% if evento.organizador %}
+                <a href="/usuarios/{{ evento.organizador.id }}" class="mt-1 inline-flex items-center gap-1 text-sm font-extrabold text-[#0B5FEA]">Ver perfil <i data-lucide="external-link" class="h-4 w-4"></i></a>
+              {% endif %}
             </div>
           </div>
         </section>

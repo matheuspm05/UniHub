@@ -47,7 +47,7 @@ class Moradia(db.Model):
             "status": self.status,
             "imagem_url": self.imagem_url,
             "anunciante_id": self.anunciante_id,
-            "anunciante": self.anunciante.to_dict() if self.anunciante else None,
+            "anunciante": self.anunciante.to_public_dict() if self.anunciante else None,
             "visualizacoes": self.visualizacoes,
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
             "atualizado_em": self.atualizado_em.isoformat() if self.atualizado_em else None,

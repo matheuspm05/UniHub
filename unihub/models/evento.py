@@ -46,7 +46,7 @@ class Evento(db.Model):
             "status": self.status,
             "banner_url": self.banner_url,
             "organizador_id": self.organizador_id,
-            "organizador": self.organizador.to_dict() if self.organizador else None,
+            "organizador": self.organizador.to_public_dict() if self.organizador else None,
             "visualizacoes": self.visualizacoes,
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
             "atualizado_em": self.atualizado_em.isoformat() if self.atualizado_em else None,

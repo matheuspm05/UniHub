@@ -23,11 +23,41 @@ migrations/             # Flask-Migrate/Alembic
 
 ## Instalar
 
+Depois de clonar o repositório, entre na pasta do projeto:
+
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd Unihub
+```
+
+Linux:
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -e .
+```
+
+Windows PowerShell:
+
+```powershell
+py -3 -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -e .
+```
+
+Windows CMD:
+
+```bat
+py -3 -m venv venv
+venv\Scripts\activate.bat
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
 ## Configurar ambiente
@@ -43,6 +73,12 @@ DATABASE_URL=sqlite:///unihub.db
 ```
 
 Se `DATABASE_URL` não existir, o fallback é SQLite local.
+
+Se quiser gerar os arquivos de ambiente automaticamente:
+
+```bash
+python make_env.py
+```
 
 ## Migrations
 
@@ -90,6 +126,22 @@ Com invoke:
 invoke dev
 ```
 
+O `tasks.py` foi preparado para Linux e Windows. Se o `invoke` estiver instalado no ambiente virtual, estes atalhos funcionam nos dois sistemas:
+
+```bash
+invoke install
+invoke db-upgrade
+invoke seed
+invoke test
+invoke dev
+```
+
+No Windows, se o comando `invoke` não estiver disponível no terminal atual, use:
+
+```powershell
+python -m invoke dev
+```
+
 Se a porta 5000 estiver ocupada:
 
 ```bash
@@ -123,13 +175,27 @@ http://127.0.0.1:5000/swagger.json
 Os testes usam SQLite em memória e fazem seed automaticamente.
 
 ```bash
+python -m unittest
+```
+
+Com invoke:
+
+```bash
+invoke test
+```
+
+Sem ativar o ambiente virtual:
+
+Linux:
+
+```bash
 ./venv/bin/python -m unittest
 ```
 
-Alternativa sem ativar o ambiente virtual:
+Windows:
 
-```bash
-python3 -m unittest
+```powershell
+.\venv\Scripts\python.exe -m unittest
 ```
 
 ## Autenticação
