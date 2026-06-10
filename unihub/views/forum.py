@@ -14,7 +14,7 @@ from unihub.utils.auth import (
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 from unihub.utils.security import safe_redirect_target
-from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
+from unihub.utils.view_helpers import contexto_dashboard, prefere_html
 
 
 bp = Blueprint("forum", __name__, url_prefix="/forum")
@@ -26,10 +26,6 @@ CATEGORIAS_VALIDAS = {valor for valor, _ in TOPICO_CATEGORIAS}
 
 def _prefer_html():
     return prefere_html()
-
-
-def _iniciais(nome):
-    return iniciais(nome)
 
 
 def _base_contexto():

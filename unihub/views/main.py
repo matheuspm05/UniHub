@@ -1,6 +1,3 @@
-import calendar
-from datetime import date
-
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -13,10 +10,6 @@ from unihub.utils.view_helpers import iniciais
 
 
 bp = Blueprint("main", __name__)
-
-
-def _iniciais(nome):
-    return iniciais(nome)
 
 
 def _dashboard_contexto():
@@ -50,7 +43,7 @@ def _dashboard_contexto():
         .all()
     )
     return {
-        "iniciais": _iniciais,
+        "iniciais": iniciais,
         "topicos": topicos,
         "eventos": eventos,
         "eventos_agenda": [item.evento for item in eventos_agenda],
@@ -119,24 +112,6 @@ def _perfil_contexto():
         }
     )
     return contexto
-
-
-def _calendario_agenda(eventos):
-    referencia = eventos[0].data_evento if eventos else date.today()
-    semanas = calendar.Calendar(firstweekday=6).monthdatescalendar(
-        referencia.year,
-        referencia.month,
-    )
-    datas_eventos = {evento.data_evento for evento in eventos}
-    hoje = date.today()
-    return {
-        "mes_label": f"{calendar.month_name[referencia.month]} {referencia.year}",
-        "dias_semana": ["D", "S", "T", "Q", "Q", "S", "S"],
-        "semanas": semanas,
-        "mes_referencia": referencia.month,
-        "datas_eventos": datas_eventos,
-        "hoje": hoje,
-    }
 
 
 @bp.get("/")

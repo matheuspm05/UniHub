@@ -25,5 +25,6 @@ instance/
 htmlcov/
 *.log
 temp.txt
+Logins.txt
 
 .vscode/

@@ -5,7 +5,7 @@ from unihub.ext.db import db
 from unihub.models import Notificacao
 from unihub.utils.auth import exigir_login, obter_usuario_atual_id
 from unihub.utils.responses import resposta_erro, resposta_sucesso
-from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
+from unihub.utils.view_helpers import contexto_dashboard, prefere_html
 
 
 bp = Blueprint("notificacoes", __name__, url_prefix="/notificacoes")
@@ -15,10 +15,6 @@ def _as_bool(value):
     if value is None:
         return None
     return str(value).lower() in ["1", "true", "sim", "yes"]
-
-
-def _iniciais(nome):
-    return iniciais(nome)
 
 
 def _prefer_html():

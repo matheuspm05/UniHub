@@ -13,7 +13,7 @@ from unihub.utils.auth import (
     obter_usuario_atual_id,
 )
 from unihub.utils.responses import resposta_erro, resposta_sucesso
-from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
+from unihub.utils.view_helpers import contexto_dashboard, prefere_html
 
 
 bp = Blueprint("moradias", __name__, url_prefix="/moradias")
@@ -36,10 +36,6 @@ def _as_bool(value):
 
 def _prefer_html():
     return prefere_html()
-
-
-def _iniciais(nome):
-    return iniciais(nome)
 
 
 def _base_contexto():
@@ -137,7 +133,7 @@ def _filtrar_moradias():
         if preco_max:
             query = query.filter(Moradia.preco_mensal <= Decimal(preco_max))
     except InvalidOperation:
-        return resposta_erro("preco_min e preco_max devem ser numeros validos", 400)
+        return None, resposta_erro("preco_min e preco_max devem ser numeros validos", 400)
 
     busca = request.args.get("busca")
     if busca:

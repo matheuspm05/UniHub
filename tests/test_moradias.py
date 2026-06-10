@@ -43,3 +43,9 @@ class TesteMoradias(TesteBase):
 
         self.assertEqual(resposta.status_code, 201)
         self.assertEqual(resposta.json["data"]["anunciante"]["id"], 1)
+
+    def test_filtro_preco_invalido_retorna_400(self):
+        self.login_usuario(1)
+        resposta = self.cliente.get("/moradias?preco_min=abc")
+
+        self.assertEqual(resposta.status_code, 400)
