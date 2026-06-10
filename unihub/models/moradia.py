@@ -30,6 +30,7 @@ class Moradia(db.Model):
     perto_uvv: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
     aceita_dividir_quarto: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
     status: Mapped[str] = mapped_column(db.String(30), default="disponivel", nullable=False)
+    contato_externo: Mapped[str | None] = mapped_column(db.String(255))
     imagem_url: Mapped[str | None] = mapped_column(db.String(255))
     anunciante_id: Mapped[int] = mapped_column(db.ForeignKey("usuarios.id"), nullable=False)
     visualizacoes: Mapped[int] = mapped_column(db.Integer, default=0, nullable=False)
@@ -57,6 +58,7 @@ class Moradia(db.Model):
             "perto_uvv": self.perto_uvv,
             "aceita_dividir_quarto": self.aceita_dividir_quarto,
             "status": self.status,
+            "contato_externo": self.contato_externo,
             "imagem_url": self.imagem_url,
             "anunciante_id": self.anunciante_id,
             "anunciante": self.anunciante.to_public_dict() if self.anunciante else None,

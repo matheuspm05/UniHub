@@ -47,18 +47,6 @@
                 {% endif %}
               </select>
             </label>
-
-            <label class="grid gap-2">
-              <span class="text-sm font-extrabold text-unihub-ink">Disciplina *</span>
-              <select name="disciplina" required class="h-12 rounded-lg border border-[#CBD6E6] px-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
-                {% for disciplina in disciplinas %}
-                  <option value="{{ disciplina }}" {% if topico.disciplina == disciplina %}selected{% endif %}>{{ disciplina }}</option>
-                {% endfor %}
-                {% if topico.disciplina not in disciplinas %}
-                  <option value="{{ topico.disciplina }}" selected>{{ topico.disciplina }}</option>
-                {% endif %}
-              </select>
-            </label>
           </div>
 
           <label class="grid gap-2">
@@ -148,16 +136,11 @@
             <h2 class="text-lg font-extrabold text-unihub-ink">Status atual</h2>
             <span class="rounded-full px-3 py-1 text-sm font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>
           </div>
-          <p class="mt-5 text-sm font-medium leading-6 text-[#344469]">Topicos abertos ficam visiveis para todos e podem receber novas respostas.</p>
+            <p class="mt-5 text-sm font-medium leading-6 text-[#344469]">Topicos abertos ficam visiveis para todos e podem receber novas respostas.</p>
           <div class="mt-6 border-t border-unihub-line pt-5">
             <h3 class="text-base font-extrabold text-unihub-ink">Acoes disponiveis</h3>
-            <p class="mt-3 text-sm font-medium leading-6 text-unihub-muted">Nesta versao comum, voce pode atualizar titulo, descricao, curso, disciplina e categoria do proprio topico.</p>
+            <p class="mt-3 text-sm font-medium leading-6 text-unihub-muted">Voce pode atualizar titulo, descricao, curso e categoria do proprio topico.</p>
           </div>
-        </section>
-
-        <section class="rounded-lg border border-uvv-100 bg-uvv-50 p-6 shadow-card">
-          <h2 class="inline-flex items-center gap-2 text-lg font-extrabold text-unihub-ink"><i data-lucide="lightbulb" class="h-5 w-5 text-[#0B5FEA]"></i>Dica</h2>
-          <p class="mt-4 text-sm font-medium leading-6 text-[#344469]">Seja claro e objetivo na descricao do seu topico. Isso aumenta as chances de receber respostas uteis da comunidade.</p>
         </section>
       </aside>
     </div>

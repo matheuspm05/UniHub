@@ -25,7 +25,7 @@
     </div>
 
     {% if usuario_pode_moderar %}
-      <nav class="flex gap-8 border-b border-unihub-line">
+      <nav class="flex gap-8 overflow-x-auto border-b border-unihub-line">
         <a href="/forum" class="inline-flex items-center border-b-2 border-[#0B5FEA] px-3 pb-4 text-sm font-extrabold text-[#0B5FEA]">Explorar forum</a>
         {% if current_user.role == "admin" %}
           <a href="/admin/forum/topicos" class="inline-flex items-center px-3 pb-4 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">Gerenciar forum</a>
@@ -44,12 +44,12 @@
           type="search"
           name="busca"
           value="{{ filtros.get('busca', '') }}"
-          placeholder="Buscar por topico, disciplina ou palavra-chave"
+          placeholder="Buscar por topico, curso ou palavra-chave"
         >
       </label>
 
-      <div class="flex flex-wrap gap-3">
-        <label class="relative min-w-36">
+      <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
+        <label class="relative">
           <select name="curso" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
             <option value="">Curso</option>
             {% for curso in cursos %}
@@ -59,17 +59,7 @@
           <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
         </label>
 
-        <label class="relative min-w-40">
-          <select name="disciplina" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
-            <option value="">Disciplina</option>
-            {% for disciplina in disciplinas %}
-              <option value="{{ disciplina }}" {% if filtros.get('disciplina') == disciplina %}selected{% endif %}>{{ disciplina }}</option>
-            {% endfor %}
-          </select>
-          <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
-        </label>
-
-        <label class="relative min-w-40">
+        <label class="relative">
           <select name="categoria" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
             <option value="">Categoria</option>
             {% for categoria in categorias %}
@@ -79,7 +69,7 @@
           <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
         </label>
 
-        <label class="relative min-w-36">
+        <label class="relative">
           <select name="status" class="h-11 w-full appearance-none rounded-lg border border-[#CBD6E6] bg-white pl-4 pr-10 text-sm font-bold text-unihub-ink outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">
             <option value="">Status</option>
             {% for status, label in [("aberto", "Aberto"), ("resolvido", "Resolvido"), ("fechado", "Fechado")] %}
@@ -89,7 +79,7 @@
           <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-unihub-muted"></i>
         </label>
 
-        <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white transition hover:bg-uvv-900">Filtrar</button>
+        <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white transition hover:bg-uvv-600">Filtrar</button>
       </div>
     </form>
 
@@ -105,9 +95,9 @@
               </div>
               <div>
                 <h3 class="text-lg font-extrabold text-unihub-ink">{{ aviso.titulo }}</h3>
-                <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ aviso.curso }} • {{ aviso.disciplina }}</p>
+                <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ aviso.curso }}</p>
                 <p class="mt-1 line-clamp-2 text-sm font-medium text-[#344469]">{{ aviso.descricao }}</p>
-                <p class="mt-3 text-sm font-semibold text-unihub-muted">{{ aviso.autor.nome if aviso.autor else "UniHub" }} • Atualizado hoje</p>
+                <p class="mt-3 text-sm font-semibold text-unihub-muted">{{ aviso.autor.nome if aviso.autor else "UniHub" }} • {{ aviso.atualizado_em.strftime("%d/%m/%Y %H:%M") if aviso.atualizado_em else "" }}</p>
               </div>
               <a href="/forum/topicos/{{ aviso.id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 bg-white px-4 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver topico</a>
             </article>
@@ -148,8 +138,6 @@
               <div class="mt-1 flex flex-wrap gap-x-2 gap-y-1 text-sm font-semibold text-unihub-muted">
                 <span class="rounded-md {{ cor }} px-2 py-0.5 text-xs font-extrabold">{{ topico.categoria }}</span>
                 <span>{{ topico.curso }}</span>
-                <span>•</span>
-                <span>{{ topico.disciplina }}</span>
               </div>
               <p class="mt-1 line-clamp-2 text-sm font-medium leading-6 text-[#344469]">{{ topico.descricao }}</p>
             </div>
@@ -164,7 +152,7 @@
 
             <div>
               <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>
-              <p class="mt-2 text-sm font-semibold text-unihub-muted">Atualizado hoje</p>
+              <p class="mt-2 text-sm font-semibold text-unihub-muted">{{ topico.atualizado_em.strftime("%d/%m/%Y %H:%M") if topico.atualizado_em else "" }}</p>
             </div>
 
             <a href="/forum/topicos/{{ topico.id }}" class="inline-flex h-10 items-center justify-center rounded-lg border border-uvv-200 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Ver topico</a>

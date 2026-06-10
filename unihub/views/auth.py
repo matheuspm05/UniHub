@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user
 from unihub.ext.db import db
 from unihub.forms import CadastroForm, LoginForm
 from unihub.models import Usuario
+from unihub.options import CURSOS, PERIODOS
 from unihub.utils.auth import exigir_login
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 
@@ -37,6 +38,10 @@ def _primeiro_erro(form, fallback):
         if erros:
             return erros[0]
     return fallback
+
+
+CURSOS_VALIDOS = {valor for valor, _ in CURSOS}
+PERIODOS_VALIDOS = {valor for valor, _ in PERIODOS}
 
 
 def _autenticar_usuario(email, senha):
@@ -148,6 +153,11 @@ def cadastrar_usuario():
     erro_senha = _erro_senha(senha)
     if erro_senha:
         return resposta_erro(erro_senha, 400)
+
+    if str(dados["curso"]) not in CURSOS_VALIDOS:
+        return resposta_erro("Curso invalido", 400)
+    if str(dados["periodo"]) not in PERIODOS_VALIDOS:
+        return resposta_erro("Periodo invalido", 400)
 
     email = str(dados["email"])
     if Usuario.query.filter_by(email=email).first():

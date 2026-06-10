@@ -1,11 +1,15 @@
+import calendar
+from datetime import date
+
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
 from unihub.forms import PerfilForm
 from unihub.models import AgendaEvento, Evento, ForumResposta, ForumTopico, Notificacao, Usuario
+from unihub.options import CURSOS, PERIODOS
 from unihub.utils.responses import resposta_sucesso
-from unihub.utils.view_helpers import contar_mensagens_nao_lidas, iniciais
+from unihub.utils.view_helpers import iniciais
 
 
 bp = Blueprint("main", __name__)
@@ -29,7 +33,11 @@ def _dashboard_contexto():
         .all()
     )
     conexoes = (
-        Usuario.query.filter(Usuario.id != usuario_id)
+        Usuario.query.filter(
+            Usuario.id != usuario_id,
+            Usuario.ativo.is_(True),
+            Usuario.role != "admin",
+        )
         .order_by(Usuario.nome.asc())
         .limit(2)
         .all()
@@ -51,7 +59,6 @@ def _dashboard_contexto():
             usuario_id=usuario_id,
             lida=False,
         ).count(),
-        "mensagens_count": contar_mensagens_nao_lidas(usuario_id),
     }
 
 
@@ -104,14 +111,32 @@ def _perfil_contexto():
                 ("calendar-check", "Eventos salvos", eventos_salvos, "bg-amber-50 text-amber-600"),
             ],
             "atividades": atividades,
-            "interesses": [
-                current_user.curso,
-                current_user.periodo,
-                current_user.cidade,
+            "redes": [
+                ("instagram", "Instagram", current_user.instagram),
+                ("linkedin", "LinkedIn", current_user.linkedin),
+                ("message-circle-more", "WhatsApp", current_user.whatsapp),
             ],
         }
     )
     return contexto
+
+
+def _calendario_agenda(eventos):
+    referencia = eventos[0].data_evento if eventos else date.today()
+    semanas = calendar.Calendar(firstweekday=6).monthdatescalendar(
+        referencia.year,
+        referencia.month,
+    )
+    datas_eventos = {evento.data_evento for evento in eventos}
+    hoje = date.today()
+    return {
+        "mes_label": f"{calendar.month_name[referencia.month]} {referencia.year}",
+        "dias_semana": ["D", "S", "T", "Q", "Q", "S", "S"],
+        "semanas": semanas,
+        "mes_referencia": referencia.month,
+        "datas_eventos": datas_eventos,
+        "hoje": hoje,
+    }
 
 
 @bp.get("/")
@@ -141,6 +166,8 @@ def editar_perfil():
     form = PerfilForm(obj=current_user)
     contexto = _perfil_contexto()
     contexto["form"] = form
+    contexto["cursos"] = [valor for valor, _ in CURSOS]
+    contexto["periodos"] = [valor for valor, _ in PERIODOS]
     if request.method == "POST":
         if not form.validate_on_submit():
             contexto["erro"] = "Confira os dados do perfil e tente novamente."
@@ -151,10 +178,13 @@ def editar_perfil():
             contexto["erro"] = "Este e-mail ja esta em uso."
             return render_template("main/perfil_editar.html", **contexto), 400
 
-        for campo in ["nome", "curso", "periodo", "cidade", "bio"]:
+        for campo in ["nome", "cidade", "bio", "instagram", "linkedin", "whatsapp"]:
             valor = getattr(form, campo).data
             if valor is not None:
                 setattr(current_user, campo, valor.strip())
+
+        current_user.curso = form.curso.data.strip()
+        current_user.periodo = form.periodo.data.strip()
 
         if email:
             current_user.email = email

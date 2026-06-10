@@ -14,8 +14,6 @@
           {% set icone = "message-circle" %}
         {% elif tipo == "evento" %}
           {% set icone = "calendar-days" %}
-        {% elif tipo == "mensagem" %}
-          {% set icone = "mail" %}
         {% endif %}
         <a href="/notificacoes?tipo={{ tipo }}" class="flex items-center gap-3 rounded-lg px-3 py-3 {% if request.args.get('tipo') == tipo %}bg-uvv-50 text-[#0B5FEA]{% else %}transition hover:bg-unihub-surface hover:text-[#0B5FEA]{% endif %}">
           <i data-lucide="{{ icone }}" class="h-5 w-5"></i>
@@ -23,15 +21,6 @@
         </a>
       {% endfor %}
     </nav>
-  </section>
-
-  <section class="mt-7">
-    <h3 class="text-sm font-extrabold text-unihub-ink">Periodo</h3>
-    <button class="mt-4 flex h-11 w-full cursor-default items-center gap-3 rounded-lg border border-[#CBD6E6] px-3 text-left text-sm font-semibold text-unihub-muted" type="button" disabled>
-      <i data-lucide="calendar-days" class="h-5 w-5 text-unihub-muted"></i>
-      Todos os periodos
-      <i data-lucide="chevron-down" class="ml-auto h-5 w-5 text-unihub-muted"></i>
-    </button>
   </section>
 
   <section class="mt-7">

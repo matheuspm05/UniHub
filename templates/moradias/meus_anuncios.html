@@ -44,7 +44,7 @@
     {% if moradias %}
       <div class="grid gap-4">
         {% for moradia in moradias %}
-          <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card xl:grid-cols-[220px_1fr_170px_230px_24px] xl:items-center">
+          <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card xl:grid-cols-[220px_1fr_170px_230px] xl:items-center">
             <img
               src="{{ url_for('static', filename=imagem_padrao) }}"
               alt="Foto de {{ moradia.titulo }}"
@@ -73,7 +73,7 @@
 
             <div class="grid grid-cols-2 gap-3 text-center text-sm font-semibold text-unihub-muted xl:grid-cols-1">
               <span><strong class="block text-base font-extrabold text-unihub-ink">{{ moradia.visualizacoes }}</strong>visualizacoes</span>
-              <span><strong class="block text-base font-extrabold text-unihub-ink">{{ (moradia.visualizacoes // 8) + 1 }}</strong>interessados</span>
+              <span><strong class="block text-base font-extrabold text-unihub-ink">{{ moradia.status|capitalize }}</strong>status</span>
             </div>
 
             <div class="grid gap-3">
@@ -105,9 +105,6 @@
               {% endif %}
             </div>
 
-            <button class="grid h-10 w-10 place-items-center rounded-lg text-unihub-muted transition hover:bg-unihub-surface hover:text-[#0B5FEA]" type="button" aria-label="Mais opcoes">
-              <i data-lucide="more-vertical" class="h-5 w-5"></i>
-            </button>
           </article>
         {% endfor %}
       </div>

@@ -6,11 +6,11 @@ from unihub.models import (
     Evento,
     ForumResposta,
     ForumTopico,
-    Mensagem,
     Moradia,
     Notificacao,
     Usuario,
 )
+from unihub.options import CURSOS
 from unihub.utils.auth import exigir_admin
 from unihub.utils.responses import resposta_erro, resposta_sucesso
 from unihub.utils.security import safe_redirect_target
@@ -66,7 +66,7 @@ def _topicos_query():
     if status:
         query = query.filter(ForumTopico.status == status)
 
-    for campo in ["curso", "disciplina", "categoria", "tipo"]:
+    for campo in ["curso", "categoria", "tipo"]:
         valor = request.args.get(campo)
         if valor:
             query = query.filter(getattr(ForumTopico, campo).ilike(f"%{valor}%"))
@@ -79,7 +79,6 @@ def _topicos_query():
                 ForumTopico.titulo.ilike(termo),
                 ForumTopico.descricao.ilike(termo),
                 ForumTopico.curso.ilike(termo),
-                ForumTopico.disciplina.ilike(termo),
                 ForumTopico.categoria.ilike(termo),
             )
         )
@@ -185,7 +184,6 @@ def dashboard():
             "total_eventos": Evento.query.count(),
             "total_moradias": Moradia.query.count(),
             "total_notificacoes": Notificacao.query.count(),
-            "total_mensagens": Mensagem.query.count(),
         }
     )
 
@@ -201,8 +199,7 @@ def listar_todos_topicos():
                 "topicos": topicos,
                 "total_topicos": len(topicos),
                 "filtros": request.args,
-                "cursos": _opcoes_distintas(ForumTopico, "curso"),
-                "disciplinas": _opcoes_distintas(ForumTopico, "disciplina"),
+                "cursos": [valor for valor, _ in CURSOS],
                 "categorias": _opcoes_distintas(ForumTopico, "categoria"),
             }
         )

@@ -17,7 +17,7 @@
       </a>
     </div>
 
-    <nav class="flex gap-6 border-b border-unihub-line">
+    <nav class="flex gap-6 overflow-x-auto border-b border-unihub-line">
       <a href="/forum" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
         <i data-lucide="compass" class="h-5 w-5"></i>
         Explorar forum
@@ -38,14 +38,14 @@
         <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por trecho da resposta ou topico relacionado">
       </label>
 
-      <div class="flex flex-wrap gap-3">
-        <select name="status" class="h-12 min-w-44 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
+      <div class="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+        <select name="status" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
           <option value="">Status</option>
           {% for status, label in [("ativo", "Ativo"), ("editado", "Editado"), ("desativado", "Desativado")] %}
             <option value="{{ status }}" {% if filtros.get('status') == status %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
-        <button class="h-12 rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
+        <button class="h-12 rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
         <a href="/admin/forum/respostas" class="inline-flex h-12 items-center rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Limpar</a>
       </div>
     </form>

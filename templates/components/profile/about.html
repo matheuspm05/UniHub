@@ -1,6 +1,6 @@
 <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
   <div class="flex items-center justify-between">
-    <h2 class="text-xl font-extrabold text-unihub-ink">Sobre mim</h2>
+    <h2 class="text-xl font-extrabold text-unihub-ink">Resumo do perfil</h2>
   </div>
   <p class="mt-5 text-base leading-7 text-unihub-ink">
     {{ current_user.bio or ("Estudante de " ~ current_user.curso ~ " no " ~ current_user.periodo ~ ".") }}
@@ -24,5 +24,36 @@
         </span>
       </div>
     {% endfor %}
+  </div>
+
+  <div class="mt-6 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+    <div class="rounded-lg border border-unihub-line p-4">
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Redes sociais</p>
+      <div class="mt-4 grid gap-3">
+        {% for icone, label, valor in redes %}
+          <div class="flex items-center justify-between gap-4 rounded-lg bg-unihub-surface px-4 py-3">
+            <span class="inline-flex items-center gap-3 text-sm font-semibold text-unihub-ink">
+              <i data-lucide="{{ icone }}" class="h-4 w-4 text-[#0B5FEA]"></i>
+              {{ label }}
+            </span>
+            <span class="truncate text-sm font-medium text-unihub-muted">{{ valor or "Nao informado" }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="rounded-lg border border-unihub-line p-4">
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Contato academico</p>
+      <div class="mt-4 grid gap-3 text-sm font-medium text-unihub-muted">
+        <span class="inline-flex items-center gap-3 rounded-lg bg-unihub-surface px-4 py-3">
+          <i data-lucide="mail" class="h-4 w-4 text-[#0B5FEA]"></i>
+          {{ current_user.email }}
+        </span>
+        <span class="inline-flex items-center gap-3 rounded-lg bg-unihub-surface px-4 py-3">
+          <i data-lucide="map-pin" class="h-4 w-4 text-emerald-600"></i>
+          {{ current_user.cidade }}
+        </span>
+      </div>
+    </div>
   </div>
 </section>

@@ -6,12 +6,12 @@
     </div>
     <div class="mt-6 grid gap-6">
       <div class="flex gap-4">
-        <i data-lucide="user" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
-        <p class="text-sm leading-6 text-unihub-muted"><span class="block font-extrabold text-unihub-ink">Foto de perfil</span>Use uma foto clara e amigavel. Ela ajuda na interacao com a comunidade.</p>
+        <i data-lucide="link-2" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
+        <p class="text-sm leading-6 text-unihub-muted"><span class="block font-extrabold text-unihub-ink">Redes sociais</span>Adicione contatos externos para facilitar networking sem depender de mensagens internas.</p>
       </div>
       <div class="flex gap-4">
         <i data-lucide="message-circle" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
-        <p class="text-sm leading-6 text-unihub-muted"><span class="block font-extrabold text-unihub-ink">Sobre voce</span>Conte um pouco sobre seus interesses e objetivos. Isso facilita conexoes.</p>
+        <p class="text-sm leading-6 text-unihub-muted"><span class="block font-extrabold text-unihub-ink">Bio objetiva</span>Explique seu foco academico, area de interesse ou o que voce procura na comunidade.</p>
       </div>
       <div class="flex gap-4">
         <i data-lucide="lock" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
@@ -28,27 +28,16 @@
     <dl class="mt-5 grid gap-4 text-sm">
       <div class="flex justify-between gap-4">
         <dt class="font-semibold text-unihub-muted">Membro desde</dt>
-        <dd class="font-semibold text-unihub-muted">Marco de 2024</dd>
+        <dd class="font-semibold text-unihub-muted">{{ current_user.criado_em.strftime("%m/%Y") if current_user.criado_em else "Nao informado" }}</dd>
       </div>
       <div class="flex justify-between gap-4">
-        <dt class="font-semibold text-unihub-muted">Ultimo acesso</dt>
-        <dd class="font-semibold text-unihub-muted">Hoje, 09:42</dd>
+        <dt class="font-semibold text-unihub-muted">Ultima atualizacao</dt>
+        <dd class="font-semibold text-unihub-muted">{{ current_user.atualizado_em.strftime("%d/%m/%Y") if current_user.atualizado_em else "Nao informado" }}</dd>
       </div>
       <div class="flex justify-between gap-4">
         <dt class="font-semibold text-unihub-muted">Tipo de conta</dt>
-        <dd class="rounded bg-emerald-100 px-2 py-1 text-xs font-extrabold text-emerald-700">Estudante</dd>
+        <dd class="rounded bg-emerald-100 px-2 py-1 text-xs font-extrabold text-emerald-700">{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize) }}</dd>
       </div>
     </dl>
-  </section>
-
-  <section class="rounded-xl border border-red-100 bg-[linear-gradient(135deg,#FFF1F1_0%,#FFFFFF_100%)] p-6 shadow-card">
-    <div class="flex items-center gap-3">
-      <i data-lucide="trash-2" class="h-6 w-6 text-red-500"></i>
-      <h2 class="text-lg font-extrabold text-unihub-ink">Excluir conta</h2>
-    </div>
-    <p class="mt-5 text-sm leading-6 text-unihub-muted">Ao excluir sua conta, todos os seus dados serao removidos permanentemente.</p>
-    <button class="mt-4 h-11 rounded-lg border border-red-300 px-6 text-sm font-extrabold text-red-600 transition hover:bg-red-50" type="button">
-      Excluir minha conta
-    </button>
   </section>
 </aside>

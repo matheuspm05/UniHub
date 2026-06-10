@@ -39,7 +39,6 @@
           <div>
             <h2 class="text-xl font-extrabold text-unihub-ink">Sobre o evento</h2>
             <p class="mt-4 max-w-3xl whitespace-pre-line text-base font-medium leading-8 text-[#344469]">{{ evento.descricao }}</p>
-            <p class="mt-4 max-w-3xl text-base font-medium leading-8 text-[#344469]">Participe, conecte-se com outros estudantes e acompanhe as atividades academicas da comunidade universitaria.</p>
           </div>
         </div>
       </article>
@@ -51,7 +50,7 @@
             <p class="flex gap-3"><i data-lucide="calendar-days" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Data</strong>{{ evento.data_evento.strftime("%d/%m/%Y") }}</span></p>
             <p class="flex gap-3"><i data-lucide="clock" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Horario</strong>{{ evento.horario }}</span></p>
             <p class="flex gap-3"><i data-lucide="map-pin" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Local</strong>{{ evento.local }}</span></p>
-            <p class="flex gap-3"><i data-lucide="users" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Vagas</strong>60 vagas disponiveis</span></p>
+            <p class="flex gap-3"><i data-lucide="users" class="h-5 w-5 text-unihub-muted"></i><span><strong class="block text-unihub-ink">Inscricoes</strong>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram este evento</span></p>
           </div>
         </section>
 
@@ -114,10 +113,6 @@
                 </button>
               </form>
             {% endif %}
-            <button class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-[#CBD6E6] text-base font-extrabold text-unihub-ink transition hover:bg-unihub-surface" type="button">
-              <i data-lucide="share-2" class="h-5 w-5"></i>
-              Compartilhar
-            </button>
           </div>
         </section>
 
@@ -129,9 +124,8 @@
               <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
               <span class="inline-flex items-center gap-3"><i data-lucide="eye" class="h-6 w-6 text-violet-600"></i>{{ evento.visualizacoes }} visualizacoes</span>
             {% else %}
-              <span class="inline-flex items-center gap-3"><i data-lucide="badge-check" class="h-6 w-6 text-emerald-600"></i>Certificado de participacao</span>
-              <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>Vagas limitadas</span>
-              <span class="inline-flex items-center gap-3"><i data-lucide="gift" class="h-6 w-6 text-violet-600"></i>Evento gratuito e aberto a todos</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="users" class="h-6 w-6 text-orange-500"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
+              <span class="inline-flex items-center gap-3"><i data-lucide="eye" class="h-6 w-6 text-violet-600"></i>{{ evento.visualizacoes }} visualizacoes</span>
             {% endif %}
           </div>
         </section>

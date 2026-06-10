@@ -2,15 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, EmailField, PasswordField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Length, Optional, ValidationError
 
-
-CURSOS = [
-    ("Ciencia da Computacao", "Ciencia da Computacao"),
-    ("Engenharia de Software", "Engenharia de Software"),
-    ("Sistemas de Informacao", "Sistemas de Informacao"),
-    ("Design", "Design"),
-    ("Administracao", "Administracao"),
-]
-PERIODOS = [(f"{numero} periodo", f"{numero} periodo") for numero in range(1, 9)]
+from unihub.options import CURSOS, PERIODOS
 
 
 def _validar_senha(form, field):

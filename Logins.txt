@@ -1,0 +1,15 @@
+USUARIO SIMPLES 
+lucas.almeida@uvv.br
+senha123
+
+usuario MODERADOR
+mariana.costa@uvv.br
+senha123
+
+
+usuario ADMIN
+rafael.souza@uvv.br
+senha123
+
+
+

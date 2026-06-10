@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <nav class="flex gap-8 border-b border-unihub-line">
+    <nav class="flex gap-8 overflow-x-auto border-b border-unihub-line">
       <a href="/forum/meus-posts" class="inline-flex items-center border-b-2 border-[#0B5FEA] px-3 pb-4 text-base font-extrabold text-[#0B5FEA]">Meus topicos</a>
       {% if usuario_pode_moderar %}
         <a href="#meus-avisos" class="inline-flex items-center px-3 pb-4 text-base font-bold text-unihub-muted transition hover:text-[#0B5FEA]">Meus avisos</a>
@@ -37,7 +37,7 @@
       {% endif %}
     </nav>
 
-    <div class="grid gap-4 rounded-lg border border-unihub-line bg-white p-6 shadow-card md:grid-cols-4">
+    <div class="grid gap-4 rounded-lg border border-unihub-line bg-white p-6 shadow-card sm:grid-cols-2 xl:grid-cols-4">
       <div class="flex items-center gap-4">
         <span class="grid h-16 w-16 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]"><i data-lucide="list-collapse" class="h-7 w-7"></i></span>
         <p class="text-sm font-semibold text-unihub-muted">Topicos criados<br><strong class="text-2xl font-extrabold text-unihub-ink">{{ total_topicos }}</strong></p>
@@ -52,7 +52,7 @@
       </div>
       <div class="flex items-center gap-4">
         <span class="grid h-16 w-16 place-items-center rounded-full bg-amber-50 text-amber-600"><i data-lucide="star" class="h-7 w-7"></i></span>
-        <p class="text-sm font-semibold text-unihub-muted">Curtidas recebidas<br><strong class="text-2xl font-extrabold text-unihub-ink">0</strong></p>
+        <p class="text-sm font-semibold text-unihub-muted">Avisos oficiais<br><strong class="text-2xl font-extrabold text-unihub-ink">{{ avisos|length if usuario_pode_moderar else 0 }}</strong></p>
       </div>
     </div>
 
@@ -63,8 +63,8 @@
             <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(current_user.nome) }}</span>
             <div>
               <h2 class="text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h2>
-              <p class="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-unihub-muted"><i data-lucide="book-open" class="h-4 w-4"></i>{{ topico.disciplina }}</p>
-              <p class="mt-1 text-sm font-medium text-unihub-muted">Por {{ current_user.nome }} • {{ current_user.periodo }} periodo</p>
+              <p class="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-unihub-muted"><i data-lucide="book-open" class="h-4 w-4"></i>{{ topico.categoria }}</p>
+              <p class="mt-1 text-sm font-medium text-unihub-muted">Por {{ current_user.nome }} • {{ current_user.periodo }}</p>
             </div>
           </div>
 
@@ -111,7 +111,7 @@
             <article class="grid gap-3 rounded-lg border border-unihub-line bg-unihub-surface p-4 md:grid-cols-[1fr_auto_auto] md:items-center">
               <div>
                 <p class="text-sm font-extrabold text-unihub-ink">{{ aviso.titulo }}</p>
-                <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ aviso.disciplina }} • {{ aviso.status|capitalize }}</p>
+                <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ aviso.curso }} • {{ aviso.status|capitalize }}</p>
               </div>
               <a href="/forum/topicos/{{ aviso.id }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-uvv-200 px-4 text-sm font-extrabold text-[#0B5FEA]">Ver topico</a>
               <a href="/forum/topicos/{{ aviso.id }}/editar" class="inline-flex h-9 items-center justify-center rounded-lg border border-[#CBD6E6] px-4 text-sm font-extrabold text-unihub-muted">Editar</a>

@@ -11,9 +11,6 @@
         {% elif notificacao.tipo == 'evento' %}
           {% set icone = 'calendar' %}
           {% set classe = 'bg-orange-50 text-orange-500' %}
-        {% elif notificacao.tipo == 'mensagem' %}
-          {% set icone = 'mail' %}
-          {% set classe = 'bg-emerald-50 text-emerald-600' %}
         {% endif %}
         <article class="flex items-center gap-5 border-b border-unihub-line px-4 py-4 last:border-b-0">
           <span class="grid h-12 w-12 shrink-0 place-items-center rounded-lg {{ classe }}">

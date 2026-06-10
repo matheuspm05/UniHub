@@ -1,4 +1,5 @@
-from datetime import datetime
+import calendar
+from datetime import date, datetime
 
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
@@ -24,6 +25,20 @@ bp = Blueprint("eventos", __name__, url_prefix="/eventos")
 agenda_bp = Blueprint("agenda", __name__)
 EVENTO_IMAGEM_PADRAO = "imgs/eventos/foto padrao evento.png"
 STATUS_EVENTO_VALIDOS = {"ativo", "cancelado", "encerrado", "desativado"}
+MESES_PT_BR = {
+    1: "Janeiro",
+    2: "Fevereiro",
+    3: "Marco",
+    4: "Abril",
+    5: "Maio",
+    6: "Junho",
+    7: "Julho",
+    8: "Agosto",
+    9: "Setembro",
+    10: "Outubro",
+    11: "Novembro",
+    12: "Dezembro",
+}
 
 
 def _payload():
@@ -471,13 +486,25 @@ def listar_agenda():
     )
     if _prefer_html():
         contexto = _base_contexto()
-        proximo = agenda[0].evento if agenda else None
+        eventos = [item.evento for item in agenda]
+        proximo = eventos[0] if eventos else None
+        referencia = proximo.data_evento if proximo else date.today()
+        semanas = calendar.Calendar(firstweekday=6).monthdatescalendar(
+            referencia.year,
+            referencia.month,
+        )
         contexto.update(
             {
                 "agenda": agenda,
-                "eventos": [item.evento for item in agenda],
+                "eventos": eventos,
                 "proximo_evento": proximo,
                 "imagem_padrao": EVENTO_IMAGEM_PADRAO,
+                "calendario_mes": f"{MESES_PT_BR[referencia.month]} {referencia.year}",
+                "calendario_dias": ["D", "S", "T", "Q", "Q", "S", "S"],
+                "calendario_semanas": semanas,
+                "calendario_hoje": date.today(),
+                "calendario_mes_numero": referencia.month,
+                "calendario_eventos": {evento.data_evento for evento in eventos},
             }
         )
         return render_template("eventos/agenda.html", **contexto)

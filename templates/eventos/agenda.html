@@ -12,12 +12,6 @@
           <p class="mt-2 text-base font-medium text-unihub-muted">Acompanhe os eventos que voce salvou e organize sua rotina universitaria.</p>
         </div>
 
-        <div class="flex flex-wrap gap-3">
-          <button class="inline-flex h-11 items-center gap-3 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink" type="button">Status <i data-lucide="chevron-down" class="h-4 w-4"></i></button>
-          <button class="inline-flex h-11 items-center gap-3 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink" type="button"><i data-lucide="calendar-days" class="h-4 w-4"></i>Data <i data-lucide="chevron-down" class="h-4 w-4"></i></button>
-          <button class="inline-flex h-11 items-center gap-3 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink" type="button">Ordenar por <i data-lucide="chevron-down" class="h-4 w-4"></i></button>
-        </div>
-
         {% if eventos %}
           <div class="grid gap-4">
             {% for evento in eventos %}
@@ -68,19 +62,23 @@
       <aside class="grid h-fit gap-5">
         <section class="rounded-lg border border-unihub-line bg-white p-5 shadow-card">
           <div class="flex items-center justify-between">
-            <i data-lucide="chevron-left" class="h-5 w-5 text-unihub-muted"></i>
-            <h2 class="text-lg font-extrabold text-unihub-ink">Maio 2026</h2>
-            <i data-lucide="chevron-right" class="h-5 w-5 text-unihub-muted"></i>
+            <i data-lucide="calendar-days" class="h-5 w-5 text-[#0B5FEA]"></i>
+            <h2 class="text-lg font-extrabold text-unihub-ink">{{ calendario_mes }}</h2>
+            <span class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Agenda</span>
           </div>
           <div class="mt-5 grid grid-cols-7 gap-2 text-center text-sm font-semibold text-unihub-muted">
-            {% for dia in ["D", "S", "T", "Q", "Q", "S", "S", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"] %}
-              <span class="grid h-8 place-items-center rounded-full {% if dia in ["20", "24"] %}bg-[#0B5FEA] text-white{% elif dia == "22" %}bg-violet-100 text-violet-700{% endif %}">{{ dia }}</span>
+            {% for dia in calendario_dias %}
+              <span class="grid h-8 place-items-center rounded-full text-xs font-extrabold">{{ dia }}</span>
             {% endfor %}
-          </div>
+            {% for semana in calendario_semanas %}
+              {% for dia in semana %}
+                <span class="grid h-9 place-items-center rounded-full {% if dia.month != calendario_mes_numero %}text-slate-300{% elif dia in calendario_eventos %}bg-[#0B5FEA] font-extrabold text-white{% elif dia == calendario_hoje %}bg-violet-100 font-extrabold text-violet-700{% else %}text-unihub-ink{% endif %}">{{ dia.day }}</span>
+              {% endfor %}
+            {% endfor %}
+           </div>
           <div class="mt-5 flex flex-wrap gap-3 text-xs font-semibold text-unihub-muted">
             <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-[#0B5FEA]"></span>Eventos salvos</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>Hoje</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-violet-600"></span>Proximos eventos</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-violet-400"></span>Hoje</span>
           </div>
         </section>
 
@@ -116,9 +114,9 @@
             <span class="grid h-14 w-14 place-items-center rounded-full bg-uvv-50 text-[#0B5FEA]"><i data-lucide="calendar-days" class="h-7 w-7"></i></span>
             <div>
               <p class="text-sm font-semibold text-unihub-muted">Esta semana</p>
-              <p class="mt-1 text-3xl font-extrabold text-unihub-ink">{{ eventos|length if eventos|length < 2 else 1 }}</p>
-              <p class="text-sm font-medium text-unihub-muted">evento salvo</p>
-              <p class="mt-3 text-sm font-medium text-unihub-muted">20 a 26 de maio de 2026</p>
+              <p class="mt-1 text-3xl font-extrabold text-unihub-ink">{{ eventos|length }}</p>
+              <p class="text-sm font-medium text-unihub-muted">evento{{ "s" if eventos|length != 1 else "" }} salvo{{ "s" if eventos|length != 1 else "" }}</p>
+              <p class="mt-3 text-sm font-medium text-unihub-muted">Acompanhe seus compromissos em um so lugar.</p>
             </div>
           </div>
         </section>

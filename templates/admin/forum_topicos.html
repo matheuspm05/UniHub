@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <nav class="flex gap-6 border-b border-unihub-line">
+    <nav class="flex gap-6 overflow-x-auto border-b border-unihub-line">
       <a href="/forum" class="inline-flex items-center gap-2 px-3 pb-3 text-sm font-bold text-unihub-muted transition hover:text-[#0B5FEA]">
         <i data-lucide="compass" class="h-5 w-5"></i>
         Explorar forum
@@ -41,20 +41,14 @@
     <form method="get" action="/admin/forum/topicos" class="grid gap-4 rounded-lg border border-unihub-line bg-white p-4 shadow-card">
       <label class="relative block">
         <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
-        <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por topico, disciplina, categoria ou palavra-chave">
+        <input name="busca" value="{{ filtros.get('busca', '') }}" class="h-12 w-full rounded-lg border border-[#CBD6E6] bg-white pl-12 pr-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" type="search" placeholder="Buscar por topico, curso, categoria ou palavra-chave">
       </label>
 
-      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
         <select name="curso" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
           <option value="">Curso</option>
           {% for curso in cursos %}
             <option value="{{ curso }}" {% if filtros.get('curso') == curso %}selected{% endif %}>{{ curso }}</option>
-          {% endfor %}
-        </select>
-        <select name="disciplina" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
-          <option value="">Disciplina</option>
-          {% for disciplina in disciplinas %}
-            <option value="{{ disciplina }}" {% if filtros.get('disciplina') == disciplina %}selected{% endif %}>{{ disciplina }}</option>
           {% endfor %}
         </select>
         <select name="categoria" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
@@ -70,7 +64,7 @@
           {% endfor %}
         </select>
         <div class="flex gap-2">
-          <button class="h-12 rounded-lg bg-unihub-ink px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
+          <button class="h-12 rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white" type="submit">Filtrar</button>
           <a href="/admin/forum/topicos" class="inline-flex h-12 items-center rounded-lg px-3 text-sm font-extrabold text-[#0B5FEA] hover:bg-uvv-50">Limpar</a>
         </div>
       </div>
@@ -91,7 +85,7 @@
             </div>
             <h3 class="mt-2 text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h3>
             <p class="mt-1 line-clamp-2 text-sm font-medium text-[#344469]">{{ topico.descricao }}</p>
-            <p class="mt-2 text-sm font-semibold text-unihub-muted">{{ topico.curso }} • {{ topico.disciplina or "Geral" }}</p>
+            <p class="mt-2 text-sm font-semibold text-unihub-muted">{{ topico.curso }}</p>
           </div>
 
           <div class="flex items-center gap-3">

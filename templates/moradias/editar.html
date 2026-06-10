@@ -103,30 +103,12 @@
                   <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
                 </span>
               </label>
-            </div>
-          </div>
-        </section>
 
-        <section class="rounded-lg border border-unihub-line bg-white p-5 shadow-card md:p-6">
-          <p class="text-sm font-extrabold text-unihub-ink">Fotos (opcional)</p>
-          <p class="mt-1 text-sm font-medium text-unihub-muted">Adicione fotos da moradia para atrair mais interessados.</p>
-          <div class="mt-4 grid gap-3 sm:grid-cols-4">
-            {% for item in range(3) %}
-              <div class="relative h-32 overflow-hidden rounded-lg border border-unihub-line">
-                <img src="{{ url_for('static', filename=imagem_padrao) }}" alt="Foto do anuncio" class="h-full w-full object-cover">
-                <button class="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-white text-unihub-ink shadow-sm" type="button" aria-label="Remover foto">
-                  <i data-lucide="x" class="h-4 w-4"></i>
-                </button>
-              </div>
-            {% endfor %}
-            <label class="grid h-32 place-items-center rounded-lg border border-dashed border-[#CBD6E6] bg-white p-4 text-center text-sm font-semibold text-unihub-muted">
-              <input type="file" name="fotos" class="hidden" multiple accept="image/png,image/jpeg">
-              <span>
-                <i data-lucide="plus" class="mx-auto h-7 w-7 text-[#0B5FEA]"></i>
-                <strong class="mt-2 block text-[#0B5FEA]">Adicionar foto</strong>
-                <span>PNG, JPG ou JPEG<br>(max. 10MB cada)</span>
-              </span>
-            </label>
+              <label class="grid gap-2 md:col-span-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Contato externo</span>
+                <input name="contato_externo" value="{{ dados.get('contato_externo', moradia.contato_externo or '') }}" class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" placeholder="Ex.: WhatsApp, Instagram ou e-mail para contato">
+              </label>
+            </div>
           </div>
         </section>
 
@@ -195,7 +177,7 @@
             <i data-lucide="info" class="h-6 w-6 shrink-0 text-[#0B5FEA]"></i>
             <div>
               <h2 class="text-sm font-extrabold text-unihub-ink">Importante</h2>
-              <p class="mt-2 text-sm font-medium leading-6 text-unihub-muted">Ao excluir o anuncio, esta acao nao podera ser desfeita. Todas as informacoes serao removidas da listagem.</p>
+              <p class="mt-2 text-sm font-medium leading-6 text-unihub-muted">Mantenha o contato externo atualizado para evitar interessados sem retorno.</p>
             </div>
           </div>
         </section>

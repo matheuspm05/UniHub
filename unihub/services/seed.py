@@ -7,7 +7,6 @@ from unihub.models import (
     Evento,
     ForumResposta,
     ForumTopico,
-    Mensagem,
     Moradia,
     Notificacao,
     Usuario,
@@ -34,45 +33,60 @@ def seed_database():
         {
             "nome": "Lucas Almeida",
             "email": "lucas.almeida@uvv.br",
-            "curso": "Ciência da Computação",
-            "periodo": "3º período",
+            "curso": "Ciencia da Computacao",
+            "periodo": "3 periodo",
             "cidade": "Vila Velha",
+            "instagram": "@lucasalmeida",
+            "linkedin": "linkedin.com/in/lucasalmeida",
+            "whatsapp": "(27) 99999-1001",
             "role": "usuario",
             "selo": "Aluno",
         },
         {
             "nome": "João Pedro",
             "email": "joao.pedro@uvv.br",
-            "curso": "Ciência da Computação",
-            "periodo": "3º período",
+            "curso": "Ciencia da Computacao",
+            "periodo": "3 periodo",
             "cidade": "Vila Velha",
+            "instagram": "@joaopedro",
+            "linkedin": "linkedin.com/in/joaopedro",
+            "whatsapp": "(27) 99999-1002",
             "role": "usuario",
             "selo": "Aluno",
         },
         {
             "nome": "Mariana Costa",
             "email": "mariana.costa@uvv.br",
-            "curso": "Ciência da Computação",
-            "periodo": "5º período",
+            "curso": "Engenharia de Software",
+            "periodo": "5 periodo",
             "cidade": "Vila Velha",
+            "instagram": "@maricosta",
+            "linkedin": "linkedin.com/in/marianacosta",
+            "whatsapp": "(27) 99999-1003",
             "role": "moderador",
             "selo": "Representante",
         },
         {
             "nome": "Ana Beatriz",
             "email": "ana.beatriz@uvv.br",
-            "curso": "Administração",
-            "periodo": "2º período",
-            "cidade": "Vitória",
+            "curso": "Administracao",
+            "periodo": "2 periodo",
+            "cidade": "Vitoria",
+            "instagram": "@anabeatriz",
+            "linkedin": "linkedin.com/in/anabeatriz",
+            "whatsapp": "(27) 99999-1004",
             "role": "usuario",
             "selo": "Aluno",
         },
         {
             "nome": "Rafael Souza",
             "email": "rafael.souza@uvv.br",
-            "curso": "Sistemas de Informação",
-            "periodo": "7º período",
+            "curso": "Analise e Desenvolvimento de Sistemas",
+            "periodo": "7 periodo",
             "cidade": "Vila Velha",
+            "instagram": "@rafaelsouza",
+            "linkedin": "linkedin.com/in/rafaelsouza",
+            "whatsapp": "(27) 99999-1005",
             "role": "admin",
             "selo": "Administrador",
         },
@@ -95,15 +109,15 @@ def seed_database():
         {
             "titulo": "Dúvida sobre algoritmo de ordenação",
             "descricao": "Estou comparando bubble sort, merge sort e quicksort. Quando faz sentido usar cada um?",
-            "curso": "Ciência da Computação",
+            "curso": "Ciencia da Computacao",
             "disciplina": "Estrutura de Dados",
-            "categoria": "Dúvida",
+            "categoria": "Duvida",
             "autor": "Lucas Almeida",
         },
         {
             "titulo": "Resumo para prova de Banco de Dados",
             "descricao": "Compartilhei um resumo com normalização, SQL e modelagem relacional.",
-            "curso": "Ciência da Computação",
+            "curso": "Ciencia da Computacao",
             "disciplina": "Banco de Dados",
             "categoria": "Material de estudo",
             "autor": "Mariana Costa",
@@ -111,7 +125,7 @@ def seed_database():
         {
             "titulo": "Grupo para Projeto Integrador",
             "descricao": "Procuro pessoas para formar grupo do Projeto Integrador deste semestre.",
-            "curso": "Ciência da Computação",
+            "curso": "Engenharia de Software",
             "disciplina": "Projeto Integrador",
             "categoria": "Grupo de trabalho",
             "autor": "João Pedro",
@@ -119,7 +133,7 @@ def seed_database():
         {
             "titulo": "Monitoria de Cálculo I nesta semana",
             "descricao": "A monitoria vai acontecer na quarta-feira, no bloco de exatas.",
-            "curso": "Ciência da Computação",
+            "curso": "Engenharia de Software",
             "disciplina": "Cálculo I",
             "categoria": "Monitoria",
             "tipo": "aviso",
@@ -129,9 +143,9 @@ def seed_database():
         {
             "titulo": "Vaga de estágio em desenvolvimento",
             "descricao": "Empresa parceira abriu vaga para backend Python e SQL.",
-            "curso": "Sistemas de Informação",
+            "curso": "Analise e Desenvolvimento de Sistemas",
             "disciplina": "Carreira",
-            "categoria": "Estágio",
+            "categoria": "Estagio",
             "autor": "Rafael Souza",
         },
     ]
@@ -230,6 +244,7 @@ def seed_database():
             "numero_vagas": 2,
             "perto_uvv": True,
             "aceita_dividir_quarto": True,
+            "contato_externo": "WhatsApp: (27) 99999-1111",
             "anunciante": "João Pedro",
         },
         {
@@ -240,6 +255,7 @@ def seed_database():
             "numero_vagas": 1,
             "perto_uvv": False,
             "aceita_dividir_quarto": False,
+            "contato_externo": "Instagram: @quartoitapua",
             "anunciante": "Ana Beatriz",
         },
         {
@@ -250,6 +266,7 @@ def seed_database():
             "numero_vagas": 2,
             "perto_uvv": False,
             "aceita_dividir_quarto": True,
+            "contato_externo": "lucas.moradia@uvv.br",
             "anunciante": "Lucas Almeida",
         },
     ]
@@ -275,12 +292,6 @@ def seed_database():
             "tipo": "evento",
             "link": "/eventos/2",
         },
-        {
-            "titulo": "Nova mensagem recebida",
-            "mensagem": "Mariana enviou uma nova mensagem para você.",
-            "tipo": "mensagem",
-            "link": "/mensagens/3",
-        },
     ]
 
     for item in notificacoes_data:
@@ -289,32 +300,6 @@ def seed_database():
             usuario_id=usuarios["Lucas Almeida"].id,
             titulo=item["titulo"],
             defaults=item,
-        )
-
-    mensagens_data = [
-        {
-            "remetente": "Mariana Costa",
-            "destinatario": "Lucas Almeida",
-            "conteudo": "Lucas, confirma se você consegue ir no workshop de Git?",
-        },
-        {
-            "remetente": "Lucas Almeida",
-            "destinatario": "Mariana Costa",
-            "conteudo": "Consigo sim, vou levar meu notebook.",
-        },
-        {
-            "remetente": "João Pedro",
-            "destinatario": "Lucas Almeida",
-            "conteudo": "Vamos revisar Banco de Dados mais tarde?",
-        },
-    ]
-
-    for item in mensagens_data:
-        _get_or_create(
-            Mensagem,
-            remetente_id=usuarios[item["remetente"]].id,
-            destinatario_id=usuarios[item["destinatario"]].id,
-            conteudo=item["conteudo"],
         )
 
     db.session.commit()

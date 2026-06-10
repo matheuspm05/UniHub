@@ -4,6 +4,7 @@ from flask_login import current_user
 from unihub.ext.db import db
 from unihub.forms import RespostaForm, TopicoForm
 from unihub.models import ForumResposta, ForumTopico, Usuario
+from unihub.options import CURSOS, TOPICO_CATEGORIAS
 from unihub.utils.auth import (
     usuario_atual_pode_moderar,
     resposta_proibida,
@@ -19,6 +20,8 @@ from unihub.utils.view_helpers import contexto_dashboard, iniciais, prefere_html
 bp = Blueprint("forum", __name__, url_prefix="/forum")
 STATUS_TOPICO_VALIDOS = {"aberto", "resolvido", "fechado", "desativado"}
 TIPOS_TOPICO_VALIDOS = {"topico", "aviso"}
+CURSOS_VALIDOS = {valor for valor, _ in CURSOS}
+CATEGORIAS_VALIDAS = {valor for valor, _ in TOPICO_CATEGORIAS}
 
 
 def _prefer_html():
@@ -83,7 +86,7 @@ def _query_topicos():
     else:
         query = query.filter(ForumTopico.status != "desativado")
 
-    for campo in ["curso", "disciplina", "categoria", "tipo"]:
+    for campo in ["curso", "categoria", "tipo"]:
         valor = request.args.get(campo)
         if valor:
             query = query.filter(getattr(ForumTopico, campo).ilike(f"%{valor}%"))
@@ -95,7 +98,7 @@ def _query_topicos():
             db.or_(
                 ForumTopico.titulo.ilike(termo),
                 ForumTopico.descricao.ilike(termo),
-                ForumTopico.disciplina.ilike(termo),
+                ForumTopico.curso.ilike(termo),
                 ForumTopico.categoria.ilike(termo),
             )
         )
@@ -107,9 +110,8 @@ def _dados_topico_formulario(form):
     data = {
         "titulo": form.titulo.data.strip(),
         "descricao": form.descricao.data.strip(),
-        "curso": form.curso.data.strip(),
-        "disciplina": form.disciplina.data.strip(),
-        "categoria": form.categoria.data.strip(),
+        "curso": form.curso.data,
+        "categoria": form.categoria.data,
     }
     if usuario_atual_pode_moderar():
         tipo = (form.tipo.data or "topico").strip()
@@ -124,7 +126,7 @@ def _dados_topico_formulario(form):
 
 
 def _criar_topico_com_dados(data):
-    obrigatorios = ["titulo", "descricao", "curso", "disciplina", "categoria"]
+    obrigatorios = ["titulo", "descricao", "curso", "categoria"]
     faltando = _missing_fields(data, obrigatorios)
     if faltando:
         return None, resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
@@ -136,6 +138,10 @@ def _criar_topico_com_dados(data):
     tipo = data.get("tipo", "topico")
     if tipo not in TIPOS_TOPICO_VALIDOS:
         return None, resposta_erro("Tipo invalido", 400)
+    if data["curso"] not in CURSOS_VALIDOS:
+        return None, resposta_erro("Curso invalido", 400)
+    if data["categoria"] not in CATEGORIAS_VALIDAS:
+        return None, resposta_erro("Categoria invalida", 400)
     if tipo == "aviso" and not usuario_atual_pode_moderar():
         return None, resposta_proibida("Somente moderadores podem criar avisos oficiais")
 
@@ -143,7 +149,7 @@ def _criar_topico_com_dados(data):
         titulo=data["titulo"],
         descricao=data["descricao"],
         curso=data["curso"],
-        disciplina=data["disciplina"],
+        disciplina=None,
         categoria=data["categoria"],
         status="aberto",
         tipo=tipo,
@@ -175,12 +181,16 @@ def _atualizar_topico_com_dados(topico, data, pode_moderar):
     if "tipo" in data and data["tipo"] not in TIPOS_TOPICO_VALIDOS:
         return resposta_erro("Tipo invalido", 400)
 
-    obrigatorios = ["titulo", "descricao", "curso", "disciplina", "categoria"]
+    obrigatorios = ["titulo", "descricao", "curso", "categoria"]
     faltando = _missing_fields(data, obrigatorios)
     if faltando:
         return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
+    if data["curso"] not in CURSOS_VALIDOS:
+        return resposta_erro("Curso invalido", 400)
+    if data["categoria"] not in CATEGORIAS_VALIDAS:
+        return resposta_erro("Categoria invalida", 400)
 
-    campos_editaveis = ["titulo", "descricao", "curso", "disciplina", "categoria"]
+    campos_editaveis = ["titulo", "descricao", "curso", "categoria"]
     if pode_moderar:
         campos_editaveis.extend(["status", "tipo"])
 
@@ -230,9 +240,8 @@ def _renderizar_lista_topicos():
             "topicos": topicos,
             "avisos": avisos,
             "filtros": request.args,
-            "cursos": _opcoes_topicos("curso"),
-            "disciplinas": _opcoes_topicos("disciplina"),
-            "categorias": _opcoes_topicos("categoria"),
+            "cursos": [valor for valor, _ in CURSOS],
+            "categorias": [valor for valor, _ in TOPICO_CATEGORIAS],
             "usuario_pode_moderar": usuario_atual_pode_moderar(),
         }
     )
@@ -317,9 +326,8 @@ def _renderizar_formulario_topico(template, form, topico=None):
         {
             "form": form,
             "topico": topico,
-            "cursos": _opcoes_topicos("curso"),
-            "disciplinas": _opcoes_topicos("disciplina"),
-            "categorias": _opcoes_topicos("categoria"),
+            "cursos": [valor for valor, _ in CURSOS],
+            "categorias": [valor for valor, _ in TOPICO_CATEGORIAS],
         }
     )
     return render_template(template, **contexto)

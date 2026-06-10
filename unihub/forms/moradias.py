@@ -34,4 +34,5 @@ class MoradiaForm(FlaskForm):
         default="disponivel",
         validators=[DataRequired()],
     )
+    contato_externo = StringField("Contato externo", validators=[Optional(), Length(max=255)])
     imagem_url = StringField("Imagem", validators=[Optional(), Length(max=255)])

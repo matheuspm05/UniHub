@@ -96,6 +96,7 @@ def _dados_formulario_moradia(form):
         "perto_uvv": form.perto_uvv.data,
         "aceita_dividir_quarto": form.aceita_dividir_quarto.data,
         "status": form.status.data,
+        "contato_externo": form.contato_externo.data.strip() if form.contato_externo.data else None,
         "imagem_url": form.imagem_url.data.strip() if form.imagem_url.data else None,
     }
     if "preco_mensal" in data:
@@ -181,6 +182,7 @@ def _criar_moradia(data):
         perto_uvv=_as_bool(data.get("perto_uvv")) is True,
         aceita_dividir_quarto=_as_bool(data.get("aceita_dividir_quarto")) is True,
         status=data.get("status", "disponivel"),
+        contato_externo=data.get("contato_externo") or None,
         imagem_url=data.get("imagem_url") or None,
         anunciante_id=anunciante_id,
     )
@@ -197,7 +199,7 @@ def _atualizar_moradia(moradia, data):
     if validation:
         return validation
 
-    for campo in ["titulo", "descricao", "bairro", "preco_mensal", "numero_vagas", "status"]:
+    for campo in ["titulo", "descricao", "bairro", "preco_mensal", "numero_vagas", "status", "contato_externo"]:
         if campo in data:
             setattr(moradia, campo, data[campo])
 
@@ -413,7 +415,7 @@ def editar_moradia(moradia_id):
     if validation:
         return validation
 
-    for campo in ["titulo", "descricao", "bairro", "preco_mensal", "numero_vagas", "status", "imagem_url"]:
+    for campo in ["titulo", "descricao", "bairro", "preco_mensal", "numero_vagas", "status", "contato_externo", "imagem_url"]:
         if campo in data:
             setattr(moradia, campo, data[campo])
 

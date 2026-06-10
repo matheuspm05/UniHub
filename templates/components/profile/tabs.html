@@ -1,5 +1,5 @@
 <nav class="flex gap-8 overflow-x-auto border-b border-unihub-line text-base font-extrabold text-unihub-muted">
-  {% for item, href in [("Sobre mim", "/perfil"), ("Configuracoes", "/configuracoes")] %}
+  {% for item, href in [("Perfil", "/perfil"), ("Configuracoes", "/configuracoes")] %}
     <a href="{{ href }}" class="whitespace-nowrap border-b-2 px-1 pb-3 {% if request.path == href %}border-[#0B5FEA] text-[#0B5FEA]{% else %}border-transparent hover:text-[#0B5FEA]{% endif %}">
       {{ item }}
     </a>

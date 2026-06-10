@@ -1,0 +1,78 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Usuarios - UniHub{% endblock %}
+{% block app_main_class %}xl:grid-cols-[minmax(0,1.15fr)_360px]{% endblock %}
+
+{% block app_content %}
+  <section class="grid gap-6">
+    <div>
+      <h1 class="text-3xl font-extrabold text-unihub-ink">Usuarios da comunidade</h1>
+      <p class="mt-2 text-base font-medium text-unihub-muted">Explore perfis ativos da plataforma e encontre colegas por curso, cidade e papel.</p>
+    </div>
+
+    <section class="rounded-xl border border-unihub-line bg-white p-5 shadow-card">
+      <div class="flex items-center justify-between gap-4 border-b border-unihub-line pb-4">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-[0.18em] text-unihub-muted">Rede UniHub</p>
+          <h2 class="mt-1 text-xl font-extrabold text-unihub-ink">{{ total_usuarios }} usuarios ativos</h2>
+        </div>
+        <a href="/perfil" class="inline-flex h-11 items-center justify-center rounded-lg border border-[#CBD6E6] px-5 text-sm font-extrabold text-[#0B5FEA] transition hover:bg-uvv-50">Meu perfil</a>
+      </div>
+
+      <div class="mt-4 grid gap-3">
+        {% for usuario in usuarios %}
+          <a href="/usuarios/{{ usuario.id }}" class="grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-lg border px-4 py-4 transition {% if usuario_destaque and usuario_destaque.id == usuario.id %}border-uvv-200 bg-uvv-50{% else %}border-unihub-line hover:border-uvv-200 hover:bg-unihub-surface{% endif %}">
+            <span class="grid h-14 w-14 place-items-center rounded-full bg-[#EAF1FF] text-base font-extrabold text-[#0B5FEA]">{{ iniciais(usuario.nome) }}</span>
+            <span class="min-w-0">
+              <span class="block truncate text-base font-extrabold text-unihub-ink">{{ usuario.nome }}</span>
+              <span class="mt-1 block truncate text-sm font-medium text-unihub-muted">{{ usuario.curso }} • {{ usuario.cidade }}</span>
+            </span>
+            <span class="inline-flex rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.role == 'admin' %}bg-amber-50 text-amber-700{% elif usuario.role == 'moderador' %}bg-emerald-50 text-emerald-700{% else %}bg-blue-50 text-[#0B5FEA]{% endif %}">
+              {{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}.get(usuario.role, usuario.role|capitalize) }}
+            </span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  </section>
+
+  <aside class="grid h-fit gap-6">
+    {% set destaque = usuario_destaque or current_user %}
+    <section class="rounded-xl border border-unihub-line bg-white p-6 shadow-card">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-unihub-muted">{% if usuario_destaque %}Perfil em destaque{% else %}Seu perfil{% endif %}</p>
+      <div class="mt-5 flex items-center gap-4">
+        <span class="grid h-20 w-20 place-items-center rounded-full bg-[#EAF1FF] text-2xl font-extrabold text-[#0B5FEA]">{{ iniciais(destaque.nome) }}</span>
+        <div class="min-w-0">
+          <h2 class="truncate text-2xl font-extrabold text-unihub-ink">{{ destaque.nome }}</h2>
+          <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ destaque.curso }}</p>
+          <p class="mt-1 text-sm font-semibold text-unihub-muted">{{ destaque.periodo }} • {{ destaque.cidade }}</p>
+        </div>
+      </div>
+
+      <div class="mt-5 grid gap-3">
+        <div class="rounded-lg bg-unihub-surface p-4">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Papel</p>
+          <p class="mt-2 text-sm font-extrabold text-unihub-ink">{{ {"usuario": "Usuario comum", "moderador": "Moderador", "admin": "Administrador"}.get(destaque.role, destaque.role|capitalize) }}</p>
+        </div>
+        <div class="rounded-lg bg-unihub-surface p-4">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Redes sociais</p>
+          <div class="mt-2 grid gap-2 text-sm font-medium text-unihub-muted">
+            <p>{{ destaque.instagram or "Instagram nao informado" }}</p>
+            <p>{{ destaque.linkedin or "LinkedIn nao informado" }}</p>
+            <p>{{ destaque.whatsapp or "WhatsApp nao informado" }}</p>
+          </div>
+        </div>
+        <div class="rounded-lg bg-unihub-surface p-4">
+          <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Bio</p>
+          <p class="mt-2 text-sm font-medium leading-6 text-unihub-muted">{{ destaque.bio or "Este usuario ainda nao adicionou uma bio." }}</p>
+        </div>
+      </div>
+
+      {% if usuario_destaque and usuario_destaque.id == current_user.id %}
+        <a href="/perfil/editar" class="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white transition hover:bg-uvv-600">Editar meu perfil</a>
+      {% elif usuario_destaque %}
+        <a href="/forum" class="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#0B5FEA] px-5 text-sm font-extrabold text-white transition hover:bg-uvv-600">Ir para o forum</a>
+      {% endif %}
+    </section>
+  </aside>
+{% endblock %}

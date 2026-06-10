@@ -177,7 +177,7 @@ invoke db-migrate --message="descricao da alteracao"
 
 ## Seed
 
-Popula o banco com usuários, fórum, eventos, moradias, notificações e mensagens iniciais.
+Popula o banco com usuários, fórum, eventos, moradias, notificações e dados iniciais da interface.
 
 Linux/macOS:
 
@@ -249,6 +249,10 @@ Fluxos principais no navegador:
 - Dashboard: `http://127.0.0.1:5000/dashboard`
 - Perfil: `http://127.0.0.1:5000/perfil`
 - Notificações: `http://127.0.0.1:5000/notificacoes`
+- Usuários: `http://127.0.0.1:5000/usuarios`
+- Fórum: `http://127.0.0.1:5000/forum`
+- Eventos: `http://127.0.0.1:5000/eventos`
+- Moradias: `http://127.0.0.1:5000/moradias`
 
 ## Swagger
 
@@ -257,6 +261,26 @@ Interface:
 ```text
 http://127.0.0.1:5000/swagger/
 ```
+
+## Testes
+
+A suíte foi reduzida para os casos principais pedidos em avaliação:
+
+- rotas públicas principais
+- autenticação
+- fórum
+- eventos
+- moradias
+- usuários
+- permissões de admin
+
+Rodar:
+
+```bash
+./venv/bin/python -m unittest discover -s tests -v
+```
+
+Atualmente o projeto mantém `21` testes automatizados de fluxo principal.
 
 JSON:
 

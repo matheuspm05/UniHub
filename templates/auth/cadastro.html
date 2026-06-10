@@ -45,11 +45,9 @@
             <i data-lucide="graduation-cap" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
             <select class="h-[58px] w-full appearance-none rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-[#5F6F8D] outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" name="curso" required>
               <option value="" selected disabled>Selecione seu curso</option>
-              <option value="Ciencia da Computacao">Ciencia da Computacao</option>
-              <option value="Engenharia de Software">Engenharia de Software</option>
-              <option value="Sistemas de Informacao">Sistemas de Informacao</option>
-              <option value="Design">Design</option>
-              <option value="Administracao">Administracao</option>
+              {% for curso, label in form.curso.choices[1:] %}
+                <option value="{{ curso }}">{{ label }}</option>
+              {% endfor %}
             </select>
             <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
           </span>
@@ -61,8 +59,8 @@
           <i data-lucide="calendar-days" class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>
           <select class="h-[58px] w-full appearance-none rounded-xl border border-[#CBD6E6] bg-white pl-14 pr-14 text-lg font-medium text-[#5F6F8D] outline-none transition focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" name="periodo" required>
             <option value="" selected disabled>Selecione seu periodo</option>
-            {% for periodo in ["1 periodo", "2 periodo", "3 periodo", "4 periodo", "5 periodo", "6 periodo", "7 periodo", "8 periodo"] %}
-              <option value="{{ periodo }}">{{ periodo }}</option>
+            {% for periodo, label in form.periodo.choices[1:] %}
+              <option value="{{ periodo }}">{{ label }}</option>
             {% endfor %}
           </select>
           <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 text-[#6E7E9D]"></i>

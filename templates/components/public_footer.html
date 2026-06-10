@@ -14,9 +14,9 @@
     <div class="lg:border-l lg:border-unihub-line lg:pl-8">
       <h2 class="text-sm font-bold text-unihub-ink">Navegacao</h2>
       <div class="mt-4 grid gap-3 text-sm text-unihub-muted">
-        <a href="#sobre" class="hover:text-uvv-700">Sobre</a>
-        <a href="#funcionalidades" class="hover:text-uvv-700">Funcionalidades</a>
-        <a href="#como-funciona" class="hover:text-uvv-700">Como funciona</a>
+        <a href="{{ url_for('main.index') }}#sobre" class="hover:text-uvv-700">Sobre</a>
+        <a href="{{ url_for('main.index') }}#comparativo" class="hover:text-uvv-700">Funcionalidades</a>
+        <a href="{{ url_for('main.index') }}#como-funciona" class="hover:text-uvv-700">Como funciona</a>
       </div>
     </div>
 

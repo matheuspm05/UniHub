@@ -108,26 +108,11 @@
                   <i data-lucide="chevron-down" class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-unihub-muted"></i>
                 </span>
               </label>
-            </div>
-          </div>
-        </section>
 
-        <section class="rounded-lg border border-unihub-line bg-white p-5 shadow-card md:p-6">
-          <p class="text-sm font-extrabold text-unihub-ink">Fotos (opcional)</p>
-          <p class="mt-1 text-sm font-medium text-unihub-muted">Adicione fotos da moradia para atrair mais interessados.</p>
-          <div class="mt-4 grid gap-4 md:grid-cols-[minmax(220px,320px)_1fr]">
-            <label class="grid min-h-28 place-items-center rounded-lg border border-dashed border-[#CBD6E6] bg-white p-4 text-center text-sm font-semibold text-unihub-muted">
-              <input type="file" name="fotos" class="hidden" multiple accept="image/png,image/jpeg">
-              <span class="grid gap-2">
-                <i data-lucide="image-plus" class="mx-auto h-7 w-7 text-[#0B5FEA]"></i>
-                <strong class="text-[#0B5FEA]">Adicionar fotos</strong>
-                <span>ou arraste e solte aqui<br>PNG, JPG ou JPEG (max. 10MB cada)</span>
-              </span>
-            </label>
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {% for item in range(4) %}
-                <div class="min-h-28 rounded-lg border border-unihub-line bg-unihub-surfaceAlt"></div>
-              {% endfor %}
+              <label class="grid gap-2 md:col-span-2">
+                <span class="text-sm font-extrabold text-unihub-ink">Contato externo</span>
+                <input name="contato_externo" value="{{ dados.get('contato_externo', '') }}" class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-medium text-unihub-ink outline-none transition placeholder:text-unihub-muted focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100" placeholder="Ex.: WhatsApp, Instagram ou e-mail para contato">
+              </label>
             </div>
           </div>
         </section>
@@ -161,7 +146,7 @@
             <i data-lucide="shield-check" class="h-6 w-6 shrink-0 text-amber-500"></i>
             <div>
               <h2 class="text-sm font-extrabold text-unihub-ink">Seguranca em primeiro lugar</h2>
-              <p class="mt-2 text-sm font-medium leading-6 text-[#6B5A2D]">Nao compartilhe contatos pessoais. Toda comunicacao deve ocorrer dentro da plataforma.</p>
+              <p class="mt-2 text-sm font-medium leading-6 text-[#6B5A2D]">Use o campo de contato externo com cuidado e publique apenas informacoes que voce realmente queira compartilhar.</p>
             </div>
           </div>
         </section>

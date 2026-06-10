@@ -1,8 +1,8 @@
-<a href="/" class="inline-flex items-center gap-3" aria-label="UniHub inicio">
+<a href="{{ url_for('main.index') }}" class="inline-flex items-center gap-3 sm:gap-4" aria-label="UniHub inicio">
   <img
     src="{{ url_for('static', filename='imgs/logos/logo.png') }}"
     alt="Logo UniHub"
-    class="h-14 w-14 rounded-xl object-cover"
+    class="h-16 w-16 object-contain sm:h-[4.5rem] sm:w-[4.5rem]"
   >
-  <span class="text-[2.45rem] font-extrabold leading-none tracking-[-0.03em] text-unihub-ink">UniHub</span>
+  <span class="text-[2.35rem] font-extrabold leading-none tracking-[-0.03em] text-unihub-ink sm:text-[2.85rem]">UniHub</span>
 </a>

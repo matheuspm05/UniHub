@@ -2,13 +2,18 @@ from flask_wtf import FlaskForm
 from wtforms import RadioField, SelectField, StringField, TextAreaField
 from wtforms.validators import AnyOf, DataRequired, Length, Optional
 
+from unihub.options import CURSOS, TOPICO_CATEGORIAS
+
 
 class TopicoForm(FlaskForm):
     titulo = StringField("Titulo", validators=[DataRequired(), Length(max=180)])
     descricao = TextAreaField("Descricao", validators=[DataRequired()])
-    curso = StringField("Curso", validators=[DataRequired(), Length(max=120)])
-    disciplina = StringField("Disciplina", validators=[DataRequired(), Length(max=120)])
-    categoria = StringField("Categoria", validators=[DataRequired(), Length(max=80)])
+    curso = SelectField("Curso", choices=[("", "Selecione o curso"), *CURSOS], validators=[DataRequired()])
+    categoria = SelectField(
+        "Categoria",
+        choices=[("", "Selecione a categoria"), *TOPICO_CATEGORIAS],
+        validators=[DataRequired()],
+    )
     tipo = RadioField(
         "Tipo",
         choices=[("topico", "Topico comum"), ("aviso", "Aviso oficial")],
