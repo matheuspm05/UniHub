@@ -4,6 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
+from unihub.forms import MoradiaForm
 from unihub.models import Moradia, Usuario
 from unihub.utils.auth import (
     usuario_atual_pode_moderar,
@@ -85,8 +86,18 @@ def _validar_moradia(data, partial=False):
     return None
 
 
-def _dados_formulario_moradia():
-    data = request.form.to_dict()
+def _dados_formulario_moradia(form):
+    data = {
+        "titulo": form.titulo.data.strip(),
+        "descricao": form.descricao.data.strip(),
+        "bairro": form.bairro.data.strip(),
+        "preco_mensal": form.preco_mensal.data.strip(),
+        "numero_vagas": form.numero_vagas.data,
+        "perto_uvv": form.perto_uvv.data,
+        "aceita_dividir_quarto": form.aceita_dividir_quarto.data,
+        "status": form.status.data,
+        "imagem_url": form.imagem_url.data.strip() if form.imagem_url.data else None,
+    }
     if "preco_mensal" in data:
         data["preco_mensal"] = data["preco_mensal"].replace(".", "").replace(",", ".")
     return data
@@ -233,16 +244,22 @@ def listar_moradias():
 @bp.route("/anunciar", methods=["GET", "POST"])
 @exigir_login
 def anunciar_moradia():
+    form = MoradiaForm()
     contexto = _base_contexto()
     contexto.update(
         {
+            "form": form,
             "bairros": _bairros_disponiveis(),
             "dados": request.form,
         }
     )
 
     if request.method == "POST":
-        moradia, response = _criar_moradia(_dados_formulario_moradia())
+        if not form.validate_on_submit():
+            contexto["erro"] = "Confira os campos obrigatorios e tente novamente."
+            return render_template("moradias/anunciar.html", **contexto), 400
+
+        moradia, response = _criar_moradia(_dados_formulario_moradia(form))
         if response:
             contexto["erro"] = "Confira os campos obrigatorios e tente novamente."
             return render_template("moradias/anunciar.html", **contexto), 400
@@ -314,9 +331,11 @@ def editar_moradia_html(moradia_id):
     if not _usuario_pode_gerenciar_moradia(moradia):
         return resposta_proibida("Somente o anunciante ou um moderador pode editar este anuncio")
 
+    form = MoradiaForm(obj=moradia)
     contexto = _base_contexto()
     contexto.update(
         {
+            "form": form,
             "moradia": moradia,
             "bairros": _bairros_disponiveis(),
             "dados": request.form,
@@ -325,7 +344,11 @@ def editar_moradia_html(moradia_id):
     )
 
     if request.method == "POST":
-        response = _atualizar_moradia(moradia, _dados_formulario_moradia())
+        if not form.validate_on_submit():
+            contexto["erro"] = "Confira os campos obrigatorios e tente novamente."
+            return render_template("moradias/editar.html", **contexto), 400
+
+        response = _atualizar_moradia(moradia, _dados_formulario_moradia(form))
         if response:
             contexto["erro"] = "Confira os campos obrigatorios e tente novamente."
             return render_template("moradias/editar.html", **contexto), 400

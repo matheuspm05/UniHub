@@ -5,25 +5,22 @@ from unihub.utils.auth import (
     usuario_atual_tem_role,
     resposta_nao_autenticada,
     resposta_proibida,
-    obter_usuario_atual,
     obter_usuario_atual_id,
     exigir_admin,
     exigir_login,
     exigir_moderador,
     exigir_role,
 )
-from unihub.utils.responses import resposta_api, resposta_erro, resposta_sucesso
+from unihub.utils.responses import resposta_erro, resposta_sucesso
 
 __all__ = [
     "NIVEIS_DE_ROLE",
-    "resposta_api",
     "usuario_atual_pode_moderar",
     "usuario_atual_e_admin",
     "usuario_atual_tem_role",
     "resposta_erro",
     "resposta_nao_autenticada",
     "resposta_proibida",
-    "obter_usuario_atual",
     "obter_usuario_atual_id",
     "exigir_admin",
     "exigir_login",

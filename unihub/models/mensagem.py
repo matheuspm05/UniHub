@@ -1,26 +1,34 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from unihub.ext.db import db
+
+if TYPE_CHECKING:
+    from unihub.models.usuario import Usuario
 
 
 class Mensagem(db.Model):
     __tablename__ = "mensagens"
 
-    id = db.Column(db.Integer, primary_key=True)
-    remetente_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-    destinatario_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-    conteudo = db.Column(db.Text, nullable=False)
-    lida = db.Column(db.Boolean, default=False, nullable=False)
-    removida_pelo_remetente = db.Column(db.Boolean, default=False, nullable=False)
-    removida_pelo_destinatario = db.Column(db.Boolean, default=False, nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    remetente_id: Mapped[int] = mapped_column(db.ForeignKey("usuarios.id"), nullable=False)
+    destinatario_id: Mapped[int] = mapped_column(db.ForeignKey("usuarios.id"), nullable=False)
+    conteudo: Mapped[str] = mapped_column(db.Text, nullable=False)
+    lida: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
+    removida_pelo_remetente: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
+    removida_pelo_destinatario: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    remetente = db.relationship(
+    remetente: Mapped["Usuario"] = relationship(
         "Usuario",
         foreign_keys=[remetente_id],
         back_populates="mensagens_enviadas",
     )
-    destinatario = db.relationship(
+    destinatario: Mapped["Usuario"] = relationship(
         "Usuario",
         foreign_keys=[destinatario_id],
         back_populates="mensagens_recebidas",

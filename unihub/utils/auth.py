@@ -19,12 +19,6 @@ def obter_usuario_atual_id():
     return current_user.id
 
 
-def obter_usuario_atual():
-    if not current_user.is_authenticated:
-        return None
-    return current_user
-
-
 def usuario_atual_tem_role(role):
     if not current_user.is_authenticated or not current_user.ativo:
         return False

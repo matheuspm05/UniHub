@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
+from unihub.forms import RespostaForm, TopicoForm
 from unihub.models import ForumResposta, ForumTopico, Usuario
 from unihub.utils.auth import (
     usuario_atual_pode_moderar,
@@ -102,20 +103,20 @@ def _query_topicos():
     return query.order_by(ForumTopico.atualizado_em.desc())
 
 
-def _dados_topico_formulario():
+def _dados_topico_formulario(form):
     data = {
-        "titulo": request.form.get("titulo", "").strip(),
-        "descricao": request.form.get("descricao", "").strip(),
-        "curso": request.form.get("curso", "").strip(),
-        "disciplina": request.form.get("disciplina", "").strip(),
-        "categoria": request.form.get("categoria", "").strip(),
+        "titulo": form.titulo.data.strip(),
+        "descricao": form.descricao.data.strip(),
+        "curso": form.curso.data.strip(),
+        "disciplina": form.disciplina.data.strip(),
+        "categoria": form.categoria.data.strip(),
     }
     if usuario_atual_pode_moderar():
-        tipo = request.form.get("tipo", "topico").strip() or "topico"
+        tipo = (form.tipo.data or "topico").strip()
         data.update(
             {
                 "tipo": tipo,
-                "status": request.form.get("status", "aberto").strip() or "aberto",
+                "status": (form.status.data or "aberto").strip(),
                 "aviso_oficial": tipo == "aviso",
             }
         )
@@ -273,6 +274,7 @@ def detalhar_topico(topico_id):
                 "respostas": respostas,
                 "usuario_e_autor": topico.autor_id == obter_usuario_atual_id(),
                 "usuario_pode_moderar": usuario_atual_pode_moderar(),
+                "resposta_form": RespostaForm(),
             }
         )
         return render_template("forum/detalhes.html", **contexto)
@@ -296,21 +298,31 @@ def criar_topico():
 @bp.route("/criar", methods=["GET", "POST"])
 @exigir_login
 def criar_topico_html():
+    form = TopicoForm()
     if request.method == "POST":
-        topico, response = _criar_topico_com_dados(_dados_topico_formulario())
+        if not form.validate_on_submit():
+            return _renderizar_formulario_topico("forum/criar.html", form), 400
+
+        topico, response = _criar_topico_com_dados(_dados_topico_formulario(form))
         if response:
             return response
         return redirect(url_for("forum.detalhar_topico", topico_id=topico.id))
 
+    return _renderizar_formulario_topico("forum/criar.html", form)
+
+
+def _renderizar_formulario_topico(template, form, topico=None):
     contexto = _base_contexto()
     contexto.update(
         {
+            "form": form,
+            "topico": topico,
             "cursos": _opcoes_topicos("curso"),
             "disciplinas": _opcoes_topicos("disciplina"),
             "categorias": _opcoes_topicos("categoria"),
         }
     )
-    return render_template("forum/criar.html", **contexto)
+    return render_template(template, **contexto)
 
 
 @bp.put("/topicos/<int:topico_id>")
@@ -345,26 +357,21 @@ def editar_topico_html(topico_id):
     if topico.autor_id != obter_usuario_atual_id() and not pode_moderar:
         return resposta_proibida("Somente o autor ou um moderador pode editar este topico")
 
+    form = TopicoForm(obj=topico)
     if request.method == "POST":
+        if not form.validate_on_submit():
+            return _renderizar_formulario_topico("forum/editar.html", form, topico), 400
+
         response = _atualizar_topico_com_dados(
             topico,
-            _dados_topico_formulario(),
+            _dados_topico_formulario(form),
             pode_moderar,
         )
         if response:
             return response
         return redirect(url_for("forum.detalhar_topico", topico_id=topico.id))
 
-    contexto = _base_contexto()
-    contexto.update(
-        {
-            "topico": topico,
-            "cursos": _opcoes_topicos("curso"),
-            "disciplinas": _opcoes_topicos("disciplina"),
-            "categorias": _opcoes_topicos("categoria"),
-        }
-    )
-    return render_template("forum/editar.html", **contexto)
+    return _renderizar_formulario_topico("forum/editar.html", form, topico)
 
 
 def _alterar_status_topico(topico_id, status, mensagem):
@@ -442,7 +449,10 @@ def criar_resposta(topico_id):
         return resposta_erro("So e possivel responder topicos abertos", 400)
 
     if request.form:
-        data = {"conteudo": request.form.get("conteudo", "").strip()}
+        form = RespostaForm()
+        if not form.validate_on_submit():
+            return resposta_erro("Campo obrigatorio ausente", 400, {"campos": ["conteudo"]})
+        data = {"conteudo": form.conteudo.data.strip()}
     else:
         data, response = _payload()
         if response:
@@ -492,10 +502,11 @@ def editar_resposta_html(resposta_id):
     if not _usuario_pode_editar_resposta(resposta):
         return resposta_proibida("Somente o autor ou um moderador pode editar esta resposta")
 
-    response = _atualizar_resposta_com_dados(
-        resposta,
-        {"conteudo": request.form.get("conteudo", "").strip()},
-    )
+    form = RespostaForm()
+    if not form.validate_on_submit():
+        return resposta_erro("Campo obrigatorio ausente", 400, {"campos": ["conteudo"]})
+
+    response = _atualizar_resposta_com_dados(resposta, {"conteudo": form.conteudo.data.strip()})
     if response:
         return response
     return redirect(url_for("forum.detalhar_topico", topico_id=resposta.topico_id))

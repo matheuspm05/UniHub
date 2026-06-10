@@ -22,6 +22,7 @@
     {% endif %}
 
     <form class="mt-10 grid gap-7" method="post" action="/auth/login">
+      {{ form.hidden_tag() }}
       <label class="grid gap-2 text-sm font-bold text-unihub-ink">
         E-mail
         <span class="relative">

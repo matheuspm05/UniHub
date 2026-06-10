@@ -117,6 +117,7 @@
               <details class="mt-3 rounded-lg border border-unihub-line bg-unihub-surface p-3">
                 <summary class="cursor-pointer text-sm font-extrabold text-[#0B5FEA]">Editar resposta</summary>
                 <form method="post" action="/forum/respostas/{{ resposta.id }}/editar" class="mt-3 grid gap-3">
+                  {{ resposta_form.hidden_tag() }}
                   <textarea name="conteudo" required rows="3" class="w-full rounded-lg border border-[#CBD6E6] p-3 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100">{{ resposta.conteudo }}</textarea>
                   <div class="flex justify-end gap-2">
                     <button type="submit" class="inline-flex h-9 items-center justify-center rounded-lg bg-[#0B5FEA] px-4 text-sm font-extrabold text-white transition hover:bg-uvv-600">Salvar resposta</button>
@@ -161,6 +162,7 @@
 
     {% if topico.status == "aberto" %}
       <form id="responder" method="post" action="/forum/topicos/{{ topico.id }}/respostas" class="rounded-lg border border-unihub-line bg-white p-5 shadow-card">
+        {{ resposta_form.hidden_tag() }}
         <h2 class="text-xl font-extrabold text-unihub-ink">Escreva sua resposta</h2>
         <textarea name="conteudo" required rows="4" placeholder="Compartilhe sua resposta com a comunidade..." class="mt-3 w-full rounded-lg border border-[#CBD6E6] p-4 text-sm font-medium text-unihub-ink outline-none focus:border-uvv-500 focus:ring-4 focus:ring-uvv-100"></textarea>
         <div class="mt-3 flex justify-end gap-3">

@@ -22,6 +22,7 @@
     {% endif %}
 
     <form class="mt-10 grid gap-6" method="post" action="/auth/cadastro">
+      {{ form.hidden_tag() }}
       <label class="grid gap-2 text-sm font-bold text-unihub-ink">
         Nome completo
         <span class="relative">

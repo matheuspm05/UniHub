@@ -1,6 +1,14 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from unihub.ext.db import db
+
+if TYPE_CHECKING:
+    from unihub.models.usuario import Usuario
 
 
 class ForumTopico(db.Model):
@@ -16,27 +24,31 @@ class ForumTopico(db.Model):
         ),
     )
 
-    id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(180), nullable=False)
-    descricao = db.Column(db.Text, nullable=False)
-    curso = db.Column(db.String(120), nullable=False)
-    disciplina = db.Column(db.String(120), nullable=True)
-    categoria = db.Column(db.String(80), nullable=False)
-    status = db.Column(db.String(30), default="aberto", nullable=False)
-    tipo = db.Column(db.String(30), default="topico", nullable=False)
-    aviso_oficial = db.Column(db.Boolean, default=False, nullable=False)
-    autor_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-    visualizacoes = db.Column(db.Integer, default=0, nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    atualizado_em = db.Column(
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    titulo: Mapped[str] = mapped_column(db.String(180), nullable=False)
+    descricao: Mapped[str] = mapped_column(db.Text, nullable=False)
+    curso: Mapped[str] = mapped_column(db.String(120), nullable=False)
+    disciplina: Mapped[str | None] = mapped_column(db.String(120))
+    categoria: Mapped[str] = mapped_column(db.String(80), nullable=False)
+    status: Mapped[str] = mapped_column(db.String(30), default="aberto", nullable=False)
+    tipo: Mapped[str] = mapped_column(db.String(30), default="topico", nullable=False)
+    aviso_oficial: Mapped[bool] = mapped_column(db.Boolean, default=False, nullable=False)
+    autor_id: Mapped[int] = mapped_column(db.ForeignKey("usuarios.id"), nullable=False)
+    visualizacoes: Mapped[int] = mapped_column(db.Integer, default=0, nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow, nullable=False)
+    atualizado_em: Mapped[datetime] = mapped_column(
         db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
         nullable=False,
     )
 
-    autor = db.relationship("Usuario", back_populates="topicos")
-    respostas = db.relationship("ForumResposta", back_populates="topico", lazy=True)
+    autor: Mapped["Usuario"] = relationship("Usuario", back_populates="topicos")
+    respostas: Mapped[list["ForumResposta"]] = relationship(
+        "ForumResposta",
+        back_populates="topico",
+        lazy=True,
+    )
 
     def to_dict(self, include_respostas=False):
         data = {
@@ -75,21 +87,21 @@ class ForumResposta(db.Model):
         ),
     )
 
-    id = db.Column(db.Integer, primary_key=True)
-    conteudo = db.Column(db.Text, nullable=False)
-    topico_id = db.Column(db.Integer, db.ForeignKey("forum_topicos.id"), nullable=False)
-    autor_id = db.Column(db.Integer, db.ForeignKey("usuarios.id"), nullable=False)
-    status = db.Column(db.String(30), default="ativo", nullable=False)
-    criado_em = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    atualizado_em = db.Column(
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    conteudo: Mapped[str] = mapped_column(db.Text, nullable=False)
+    topico_id: Mapped[int] = mapped_column(db.ForeignKey("forum_topicos.id"), nullable=False)
+    autor_id: Mapped[int] = mapped_column(db.ForeignKey("usuarios.id"), nullable=False)
+    status: Mapped[str] = mapped_column(db.String(30), default="ativo", nullable=False)
+    criado_em: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow, nullable=False)
+    atualizado_em: Mapped[datetime] = mapped_column(
         db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
         nullable=False,
     )
 
-    topico = db.relationship("ForumTopico", back_populates="respostas")
-    autor = db.relationship("Usuario", back_populates="respostas")
+    topico: Mapped["ForumTopico"] = relationship("ForumTopico", back_populates="respostas")
+    autor: Mapped["Usuario"] = relationship("Usuario", back_populates="respostas")
 
     def to_dict(self):
         return {

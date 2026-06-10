@@ -4,6 +4,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 
 from unihub.ext.db import db
+from unihub.forms import CadastroForm, LoginForm
 from unihub.models import Usuario
 from unihub.utils.auth import exigir_login
 from unihub.utils.responses import resposta_erro, resposta_sucesso
@@ -13,9 +14,6 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 def _obter_json() -> dict[str, Any] | None:
-    if request.form:
-        return request.form.to_dict()
-
     dados = request.get_json(silent=True)
     if not isinstance(dados, dict) or not dados:
         return None
@@ -34,36 +32,53 @@ def _erro_senha(senha):
     return None
 
 
+def _primeiro_erro(form, fallback):
+    for erros in form.errors.values():
+        if erros:
+            return erros[0]
+    return fallback
+
+
+def _autenticar_usuario(email, senha):
+    usuario = Usuario.query.filter_by(email=email).first()
+    if not usuario or not usuario.verificar_senha(senha):
+        return None, "Email ou senha invalidos.", 401
+    if not usuario.ativo:
+        return None, "Usuario desativado.", 403
+    return usuario, None, None
+
+
 @bp.post("/login")
 def login():
+    if not request.is_json:
+        form = LoginForm()
+        if not form.validate_on_submit():
+            erro = _primeiro_erro(form, "Informe email e senha.")
+            return render_template("auth/login.html", form=form, erro=erro), 400
+
+        usuario, erro, status = _autenticar_usuario(form.email.data, form.senha.data)
+        if erro:
+            return render_template("auth/login.html", form=form, erro=erro), status
+
+        login_user(usuario, remember=form.lembrar.data)
+        return redirect(url_for("main.dashboard"))
+
     dados = _obter_json()
     if dados is None:
-        if not request.is_json:
-            return render_template("auth/login.html", erro="Informe email e senha."), 400
         return resposta_erro("JSON vazio ou invalido", 400)
 
     faltando = _campos_ausentes(dados, ["email", "senha"])
     if faltando:
-        if not request.is_json:
-            return render_template("auth/login.html", erro="Informe email e senha."), 400
         return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
 
     email = str(dados["email"])
-    senha = str(dados["senha"]) 
+    senha = str(dados["senha"])
 
-    usuario = Usuario.query.filter_by(email=email).first()
-    if not usuario or not usuario.verificar_senha(senha):
-        if not request.is_json:
-            return render_template("auth/login.html", erro="Email ou senha invalidos."), 401
-        return resposta_erro("Email ou senha invalidos", 401)
-    if not usuario.ativo:
-        if not request.is_json:
-            return render_template("auth/login.html", erro="Usuario desativado."), 403
-        return resposta_erro("Usuario desativado", 403)
+    usuario, erro, status = _autenticar_usuario(email, senha)
+    if erro:
+        return resposta_erro(erro.rstrip("."), status)
 
     login_user(usuario, remember=bool(dados.get("lembrar", False)))
-    if not request.is_json:
-        return redirect(url_for("main.dashboard"))
     return resposta_sucesso("Login realizado com sucesso", dados=usuario.to_dict())
 
 
@@ -71,7 +86,7 @@ def login():
 def tela_login():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
-    return render_template("auth/login.html")
+    return render_template("auth/login.html", form=LoginForm())
 
 
 @bp.post("/logout")
@@ -92,54 +107,54 @@ def usuario_logado():
 
 @bp.post("/cadastro")
 def cadastrar_usuario():
+    if not request.is_json:
+        form = CadastroForm()
+        if not form.validate_on_submit():
+            erro = _primeiro_erro(form, "Preencha os dados obrigatorios.")
+            return render_template("auth/cadastro.html", form=form, erro=erro), 400
+
+        email = form.email.data
+        if Usuario.query.filter_by(email=email).first():
+            return render_template("auth/cadastro.html", form=form, erro="Email ja cadastrado."), 400
+
+        usuario = _criar_usuario(
+            {
+                "nome": form.nome.data,
+                "email": email,
+                "senha": form.senha.data,
+                "curso": form.curso.data,
+                "periodo": form.periodo.data,
+                "cidade": form.cidade.data,
+                "bio": form.bio.data,
+            }
+        )
+        login_user(usuario)
+        return redirect(url_for("main.dashboard"))
+
     dados = _obter_json()
     if dados is None:
-        if not request.is_json:
-            return render_template("auth/cadastro.html", erro="Preencha os dados obrigatorios."), 400
         return resposta_erro("JSON vazio ou invalido", 400)
 
     obrigatorios = ["nome", "email", "senha", "curso", "periodo", "cidade"]
     faltando = _campos_ausentes(dados, obrigatorios)
     if faltando:
-        if not request.is_json:
-            return render_template("auth/cadastro.html", erro="Preencha os dados obrigatorios."), 400
         return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
 
     confirmacao_senha = dados.get("confirmacao_senha")
     if confirmacao_senha is not None and str(confirmacao_senha) != str(dados["senha"]):
-        if not request.is_json:
-            return render_template("auth/cadastro.html", erro="As senhas nao conferem."), 400
         return resposta_erro("As senhas nao conferem", 400)
 
     senha = str(dados["senha"])
     erro_senha = _erro_senha(senha)
     if erro_senha:
-        if not request.is_json:
-            return render_template("auth/cadastro.html", erro=erro_senha), 400
         return resposta_erro(erro_senha, 400)
 
     email = str(dados["email"])
     if Usuario.query.filter_by(email=email).first():
-        if not request.is_json:
-            return render_template("auth/cadastro.html", erro="Email ja cadastrado."), 400
         return resposta_erro("Email ja cadastrado", 400)
 
-    usuario = Usuario()
-    usuario.nome = str(dados["nome"])
-    usuario.email = email
-    usuario.curso = str(dados["curso"])
-    usuario.periodo = str(dados["periodo"])
-    usuario.cidade = str(dados["cidade"])
-    usuario.bio = str(dados["bio"]) if dados.get("bio") else None
-    usuario.role = "usuario"
-    usuario.selo = "Aluno"
-    usuario.definir_senha(senha)
-
-    db.session.add(usuario)
-    db.session.commit()
+    usuario = _criar_usuario(dados)
     login_user(usuario)
-    if not request.is_json:
-        return redirect(url_for("main.dashboard"))
     return resposta_sucesso("Usuario cadastrado com sucesso", dados=usuario.to_dict(), codigo_status=201)
 
 
@@ -147,4 +162,21 @@ def cadastrar_usuario():
 def tela_cadastro():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
-    return render_template("auth/cadastro.html")
+    return render_template("auth/cadastro.html", form=CadastroForm())
+
+
+def _criar_usuario(dados):
+    usuario = Usuario()
+    usuario.nome = str(dados["nome"])
+    usuario.email = str(dados["email"])
+    usuario.curso = str(dados["curso"])
+    usuario.periodo = str(dados["periodo"])
+    usuario.cidade = str(dados["cidade"])
+    usuario.bio = str(dados["bio"]) if dados.get("bio") else None
+    usuario.role = "usuario"
+    usuario.selo = "Aluno"
+    usuario.definir_senha(str(dados["senha"]))
+
+    db.session.add(usuario)
+    db.session.commit()
+    return usuario

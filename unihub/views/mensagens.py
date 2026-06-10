@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from unihub.ext.db import db
+from unihub.forms import MensagemForm
 from unihub.models import Mensagem, Usuario
 from unihub.utils.auth import exigir_login, obter_usuario_atual_id
 from unihub.utils.responses import resposta_erro, resposta_sucesso
@@ -122,6 +123,7 @@ def _renderizar_mensagens(usuario_id=None):
                 Usuario.ativo.is_(True),
             ).order_by(Usuario.nome.asc()).all(),
             "mostrar_nova_mensagem": request.args.get("nova") == "1",
+            "mensagem_form": MensagemForm(),
         }
     )
     return render_template("mensagens/index.html", **contexto)
@@ -170,9 +172,12 @@ def listar_conversa(usuario_id):
 @exigir_login
 def enviar_mensagem():
     if request.form:
+        form = MensagemForm()
+        if not form.validate_on_submit():
+            return resposta_erro("Campos obrigatorios ausentes", 400)
         data = {
-            "destinatario_id": request.form.get("destinatario_id"),
-            "conteudo": request.form.get("conteudo", "").strip(),
+            "destinatario_id": form.destinatario_id.data,
+            "conteudo": form.conteudo.data.strip(),
         }
     else:
         data, response = _payload()
@@ -183,7 +188,10 @@ def enviar_mensagem():
     if faltando:
         return resposta_erro("Campos obrigatorios ausentes", 400, {"campos": faltando})
 
-    destinatario_id = int(data["destinatario_id"])
+    try:
+        destinatario_id = int(data["destinatario_id"])
+    except (TypeError, ValueError):
+        return resposta_erro("destinatario_id deve ser um numero valido", 400)
     if destinatario_id == obter_usuario_atual_id():
         return resposta_erro("Nao e possivel enviar mensagem para voce mesmo", 400)
     if not db.session.get(Usuario, destinatario_id):

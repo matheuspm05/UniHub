@@ -1,0 +1,735 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R] /Count 6 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 12 0 R >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 14 0 R >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
+endobj
+10 0 obj
+<< /Length 2107 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+(UNIHUB - DOCUMENTACAO TECNICA) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(INTEGRANTES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- Matheus Pastore) Tj
+T*
+(- Felipe Yuki) Tj
+T*
+(- Davi Conde) Tj
+T*
+() Tj
+T*
+(DESCRICAO GERAL DO PRODUTO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(O UniHub e uma plataforma web para centralizar a vida academica e social de estudantes) Tj
+T*
+(universitarios. O sistema reune autenticacao, perfil, dashboard, eventos, agenda pessoal, forum) Tj
+T*
+(academico, moradias, mensagens, notificacoes e painel administrativo.) Tj
+T*
+() Tj
+T*
+(Principais funcionalidades:) Tj
+T*
+() Tj
+T*
+(- Cadastro, login, logout e sessao com Flask-Login.) Tj
+T*
+(- Perfil do usuario com edicao de dados.) Tj
+T*
+(- Dashboard com resumo de eventos, topicos, moradias e notificacoes.) Tj
+T*
+(- Forum com topicos, respostas, avisos oficiais e moderacao.) Tj
+T*
+(- Eventos com criacao por moderadores/admins, edicao, detalhes e agenda pessoal.) Tj
+T*
+(- Moradias com cadastro, edicao, detalhes e controle de status.) Tj
+T*
+(- Mensagens entre usuarios e notificacoes.) Tj
+T*
+(- Painel admin para gerenciamento de usuarios, eventos e forum.) Tj
+T*
+() Tj
+T*
+(ARQUITETURA ADOTADA) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(O projeto usa Flask com o padrao Application Factory. A funcao `create_app\(\)` em `app.py`) Tj
+T*
+(centraliza a criacao da aplicacao, carrega configuracoes, inicializa extensoes, registra models,) Tj
+T*
+(login, CSRF, blueprints, Swagger e comandos de seed.) Tj
+T*
+() Tj
+T*
+(Trecho principal:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(def create_app\(test_config=None\):) Tj
+T*
+(    flask_app = Flask\(__name__, template_folder="templates", static_folder="static"\)) Tj
+T*
+(    init_config\(flask_app, test_config\)) Tj
+T*
+(    init_db\(flask_app\)) Tj
+T*
+(    register_models\(\)) Tj
+T*
+(    init_login\(flask_app\)) Tj
+T*
+(    init_wtf\(flask_app\)) Tj
+T*
+(    init_views\(flask_app\)) Tj
+T*
+(    init_swagger\(flask_app\)) Tj
+T*
+(    register_seed_command\(flask_app\)) Tj
+T*
+(    return flask_app) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(A estrutura separa responsabilidades por pastas:) Tj
+T*
+() Tj
+T*
+(- `unihub/models`: entidades SQLAlchemy.) Tj
+T*
+ET
+endstream
+endobj
+11 0 obj
+<< /Length 2558 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+(- `unihub/views`: rotas e blueprints por dominio.) Tj
+T*
+(- `unihub/forms`: formularios Flask-WTF/WTForms.) Tj
+T*
+(- `unihub/ext`: inicializacao de extensoes.) Tj
+T*
+(- `unihub/services`: seed e servicos de apoio.) Tj
+T*
+(- `unihub/utils`: helpers de seguranca, autenticacao e respostas.) Tj
+T*
+(- `templates`: telas Jinja2 e componentes.) Tj
+T*
+(- `tests`: testes automatizados com `unittest`.) Tj
+T*
+(- `migrations`: migrations Alembic/Flask-Migrate.) Tj
+T*
+() Tj
+T*
+(ORGANIZACAO EM MODULOS E ROTAS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(As rotas sao organizadas em Blueprints:) Tj
+T*
+() Tj
+T*
+(- `main`: landing page, dashboard, perfil, configuracoes e healthcheck.) Tj
+T*
+(- `auth`: cadastro, login, logout e usuario autenticado.) Tj
+T*
+(- `usuarios`: consulta e atualizacao de usuario.) Tj
+T*
+(- `forum`: topicos, respostas e moderacao.) Tj
+T*
+(- `eventos` e `agenda`: eventos e agenda pessoal.) Tj
+T*
+(- `moradias`: anuncios de moradia.) Tj
+T*
+(- `mensagens`: conversas entre usuarios.) Tj
+T*
+(- `notificacoes`: notificacoes do usuario.) Tj
+T*
+(- `admin`: telas administrativas.) Tj
+T*
+() Tj
+T*
+(O registro acontece em `unihub/views/__init__.py`, mantendo a inicializacao centralizada.) Tj
+T*
+() Tj
+T*
+(FORMULARIOS E VALIDACAO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(O projeto usa Flask-WTF/WTForms para validacao no servidor. Os formularios ficam em) Tj
+T*
+(`unihub/forms` e sao usados tanto para telas HTML quanto para contratos principais de entrada.) Tj
+T*
+() Tj
+T*
+(Exemplos:) Tj
+T*
+() Tj
+T*
+(- `CadastroForm`: nome, email, senha, confirmacao, curso, periodo, cidade e biografia.) Tj
+T*
+(- `LoginForm`: email e senha obrigatorios.) Tj
+T*
+(- `EventoForm`: titulo, descricao, categoria, data, horario e local.) Tj
+T*
+(- `MoradiaForm`: titulo, descricao, bairro, preco, vagas e caracteristicas.) Tj
+T*
+(- `ForumTopicoForm` e `ForumRespostaForm`: validacao de topicos e respostas.) Tj
+T*
+() Tj
+T*
+(O CSRF e inicializado em `unihub/ext/wtf.py`. Em testes ele e desativado para permitir testes) Tj
+T*
+(automatizados sem token manual.) Tj
+T*
+() Tj
+T*
+(INTERFACE E TEMPLATES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(A interface usa Jinja2, templates por modulo e componentes reutilizaveis. Existem layouts) Tj
+T*
+(separados para paginas publicas, autenticacao e area logada. A camada visual usa Bootstrap e CSS) Tj
+T*
+(proprio, com telas para landing page, login, cadastro, dashboard, perfil, notificacoes, forum,) Tj
+T*
+(eventos, moradias, mensagens e administracao.) Tj
+T*
+() Tj
+T*
+(Arquivos importantes:) Tj
+T*
+() Tj
+T*
+(- `templates/layouts/public.html`) Tj
+T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Length 1998 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+(- `templates/layouts/auth.html`) Tj
+T*
+(- `templates/layouts/app.html`) Tj
+T*
+(- `templates/components/*`) Tj
+T*
+(- `templates/auth/*`) Tj
+T*
+(- `templates/eventos/*`) Tj
+T*
+(- `templates/forum/*`) Tj
+T*
+(- `templates/moradias/*`) Tj
+T*
+(- `templates/main/*`) Tj
+T*
+() Tj
+T*
+(PERSISTENCIA E BANCO DE DADOS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(O projeto usa SQLite em desenvolvimento/testes e SQLAlchemy como ORM. As migrations ficam em) Tj
+T*
+(`migrations/`.) Tj
+T*
+() Tj
+T*
+(Modelo ER resumido:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(usuarios 1:N eventos) Tj
+T*
+(usuarios 1:N forum_topicos) Tj
+T*
+(usuarios 1:N forum_respostas) Tj
+T*
+(usuarios 1:N moradias) Tj
+T*
+(usuarios 1:N notificacoes) Tj
+T*
+(usuarios 1:N agenda_eventos) Tj
+T*
+(usuarios 1:N mensagens como remetente) Tj
+T*
+(usuarios 1:N mensagens como destinatario) Tj
+T*
+() Tj
+T*
+(eventos 1:N agenda_eventos) Tj
+T*
+(forum_topicos 1:N forum_respostas) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Tabelas principais:) Tj
+T*
+() Tj
+T*
+(- `usuarios`: dados de autenticacao, perfil, role, selo e status.) Tj
+T*
+(- `eventos`: eventos universitarios e organizador.) Tj
+T*
+(- `agenda_eventos`: relacao unica entre usuario e evento salvo.) Tj
+T*
+(- `forum_topicos`: topicos e avisos oficiais.) Tj
+T*
+(- `forum_respostas`: respostas dos topicos.) Tj
+T*
+(- `moradias`: anuncios de moradia.) Tj
+T*
+(- `mensagens`: mensagens privadas entre usuarios.) Tj
+T*
+(- `notificacoes`: notificacoes internas.) Tj
+T*
+() Tj
+T*
+(Regras de integridade:) Tj
+T*
+() Tj
+T*
+(- `usuarios.role`: `usuario`, `moderador` ou `admin`.) Tj
+T*
+(- `eventos.status`: `ativo`, `cancelado`, `encerrado` ou `desativado`.) Tj
+T*
+(- `moradias.status`: `disponivel`, `pausado`, `preenchido` ou `desativado`.) Tj
+T*
+(- `forum_topicos.status`: `aberto`, `resolvido`, `fechado` ou `desativado`.) Tj
+T*
+(- `forum_topicos.tipo`: `topico` ou `aviso`.) Tj
+T*
+(- `agenda_eventos`: restricao unica para impedir salvar o mesmo evento duas vezes.) Tj
+T*
+() Tj
+T*
+(TESTES AUTOMATIZADOS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+13 0 obj
+<< /Length 1661 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+(Os testes usam `unittest`, SQLite em memoria e seed automatico. A classe base cria a aplicacao) Tj
+T*
+(em modo teste, sobe o banco, executa o seed e entrega um client Flask para os testes.) Tj
+T*
+() Tj
+T*
+(Cobertura principal:) Tj
+T*
+() Tj
+T*
+(- Autenticacao e cadastro.) Tj
+T*
+(- Rotas publicas e protegidas.) Tj
+T*
+(- Eventos e agenda.) Tj
+T*
+(- Forum e respostas.) Tj
+T*
+(- Moradias.) Tj
+T*
+(- Mensagens.) Tj
+T*
+(- Notificacoes.) Tj
+T*
+(- Usuarios e roles.) Tj
+T*
+(- Regras de banco e constraints.) Tj
+T*
+() Tj
+T*
+(Resultado validado no ambiente local:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Ran 91 tests in 36.491s) Tj
+T*
+(OK) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(TECNOLOGIAS UTILIZADAS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- Flask: framework web principal.) Tj
+T*
+(- Flask-Login: sessao e autenticacao.) Tj
+T*
+(- Flask-SQLAlchemy: ORM.) Tj
+T*
+(- Flask-Migrate/Alembic: versionamento do banco.) Tj
+T*
+(- Flask-WTF/WTForms: formularios e validacao no servidor.) Tj
+T*
+(- Jinja2: templates HTML.) Tj
+T*
+(- Bootstrap/CSS: interface responsiva.) Tj
+T*
+(- Flasgger: documentacao Swagger.) Tj
+T*
+(- python-dotenv: variaveis de ambiente.) Tj
+T*
+(- unittest: testes automatizados.) Tj
+T*
+(- SQLite: banco local e de testes.) Tj
+T*
+() Tj
+T*
+(COMO RODAR O PROJETO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Instalacao recomendada no Linux/macOS:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python3 -m venv venv) Tj
+T*
+(source venv/bin/activate) Tj
+T*
+(python setup_project.py) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Instalacao recomendada no Windows PowerShell:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(py -3 -m venv venv) Tj
+T*
+(Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass) Tj
+T*
+(.\\venv\\Scripts\\Activate.ps1) Tj
+T*
+ET
+endstream
+endobj
+14 0 obj
+<< /Length 1495 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+(python setup_project.py) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Instalacao recomendada no Windows CMD:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(py -3 -m venv venv) Tj
+T*
+(venv\\Scripts\\activate.bat) Tj
+T*
+(python setup_project.py) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(O script deve ser executado com a `venv` ativa. Ele instala dependencias, gera arquivos `.env`,) Tj
+T*
+(aplica migrations e popula o banco inicial.) Tj
+T*
+() Tj
+T*
+(Instalacao manual no Linux/macOS:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python3 -m venv venv) Tj
+T*
+(source venv/bin/activate) Tj
+T*
+(python -m pip install --upgrade pip) Tj
+T*
+(python -m pip install -r requirements.txt) Tj
+T*
+(python -m pip install -e .) Tj
+T*
+(python make_env.py) Tj
+T*
+(flask --app app.py db upgrade) Tj
+T*
+(flask --app app.py seed) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Instalacao manual no Windows PowerShell:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(py -3 -m venv venv) Tj
+T*
+(Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass) Tj
+T*
+(.\\venv\\Scripts\\Activate.ps1) Tj
+T*
+(python -m pip install --upgrade pip) Tj
+T*
+(python -m pip install -r requirements.txt) Tj
+T*
+(python -m pip install -e .) Tj
+T*
+(python make_env.py) Tj
+T*
+(flask --app app.py db upgrade) Tj
+T*
+(flask --app app.py seed) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Rodar no Linux/macOS:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(flask --app app.py run --debug --port 5000) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Rodar no Windows PowerShell:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(flask --app app.py run --debug --port 5000) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Com Invoke:) Tj
+T*
+ET
+endstream
+endobj
+15 0 obj
+<< /Length 1562 >>
+stream
+BT
+/F1 10 Tf
+50 800 Td
+14 TL
+() Tj
+T*
+() Tj
+T*
+(invoke setup) Tj
+T*
+(invoke dev) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Testar:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(python -m unittest) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(URLs principais:) Tj
+T*
+() Tj
+T*
+(- Landing page: `http://127.0.0.1:5000/`) Tj
+T*
+(- Login: `http://127.0.0.1:5000/auth/login`) Tj
+T*
+(- Dashboard: `http://127.0.0.1:5000/dashboard`) Tj
+T*
+(- Swagger: `http://127.0.0.1:5000/swagger/`) Tj
+T*
+() Tj
+T*
+(Usuario seed para demonstracao:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Admin: rafael.souza@uvv.br / senha123) Tj
+T*
+(Moderador: mariana.costa@uvv.br / senha123) Tj
+T*
+(Usuario: lucas.almeida@uvv.br / senha123) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(PRINCIPAIS DESAFIOS E SOLUCOES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- Modularizacao: o projeto foi dividido em models, views, forms, services, utils e ext para) Tj
+T*
+(evitar rotas e regras misturadas em um unico arquivo.) Tj
+T*
+(- Controle de acesso: roles foram padronizadas em `usuario`, `moderador` e `admin`, com) Tj
+T*
+(helpers para proteger rotas sensiveis.) Tj
+T*
+(- Validacao: formularios Flask-WTF foram adicionados para validar entradas no servidor e) Tj
+T*
+(melhorar a confiabilidade da aplicacao.) Tj
+T*
+(- Persistencia: SQLAlchemy e migrations garantem modelagem explicita, constraints e) Tj
+T*
+(reproducibilidade do banco.) Tj
+T*
+(- Testes: a suite usa banco em memoria e seed automatico para testar fluxos principais sem) Tj
+T*
+(depender do banco local.) Tj
+T*
+(- Entrega: `.env.example`, README, migrations e seed foram mantidos para facilitar auditoria) Tj
+T*
+(e execucao pelo professor.) Tj
+T*
+ET
+endstream
+endobj
+xref
+0 16
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000145 00000 n 
+0000000215 00000 n 
+0000000342 00000 n 
+0000000469 00000 n 
+0000000596 00000 n 
+0000000723 00000 n 
+0000000850 00000 n 
+0000000977 00000 n 
+0000003137 00000 n 
+0000005748 00000 n 
+0000007799 00000 n 
+0000009513 00000 n 
+0000011061 00000 n 
+trailer
+<< /Size 16 /Root 1 0 R >>
+startxref
+12676
+%%EOF

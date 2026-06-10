@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from unihub.ext.db import db
+from unihub.forms import PerfilForm
 from unihub.models import AgendaEvento, Evento, ForumResposta, ForumTopico, Notificacao, Usuario
 from unihub.utils.responses import resposta_sucesso
 from unihub.utils.view_helpers import contar_mensagens_nao_lidas, iniciais
@@ -137,15 +138,21 @@ def editar_perfil():
     if not current_user.is_authenticated:
         return redirect(url_for("auth.tela_login"))
 
+    form = PerfilForm(obj=current_user)
     contexto = _perfil_contexto()
+    contexto["form"] = form
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
+        if not form.validate_on_submit():
+            contexto["erro"] = "Confira os dados do perfil e tente novamente."
+            return render_template("main/perfil_editar.html", **contexto), 400
+
+        email = form.email.data.strip()
         if email and Usuario.query.filter(Usuario.email == email, Usuario.id != current_user.id).first():
             contexto["erro"] = "Este e-mail ja esta em uso."
             return render_template("main/perfil_editar.html", **contexto), 400
 
         for campo in ["nome", "curso", "periodo", "cidade", "bio"]:
-            valor = request.form.get(campo)
+            valor = getattr(form, campo).data
             if valor is not None:
                 setattr(current_user, campo, valor.strip())
 

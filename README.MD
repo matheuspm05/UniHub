@@ -30,7 +30,38 @@ git clone <URL_DO_REPOSITORIO>
 cd Unihub
 ```
 
-Linux:
+### Instalação recomendada
+
+Crie e ative a `venv` primeiro. Depois rode `setup_project.py` para instalar dependências, gerar os arquivos `.env`, aplicar migrations e popular o banco.
+
+Linux/macOS:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+python setup_project.py
+```
+
+Windows PowerShell:
+
+```powershell
+py -3 -m venv venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\Activate.ps1
+python setup_project.py
+```
+
+Windows CMD:
+
+```bat
+py -3 -m venv venv
+venv\Scripts\activate.bat
+python setup_project.py
+```
+
+### Instalação manual
+
+Linux/macOS:
 
 ```bash
 python3 -m venv venv
@@ -38,16 +69,23 @@ source venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip install -e .
+python make_env.py
+flask --app app.py db upgrade
+flask --app app.py seed
 ```
 
 Windows PowerShell:
 
 ```powershell
 py -3 -m venv venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip install -e .
+python make_env.py
+flask --app app.py db upgrade
+flask --app app.py seed
 ```
 
 Windows CMD:
@@ -58,6 +96,18 @@ venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip install -e .
+python make_env.py
+flask --app app.py db upgrade
+flask --app app.py seed
+```
+
+### PowerShell e permissão de scripts
+
+No Windows, o erro mais comum é o PowerShell bloquear `Activate.ps1`. Para liberar somente o terminal atual, rode:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\Activate.ps1
 ```
 
 ## Configurar ambiente
@@ -76,21 +126,46 @@ Se `DATABASE_URL` não existir, o fallback é SQLite local.
 
 Se quiser gerar os arquivos de ambiente automaticamente:
 
+Linux/macOS:
+
 ```bash
-python make_env.py
+./venv/bin/python make_env.py
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe make_env.py
 ```
 
 ## Migrations
 
+Linux/macOS:
+
 ```bash
-flask --app app.py db upgrade
+./venv/bin/python -m flask --app app.py db upgrade
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe -m flask --app app.py db upgrade
 ```
 
 Para criar uma migration nova:
 
+Linux/macOS:
+
 ```bash
-flask --app app.py db migrate -m "descricao da alteracao"
-flask --app app.py db upgrade
+./venv/bin/python -m flask --app app.py db migrate -m "descricao da alteracao"
+./venv/bin/python -m flask --app app.py db upgrade
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe -m flask --app app.py db migrate -m "descricao da alteracao"
+.\venv\Scripts\python.exe -m flask --app app.py db upgrade
 ```
 
 Com invoke:
@@ -104,8 +179,16 @@ invoke db-migrate --message="descricao da alteracao"
 
 Popula o banco com usuários, fórum, eventos, moradias, notificações e mensagens iniciais.
 
+Linux/macOS:
+
 ```bash
-flask --app app.py seed
+./venv/bin/python -m flask --app app.py seed
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe -m flask --app app.py seed
 ```
 
 Com invoke:
@@ -116,8 +199,16 @@ invoke seed
 
 ## Rodar
 
+Linux/macOS:
+
 ```bash
-flask --app app.py run --debug --port 5000
+./venv/bin/python -m flask --app app.py run --debug --port 5000
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe -m flask --app app.py run --debug --port 5000
 ```
 
 Com invoke:
@@ -129,6 +220,7 @@ invoke dev
 O `tasks.py` foi preparado para Linux e Windows. Se o `invoke` estiver instalado no ambiente virtual, estes atalhos funcionam nos dois sistemas:
 
 ```bash
+invoke setup
 invoke install
 invoke db-upgrade
 invoke seed
@@ -136,10 +228,12 @@ invoke test
 invoke dev
 ```
 
+O `invoke setup` faz o fluxo completo: cria `venv`, instala dependências, gera `.env`, roda migrations e executa o seed.
+
 No Windows, se o comando `invoke` não estiver disponível no terminal atual, use:
 
 ```powershell
-python -m invoke dev
+.\venv\Scripts\python.exe -m invoke dev
 ```
 
 Se a porta 5000 estiver ocupada:
@@ -174,28 +268,22 @@ http://127.0.0.1:5000/swagger.json
 
 Os testes usam SQLite em memória e fazem seed automaticamente.
 
+Linux/macOS:
+
 ```bash
-python -m unittest
+./venv/bin/python -m unittest
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\python.exe -m unittest
 ```
 
 Com invoke:
 
 ```bash
 invoke test
-```
-
-Sem ativar o ambiente virtual:
-
-Linux:
-
-```bash
-./venv/bin/python -m unittest
-```
-
-Windows:
-
-```powershell
-.\venv\Scripts\python.exe -m unittest
 ```
 
 ## Autenticação

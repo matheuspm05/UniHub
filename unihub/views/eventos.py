@@ -5,6 +5,7 @@ from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 
 from unihub.ext.db import db
+from unihub.forms import EventoForm
 from unihub.models import AgendaEvento, Evento, Usuario
 from unihub.utils.auth import (
     usuario_atual_e_admin,
@@ -98,16 +99,16 @@ def _pode_gerenciar_evento(evento):
     return evento.organizador_id == obter_usuario_atual_id() or usuario_atual_e_admin()
 
 
-def _dados_evento_formulario():
+def _dados_evento_formulario(form):
     return {
-        "titulo": request.form.get("titulo", "").strip(),
-        "descricao": request.form.get("descricao", "").strip(),
-        "categoria": request.form.get("categoria", "").strip(),
-        "data_evento": request.form.get("data_evento", "").strip(),
-        "horario": request.form.get("horario", "").strip(),
-        "local": request.form.get("local", "").strip(),
-        "status": request.form.get("status", "ativo").strip() or "ativo",
-        "banner_url": request.form.get("banner_url", "").strip() or None,
+        "titulo": form.titulo.data.strip(),
+        "descricao": form.descricao.data.strip(),
+        "categoria": form.categoria.data.strip(),
+        "data_evento": form.data_evento.data.strip(),
+        "horario": form.horario.data.strip(),
+        "local": form.local.data.strip(),
+        "status": form.status.data,
+        "banner_url": form.banner_url.data.strip() if form.banner_url.data else None,
     }
 
 
@@ -263,20 +264,32 @@ def criar_evento():
 @bp.route("/criar", methods=["GET", "POST"])
 @exigir_moderador
 def criar_evento_html():
+    form = EventoForm()
     if request.method == "POST":
-        evento, response = _criar_evento_com_dados(_dados_evento_formulario())
+        if not form.validate_on_submit():
+            return _renderizar_formulario_evento("eventos/criar.html", form), 400
+
+        evento, response = _criar_evento_com_dados(_dados_evento_formulario(form))
         if response:
             return response
         return redirect(url_for("eventos.detalhar_evento", evento_id=evento.id))
 
+    return _renderizar_formulario_evento("eventos/criar.html", form)
+
+
+def _renderizar_formulario_evento(template, form, evento=None):
     contexto = _base_contexto()
     contexto.update(
         {
+            "form": form,
+            "evento": evento,
             "categorias": _categorias_disponiveis(),
             "locais": _locais_disponiveis(),
         }
     )
-    return render_template("eventos/criar.html", **contexto)
+    if evento:
+        contexto["imagem_padrao"] = EVENTO_IMAGEM_PADRAO
+    return render_template(template, **contexto)
 
 
 @bp.put("/<int:evento_id>")
@@ -307,22 +320,17 @@ def editar_evento_html(evento_id):
     if not _pode_gerenciar_evento(evento):
         return resposta_proibida("Somente o organizador ou um admin pode editar este evento")
 
+    form = EventoForm(obj=evento)
     if request.method == "POST":
-        response = _atualizar_evento_com_dados(evento, _dados_evento_formulario())
+        if not form.validate_on_submit():
+            return _renderizar_formulario_evento("eventos/editar.html", form, evento), 400
+
+        response = _atualizar_evento_com_dados(evento, _dados_evento_formulario(form))
         if response:
             return response
         return redirect(url_for("eventos.detalhar_evento", evento_id=evento.id))
 
-    contexto = _base_contexto()
-    contexto.update(
-        {
-            "evento": evento,
-            "categorias": _categorias_disponiveis(),
-            "locais": _locais_disponiveis(),
-            "imagem_padrao": EVENTO_IMAGEM_PADRAO,
-        }
-    )
-    return render_template("eventos/editar.html", **contexto)
+    return _renderizar_formulario_evento("eventos/editar.html", form, evento)
 
 
 def _alterar_status_evento(evento_id, status, mensagem):

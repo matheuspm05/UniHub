@@ -17,6 +17,7 @@
 
     <div class="grid gap-6 xl:grid-cols-[1fr_320px]">
     <form method="post" action="/forum/criar" class="overflow-hidden rounded-lg border border-unihub-line bg-white shadow-card">
+      {{ form.hidden_tag() }}
       <div class="grid gap-6 p-7">
         {% if current_user.role != "usuario" %}
           {% set tipo_inicial = request.args.get("tipo", "topico") %}
