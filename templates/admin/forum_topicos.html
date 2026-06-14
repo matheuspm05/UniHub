@@ -92,7 +92,7 @@
             <span class="grid h-11 w-11 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(topico.autor.nome) if topico.autor else "UH" }}</span>
             <div>
               <p class="text-sm font-extrabold text-unihub-ink">{{ topico.autor.nome if topico.autor else "UniHub" }}</p>
-              <p class="text-xs font-semibold text-unihub-muted">{{ topico.autor.role|capitalize if topico.autor else "Plataforma" }}</p>
+              <p class="text-xs font-semibold text-unihub-muted">{{ role_label(topico.autor.role) if topico.autor else "Plataforma" }}</p>
             </div>
           </div>
 

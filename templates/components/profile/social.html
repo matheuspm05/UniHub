@@ -7,9 +7,11 @@
       <i data-lucide="mail" class="h-7 w-7 text-[#0B5FEA]"></i>
       {{ current_user.email }}
     </span>
-    <span class="inline-flex items-center gap-3">
-      <i data-lucide="map-pin" class="h-7 w-7 text-emerald-600"></i>
-      {{ current_user.cidade }}
-    </span>
+    {% if not is_admin_user(current_user) %}
+      <span class="inline-flex items-center gap-3">
+        <i data-lucide="map-pin" class="h-7 w-7 text-emerald-600"></i>
+        {{ current_user.cidade }}
+      </span>
+    {% endif %}
   </div>
 </section>

@@ -107,7 +107,7 @@
     {% endif %}
 
     <div>
-      <h2 class="text-lg font-extrabold text-unihub-ink">Topicos em destaque para {{ current_user.curso }}</h2>
+      <h2 class="text-lg font-extrabold text-unihub-ink">{% if is_admin_user(current_user) %}Topicos em destaque da comunidade{% else %}Topicos em destaque para {{ current_user.curso }}{% endif %}</h2>
       <div class="mt-4 grid gap-3">
         {% for topico in topicos %}
           {% set cor = {

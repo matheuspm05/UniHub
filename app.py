@@ -35,6 +35,16 @@ def create_app(test_config=None):
     from unihub.services.seed import register_seed_command
     register_seed_command(flask_app)
 
+    from unihub.utils.view_helpers import ROLE_LABELS, is_admin_user, role_label
+
+    @flask_app.context_processor
+    def inject_role_helpers():
+        return {
+            "role_labels": ROLE_LABELS,
+            "role_label": role_label,
+            "is_admin_user": is_admin_user,
+        }
+
     return flask_app
 
 

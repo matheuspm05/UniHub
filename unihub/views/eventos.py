@@ -456,7 +456,7 @@ def meus_eventos():
     ).order_by(Evento.data_evento.asc()).all()
     if _prefer_html():
         if not usuario_atual_pode_moderar():
-            return resposta_proibida("Somente moderadores podem gerenciar eventos")
+            return resposta_proibida("Somente representantes ou admins podem gerenciar eventos")
 
         contexto = _base_contexto()
         contexto.update(

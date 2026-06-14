@@ -81,14 +81,15 @@ def seed_database():
         {
             "nome": "Rafael Souza",
             "email": "rafael.souza@uvv.br",
-            "curso": "Analise e Desenvolvimento de Sistemas",
-            "periodo": "7 periodo",
-            "cidade": "Vila Velha",
-            "instagram": "@rafaelsouza",
-            "linkedin": "linkedin.com/in/rafaelsouza",
-            "whatsapp": "(27) 99999-1005",
+            "curso": "Equipe UniHub",
+            "periodo": "Conta administrativa",
+            "cidade": "Plataforma UniHub",
+            "bio": "Conta administrativa criada pelo proprietario da plataforma para moderacao e gestao geral do UniHub.",
+            "instagram": None,
+            "linkedin": None,
+            "whatsapp": None,
             "role": "admin",
-            "selo": "Administrador",
+            "selo": "Admin",
         },
     ]
 
@@ -99,6 +100,9 @@ def seed_database():
             email=item["email"],
             defaults={key: value for key, value in item.items() if key != "email"},
         )
+        for key, value in item.items():
+            if key != "email":
+                setattr(usuario, key, value)
         if not usuario.senha_hash:
             usuario.definir_senha(SENHA_PADRAO)
         usuarios[item["nome"]] = usuario

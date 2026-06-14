@@ -16,7 +16,7 @@
       </a>
 
       {% if current_user.is_authenticated %}
-        {% set papel_topbar = {"usuario": "Usuario", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize) %}
+        {% set papel_topbar = role_label(current_user.role) %}
         <a href="/perfil" class="hidden items-center gap-3 rounded-full border border-emerald-200 bg-white px-3 py-2 shadow-sm transition hover:bg-emerald-50 md:flex" aria-label="Perfil do usuario">
           <span class="grid h-10 w-10 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(current_user.nome) }}</span>
           <span class="leading-tight">
@@ -38,7 +38,9 @@
               <span class="grid h-12 w-12 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(current_user.nome) }}</span>
               <div class="min-w-0">
                 <p class="truncate text-sm font-extrabold text-unihub-ink">{{ current_user.nome }}</p>
-                <p class="mt-1 text-xs font-semibold text-unihub-muted">{{ current_user.curso }} • {{ current_user.periodo }}</p>
+                <p class="mt-1 text-xs font-semibold text-unihub-muted">
+                  {% if is_admin_user(current_user) %}Conta administrativa da plataforma{% else %}{{ current_user.curso }} • {{ current_user.periodo }}{% endif %}
+                </p>
                 <span class="mt-2 inline-flex rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-extrabold text-emerald-700">{{ papel_topbar }}</span>
               </div>
             </div>

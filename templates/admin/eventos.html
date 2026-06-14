@@ -94,7 +94,7 @@
           <div class="grid gap-2 border-y border-unihub-line py-4 text-sm font-semibold text-[#344469] xl:border-x xl:border-y-0 xl:px-6 xl:py-0">
             <span class="inline-flex items-center gap-2"><i data-lucide="users" class="h-4 w-4 text-unihub-muted"></i>{{ evento.agenda_salvos|length }} pessoa{{ "s" if evento.agenda_salvos|length != 1 else "" }} salvaram</span>
             <span class="inline-flex items-center gap-2"><i data-lucide="eye" class="h-4 w-4 text-unihub-muted"></i>{{ evento.visualizacoes }} visualizacoes</span>
-            <span class="inline-flex items-center gap-2"><i data-lucide="user-check" class="h-4 w-4 text-unihub-muted"></i>{{ evento.organizador.role|capitalize if evento.organizador else "Plataforma" }}</span>
+            <span class="inline-flex items-center gap-2"><i data-lucide="user-check" class="h-4 w-4 text-unihub-muted"></i>{{ role_label(evento.organizador.role) if evento.organizador else "Plataforma" }}</span>
           </div>
 
           <div class="grid gap-2">

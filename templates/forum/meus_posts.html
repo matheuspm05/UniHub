@@ -64,7 +64,7 @@
             <div>
               <h2 class="text-lg font-extrabold text-unihub-ink">{{ topico.titulo }}</h2>
               <p class="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-unihub-muted"><i data-lucide="book-open" class="h-4 w-4"></i>{{ topico.categoria }}</p>
-              <p class="mt-1 text-sm font-medium text-unihub-muted">Por {{ current_user.nome }} • {{ current_user.periodo }}</p>
+              <p class="mt-1 text-sm font-medium text-unihub-muted">Por {{ current_user.nome }}{% if not is_admin_user(current_user) %} • {{ current_user.periodo }}{% endif %}</p>
             </div>
           </div>
 

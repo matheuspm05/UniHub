@@ -327,7 +327,7 @@ def editar_moradia_html(moradia_id):
     if response:
         return response
     if not _usuario_pode_gerenciar_moradia(moradia):
-        return resposta_proibida("Somente o anunciante ou um moderador pode editar este anuncio")
+        return resposta_proibida("Somente o anunciante, um representante ou um admin pode editar este anuncio")
 
     form = MoradiaForm(obj=moradia)
     contexto = _base_contexto()
@@ -367,7 +367,7 @@ def alterar_status_moradia_html(moradia_id):
     if response:
         return response
     if not _usuario_pode_gerenciar_moradia(moradia):
-        return resposta_proibida("Somente o anunciante ou um moderador pode alterar este anuncio")
+        return resposta_proibida("Somente o anunciante, um representante ou um admin pode alterar este anuncio")
 
     moradia.status = status
     db.session.commit()
@@ -398,7 +398,7 @@ def editar_moradia(moradia_id):
     if response:
         return response
     if not _usuario_pode_gerenciar_moradia(moradia):
-        return resposta_proibida("Somente o anunciante ou um moderador pode editar este anuncio")
+        return resposta_proibida("Somente o anunciante, um representante ou um admin pode editar este anuncio")
 
     data, response = _payload()
     if response:
@@ -428,7 +428,7 @@ def _alterar_status_moradia(moradia_id, status, mensagem):
     if response:
         return response
     if not _usuario_pode_gerenciar_moradia(moradia):
-        return resposta_proibida("Somente o anunciante ou um moderador pode alterar este anuncio")
+        return resposta_proibida("Somente o anunciante, um representante ou um admin pode alterar este anuncio")
 
     moradia.status = status
     db.session.commit()

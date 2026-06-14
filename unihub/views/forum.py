@@ -139,7 +139,7 @@ def _criar_topico_com_dados(data):
     if data["categoria"] not in CATEGORIAS_VALIDAS:
         return None, resposta_erro("Categoria invalida", 400)
     if tipo == "aviso" and not usuario_atual_pode_moderar():
-        return None, resposta_proibida("Somente moderadores podem criar avisos oficiais")
+        return None, resposta_proibida("Somente representantes ou admins podem criar avisos oficiais")
 
     topico = ForumTopico(
         titulo=data["titulo"],
@@ -169,7 +169,7 @@ def _atualizar_topico_com_dados(topico, data, pode_moderar):
         ]
         if campos_restritos:
             return resposta_proibida(
-                "Somente moderadores podem alterar status, tipo ou aviso_oficial"
+                "Somente representantes ou admins podem alterar status, tipo ou aviso_oficial"
             )
 
     if "status" in data and data["status"] not in STATUS_TOPICO_VALIDOS:
@@ -338,7 +338,7 @@ def editar_topico(topico_id):
 
     pode_moderar = usuario_atual_pode_moderar()
     if topico.autor_id != obter_usuario_atual_id() and not pode_moderar:
-        return resposta_proibida("Somente o autor ou um moderador pode editar este topico")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode editar este topico")
 
     data, response = _payload()
     if response:
@@ -359,7 +359,7 @@ def editar_topico_html(topico_id):
 
     pode_moderar = usuario_atual_pode_moderar()
     if topico.autor_id != obter_usuario_atual_id() and not pode_moderar:
-        return resposta_proibida("Somente o autor ou um moderador pode editar este topico")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode editar este topico")
 
     form = TopicoForm(obj=topico)
     if request.method == "POST":
@@ -485,7 +485,7 @@ def editar_resposta(resposta_id):
     if response:
         return response
     if not _usuario_pode_editar_resposta(resposta):
-        return resposta_proibida("Somente o autor ou um moderador pode editar esta resposta")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode editar esta resposta")
 
     data, response = _payload()
     if response:
@@ -504,7 +504,7 @@ def editar_resposta_html(resposta_id):
     if response:
         return response
     if not _usuario_pode_editar_resposta(resposta):
-        return resposta_proibida("Somente o autor ou um moderador pode editar esta resposta")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode editar esta resposta")
 
     form = RespostaForm()
     if not form.validate_on_submit():
@@ -523,7 +523,7 @@ def desativar_resposta(resposta_id):
     if response:
         return response
     if not _usuario_pode_editar_resposta(resposta):
-        return resposta_proibida("Somente o autor ou um moderador pode desativar esta resposta")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode desativar esta resposta")
 
     resposta.status = "desativado"
     db.session.commit()
@@ -537,7 +537,7 @@ def desativar_resposta_html(resposta_id):
     if response:
         return response
     if not _usuario_pode_editar_resposta(resposta):
-        return resposta_proibida("Somente o autor ou um moderador pode desativar esta resposta")
+        return resposta_proibida("Somente o autor, um representante ou um admin pode desativar esta resposta")
 
     topico_id = resposta.topico_id
     resposta.status = "desativado"

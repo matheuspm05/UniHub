@@ -42,7 +42,7 @@
         <select name="role" class="h-12 rounded-lg border border-[#CBD6E6] bg-white px-4 text-sm font-bold text-unihub-ink outline-none">
           <option value="">Todas as roles</option>
           {% for role in roles_validas %}
-            <option value="{{ role }}" {% if filtros.get('role') == role %}selected{% endif %}>{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}[role] }}</option>
+            <option value="{{ role }}" {% if filtros.get('role') == role %}selected{% endif %}>{{ role_label(role) }}</option>
           {% endfor %}
         </select>
 
@@ -66,7 +66,7 @@
 
     <div class="grid gap-3">
       {% for usuario in usuarios %}
-        {% set role_label = {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}.get(usuario.role, usuario.role|capitalize) %}
+        {% set usuario_role_label = role_label(usuario.role) %}
         <article class="grid gap-4 rounded-lg border border-unihub-line bg-white p-5 shadow-card xl:grid-cols-[1fr_190px_300px] xl:items-center">
           <div class="flex min-w-0 items-center gap-4">
             <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-uvv-50 text-base font-extrabold text-[#0B5FEA]">
@@ -85,15 +85,15 @@
           </div>
 
           <div class="flex flex-wrap gap-2 xl:grid">
-            <span class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.role == 'admin' %}bg-red-50 text-red-700{% elif usuario.role == 'moderador' %}bg-orange-50 text-orange-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">{{ role_label }}</span>
+            <span class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.role == 'admin' %}bg-red-50 text-red-700{% elif usuario.role == 'moderador' %}bg-orange-50 text-orange-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">{{ usuario_role_label }}</span>
             <span class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.ativo %}bg-emerald-50 text-emerald-700{% else %}bg-slate-100 text-slate-700{% endif %}">{{ "Ativo" if usuario.ativo else "Desativado" }}</span>
           </div>
 
           <form method="post" action="/admin/usuarios/{{ usuario.id }}/role" class="grid gap-2 sm:grid-cols-[1fr_auto]">
-            <input type="hidden" name="next" value="{{ request.full_path }}">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
             <select name="role" class="h-11 rounded-lg border border-[#CBD6E6] bg-white px-3 text-sm font-bold text-unihub-ink outline-none" {% if usuario.id == current_user.id %}disabled{% endif %}>
               {% for role in roles_validas %}
-                <option value="{{ role }}" {% if usuario.role == role %}selected{% endif %}>{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}[role] }}</option>
+                <option value="{{ role }}" {% if usuario.role == role %}selected{% endif %}>{{ role_label(role) }}</option>
               {% endfor %}
             </select>
             <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-[#0B5FEA] px-4 text-sm font-extrabold text-white transition hover:bg-uvv-600 disabled:cursor-not-allowed disabled:bg-slate-300" {% if usuario.id == current_user.id %}disabled{% endif %}>

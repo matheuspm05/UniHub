@@ -36,7 +36,7 @@
       </div>
       <div class="flex justify-between gap-4">
         <dt class="font-semibold text-unihub-muted">Tipo de conta</dt>
-        <dd class="rounded bg-emerald-100 px-2 py-1 text-xs font-extrabold text-emerald-700">{{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize) }}</dd>
+        <dd class="rounded bg-emerald-100 px-2 py-1 text-xs font-extrabold text-emerald-700">{{ role_label(current_user.role) }}</dd>
       </div>
     </dl>
   </section>

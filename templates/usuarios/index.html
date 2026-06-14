@@ -28,7 +28,7 @@
               <span class="mt-1 block truncate text-sm font-medium text-unihub-muted">{{ usuario.curso }} • {{ usuario.cidade }}</span>
             </span>
             <span class="inline-flex rounded-full px-3 py-1 text-xs font-extrabold {% if usuario.role == 'admin' %}bg-amber-50 text-amber-700{% elif usuario.role == 'moderador' %}bg-emerald-50 text-emerald-700{% else %}bg-blue-50 text-[#0B5FEA]{% endif %}">
-              {{ {"usuario": "Usuario", "moderador": "Moderador", "admin": "Admin"}.get(usuario.role, usuario.role|capitalize) }}
+              {{ role_label(usuario.role) }}
             </span>
           </a>
         {% endfor %}
@@ -52,7 +52,7 @@
       <div class="mt-5 grid gap-3">
         <div class="rounded-lg bg-unihub-surface p-4">
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Papel</p>
-          <p class="mt-2 text-sm font-extrabold text-unihub-ink">{{ {"usuario": "Usuario comum", "moderador": "Moderador", "admin": "Administrador"}.get(destaque.role, destaque.role|capitalize) }}</p>
+          <p class="mt-2 text-sm font-extrabold text-unihub-ink">{{ role_label(destaque.role) }}</p>
         </div>
         <div class="rounded-lg bg-unihub-surface p-4">
           <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Redes sociais</p>

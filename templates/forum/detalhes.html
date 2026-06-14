@@ -27,7 +27,7 @@
           <span class="grid h-11 w-11 place-items-center rounded-full bg-uvv-50 text-sm font-extrabold text-[#0B5FEA]">{{ iniciais(topico.autor.nome) if topico.autor else "UH" }}</span>
           <strong class="text-unihub-ink">{{ topico.autor.nome if topico.autor else "UniHub" }}</strong>
           {% if topico.autor and topico.autor.role != "usuario" %}
-            <span class="rounded-full bg-uvv-50 px-2 py-0.5 text-xs font-extrabold text-[#0B5FEA]">{{ topico.autor.role|capitalize }}</span>
+            <span class="rounded-full bg-uvv-50 px-2 py-0.5 text-xs font-extrabold text-[#0B5FEA]">{{ role_label(topico.autor.role) }}</span>
           {% endif %}
         </span>
         <span class="rounded-full px-3 py-1 text-xs font-extrabold {% if topico.status == 'aberto' %}bg-emerald-50 text-emerald-700{% elif topico.status == 'resolvido' %}bg-uvv-50 text-[#0B5FEA]{% else %}bg-slate-100 text-slate-700{% endif %}">{{ topico.status|capitalize }}</span>

@@ -16,7 +16,7 @@
                 <p class="font-extrabold text-unihub-ink">
                   {{ topico.autor.nome if topico.autor else "UniHub" }}
                   {% if topico.autor and topico.autor.role == "moderador" %}
-                    <span class="ml-2 rounded bg-blue-50 px-2 py-1 text-xs font-extrabold text-[#0B5FEA]">MODERADOR</span>
+                    <span class="ml-2 rounded bg-blue-50 px-2 py-1 text-xs font-extrabold text-[#0B5FEA]">REPRESENTANTE</span>
                   {% endif %}
                   <span class="font-semibold text-unihub-muted"> · {{ topico.curso }}</span>
                 </p>

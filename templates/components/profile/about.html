@@ -3,16 +3,25 @@
     <h2 class="text-xl font-extrabold text-unihub-ink">Resumo do perfil</h2>
   </div>
   <p class="mt-5 text-base leading-7 text-unihub-ink">
-    {{ current_user.bio or ("Estudante de " ~ current_user.curso ~ " no " ~ current_user.periodo ~ ".") }}
+    {{ current_user.bio or ("Conta administrativa responsavel pela gestao geral e moderacao da plataforma UniHub." if is_admin_user(current_user) else ("Estudante de " ~ current_user.curso ~ " no " ~ current_user.periodo ~ ".")) }}
   </p>
 
   <div class="mt-6 grid gap-4 rounded-lg border border-unihub-line p-4 sm:grid-cols-2 lg:grid-cols-4">
-    {% set dados = [
-      ("user-round", "Curso", current_user.curso, "bg-blue-50 text-[#0B5FEA]"),
-      ("calendar-days", "Periodo", current_user.periodo, "bg-blue-50 text-[#0B5FEA]"),
-      ("map-pin", "Cidade", current_user.cidade, "bg-emerald-50 text-emerald-600"),
-      ("shield-check", "Perfil", {"usuario": "Usuario comum", "moderador": "Moderador", "admin": "Administrador"}.get(current_user.role, current_user.role|capitalize), "bg-violet-50 text-violet-600")
-    ] %}
+    {% if is_admin_user(current_user) %}
+      {% set dados = [
+        ("shield-check", "Perfil", role_label(current_user.role), "bg-violet-50 text-violet-600"),
+        ("badge-check", "Conta", "Administrativa", "bg-blue-50 text-[#0B5FEA]"),
+        ("settings", "Escopo", "Plataforma UniHub", "bg-emerald-50 text-emerald-600"),
+        ("lock-keyhole", "Acesso", "Total", "bg-amber-50 text-amber-700")
+      ] %}
+    {% else %}
+      {% set dados = [
+        ("user-round", "Curso", current_user.curso, "bg-blue-50 text-[#0B5FEA]"),
+        ("calendar-days", "Periodo", current_user.periodo, "bg-blue-50 text-[#0B5FEA]"),
+        ("map-pin", "Cidade", current_user.cidade, "bg-emerald-50 text-emerald-600"),
+        ("shield-check", "Perfil", role_label(current_user.role), "bg-violet-50 text-violet-600")
+      ] %}
+    {% endif %}
     {% for icone, label, valor, classe in dados %}
       <div class="flex items-center gap-3">
         <span class="grid h-10 w-10 place-items-center rounded-full {{ classe }}">
@@ -43,16 +52,18 @@
     </div>
 
     <div class="rounded-lg border border-unihub-line p-4">
-      <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">Contato academico</p>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-unihub-muted">{{ "Contato da conta" if is_admin_user(current_user) else "Contato academico" }}</p>
       <div class="mt-4 grid gap-3 text-sm font-medium text-unihub-muted">
         <span class="inline-flex items-center gap-3 rounded-lg bg-unihub-surface px-4 py-3">
           <i data-lucide="mail" class="h-4 w-4 text-[#0B5FEA]"></i>
           {{ current_user.email }}
         </span>
-        <span class="inline-flex items-center gap-3 rounded-lg bg-unihub-surface px-4 py-3">
-          <i data-lucide="map-pin" class="h-4 w-4 text-emerald-600"></i>
-          {{ current_user.cidade }}
-        </span>
+        {% if not is_admin_user(current_user) %}
+          <span class="inline-flex items-center gap-3 rounded-lg bg-unihub-surface px-4 py-3">
+            <i data-lucide="map-pin" class="h-4 w-4 text-emerald-600"></i>
+            {{ current_user.cidade }}
+          </span>
+        {% endif %}
       </div>
     </div>
   </div>
